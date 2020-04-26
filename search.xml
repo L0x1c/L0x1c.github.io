@@ -1668,7 +1668,7 @@ $$<br>
 <p>flag：Kitteh_save_galixy@flare-on.com</p>
 <p>👴做了个flare-on最简单的题放松一下 嘿嘿！准备看会动漫睡觉觉了</p>
 <hr>
-<h3 id="4-23日更新"><a class="header-anchor" href="#4-23日更新">¶</a>4.23日更新</h3>
+<h2 id="4-23日更新"><a class="header-anchor" href="#4-23日更新">¶</a>4.23日更新</h2>
 <p>👴今天又是2点多起的床，贼蒙！👍 起床赶紧学习吧！为了晚上可以玩玩生化危机3重制版 😘</p>
 <h4 id="步入正题！-v3"><a class="header-anchor" href="#步入正题！-v3">¶</a>步入正题！</h4>
 <h5 id="多维数组"><a class="header-anchor" href="#多维数组">¶</a>多维数组</h5>
@@ -1699,9 +1699,9 @@ $$<br>
 <h5 id="各类型指针的工作方式"><a class="header-anchor" href="#各类型指针的工作方式">¶</a>各类型指针的工作方式</h5>
 <p>今天鸽一天小黄书，身体扛不住了，很难受😭明天补回来！</p>
 <hr>
-<h3 id="4-24日更新"><a class="header-anchor" href="#4-24日更新">¶</a>4.24日更新</h3>
+<h2 id="4-24日更新"><a class="header-anchor" href="#4-24日更新">¶</a>4.24日更新</h2>
 <p>👴今天7点就起床了，但是我磨蹭了一会，到了9.15才开始学习，今天任务先是小黄书把昨天的那份也补回来，然后看滴水逆向，🏃‍♂️去拿书开始看</p>
-<h4 id="步入正题！-v4"><a class="header-anchor" href="#步入正题！-v4">¶</a>步入正题！</h4>
+<h3 id="步入正题！-v4"><a class="header-anchor" href="#步入正题！-v4">¶</a>步入正题！</h3>
 <h4 id="开始小黄书：-v5"><a class="header-anchor" href="#开始小黄书：-v5">¶</a>开始小黄书：</h4>
 <h5 id="各类型指针的工作方式-v2"><a class="header-anchor" href="#各类型指针的工作方式-v2">¶</a>各类型指针的工作方式</h5>
 <p>指针保存的都是地址，每种数据类型在内存中所占的内存空间不同，指针中只保存了存放数据的首地址，没有指明在哪里结束，所以需要根据对应的类型来寻找解释数据的结束地址，同一个地址使用不同类型指针进行访问，取出的内容就会不一样</p>
@@ -1781,7 +1781,7 @@ $$</p>
 <h2 id="4-25日更新"><a class="header-anchor" href="#4-25日更新">¶</a>4.25日更新</h2>
 <p>最近这两天爷有点小忙，呜呜呜😭学校作业都没做，在狂补，然后最近身体不太好，经常学一会就休息，坐不住，今天尽量完成计划任务！</p>
 <p>任务：滴水逆向+小黄书+安恒月赛(1.30开始)</p>
-<h4 id="步入正题！-v5"><a class="header-anchor" href="#步入正题！-v5">¶</a>步入正题！</h4>
+<h3 id="步入正题！-v5"><a class="header-anchor" href="#步入正题！-v5">¶</a>步入正题！</h3>
 <h4 id="结构体"><a class="header-anchor" href="#结构体">¶</a>结构体</h4>
 <p>类型从小到大：<code>char</code> <code>short</code> <code>int</code> <code>float</code> <code>double</code> <code>_int64</code> <code>数组</code></p>
 <p>数组的问题：类型必须一样</p>
