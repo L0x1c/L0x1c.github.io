@@ -2,6 +2,918 @@
 <search>
   <entry>
     <title>One Week</title>
+    <url>/2020/04/27/%E6%97%A5%E5%B8%B8%E5%B0%8F%E6%9B%B4%E6%96%B0/</url>
+    <content><![CDATA[<p>玛德！从今天开始补基础，谁都别拦我 👴要成为带手子</p>
+<h2 id="4-20日更新"><a class="header-anchor" href="#4-20日更新">¶</a>4.20日更新</h2>
+<p>今日任务：滴水逆向+小黄书更新</p>
+<p>好的👴回来了，出去🚶‍♂️了一会，开始学习：</p>
+<ul>
+<li>
+<h4 id="基于缓冲区溢出的HelloWorld"><a class="header-anchor" href="#基于缓冲区溢出的HelloWorld">¶</a>基于缓冲区溢出的HelloWorld</h4>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void HelloWord()					</span><br><span class="line">{					</span><br><span class="line">	printf("Hello World");									</span><br><span class="line">	getchar();				</span><br><span class="line">}					</span><br><span class="line">void Fun()					</span><br><span class="line">{					</span><br><span class="line">	int arr[5] = {1,2,3,4,5};							</span><br><span class="line">	arr[6] = (int)HelloWord;									</span><br><span class="line">}			</span><br><span class="line">int main()</span><br><span class="line">{</span><br><span class="line"></span><br><span class="line">	Fun();</span><br><span class="line">	return 0;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+</li>
+</ul>
+<p>🙃直接去测试看看什么妖魔鬼怪</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200420161708366.png"  alt="image-20200420161708366"></p>
+<p>压入栈后，发现将<code>arr[6] = (int)HelloWord</code>这句话压入了ebp+0x4，一般我们程序的ebp+0x4是我们返回的地址在pop eip的ret的位置，所以ret的位置把堆栈的位置弹出到eip改变了所以会返回另一个调用函数的东西</p>
+<p>👴去更深究了一波一个指令</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200420170713188.png"  alt="image-20200420170713188"></p>
+<p>发现 <code>int arr = (int)HelloWord</code>与<code>int arr = (int)&amp;HelloWord</code>干的事情是一样的，把helloword的地址放到arr中后面进行一个调用</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200420172250979.png"  alt="image-20200420172250979"></p>
+<p>给👴过去！</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200420172325154.png"  alt="image-20200420172325154"></p>
+<p>给自己加个🍗，就是这个逻辑下一个！</p>
+<hr>
+<ul>
+<li>
+<h4 id="永不停止的HelloWorld"><a class="header-anchor" href="#永不停止的HelloWorld">¶</a>永不停止的HelloWorld</h4>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void Fun()					</span><br><span class="line">{					</span><br><span class="line">	int i;				</span><br><span class="line">	int arr[5] = {0};				</span><br><span class="line">						</span><br><span class="line">	for(i=0;i&lt;=5;i++)				</span><br><span class="line">	{				</span><br><span class="line">		arr[i] = 0;			</span><br><span class="line">		printf("Hello World!\n");			</span><br><span class="line">	}				</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+</li>
+</ul>
+<p>好的🙃继续看看什么操作，简单分析一下就是i=5的时候arr数组已经溢出</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200420174020903.png"  alt="image-20200420174020903"></p>
+<p>好的 我们可以看到，我们的arr[i]进行了一个奇妙的操作，把5个成员放入堆栈后，因为i是局部变量在ebp-0x4中也就是我们将要溢出的arr[5]中，在下面一次给arr[i]变成0且ebp-0x4中的值+1的操作中发现，在最后一次[ebp+0x5*0x4-0x18] = [ebp-0x4] 👴笑了！于是无限循环</p>
+<p>在这两个实验中，我可以发现，嗯！编译器牛逼！反正这几个代码是错的，我编译器大人就给你优化的天下无敌好吧，这里想给他们一🔪，坑害了多少人不调试的坏毛病！😡</p>
+<hr>
+<h3 id="步入正题好吧！"><a class="header-anchor" href="#步入正题好吧！">¶</a>步入正题好吧！</h3>
+<h4 id="变量"><a class="header-anchor" href="#变量">¶</a>变量</h4>
+<p>变量声明就是👴要告诉计算机👴要用一块内存，用多少内存是由数据类型决定<code>int i;</code>【宽度，作用域，种类】作用域：在函数外是全局变量，在程序变成.exe的时候，💻大大会给你分配一块特定的内存，如果在函数里面，是不给你分的，什么时候用，人家再给你分</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200420181427546.png"  alt="image-20200420181427546"></p>
+<p>给👴仔细看，这里是一个3给了一个特定的地址，用这个来分辨全局变量，通过dword和word来分辨是什么类型</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200420181612366.png"  alt="image-20200420181612366"></p>
+<p>看到不同了吧！一个全局一个局部，局部变量正常是没有内存的，嗯哼👌</p>
+<p>全局变量如果没有赋给初值就是0，局部如果不给就是CC因为他在缓冲区的啦！😡小爷给自己测试一下，好的，👴的编译器TQL，又给优化了！你妹的！好的直接说，一般就是CCCC毕竟局部变量在ebp-0x4的位置</p>
+<h4 id="类型转换"><a class="header-anchor" href="#类型转换">¶</a>类型转换</h4>
+<p>👴不废话 直接上手，了解一下movsx与movzx</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200420190055542.png"  alt="image-20200420190055542"></p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200420190252271.png"  alt="image-20200420190252271"></p>
+<p>movsx是看到al是8位，cx是16位，那么强转，<strong>是看符号位的</strong>，如果单独拿一个mov al,0xFF来，👴想给他看成有符号就有符号，不想就不想</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200420190408235.png"  alt="image-20200420190408235"></p>
+<p>movzx是不看符号位直接补0</p>
+<p>我们在c语言写代码的时候如果我们没有指明默认都是有符号的</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200420191023099.png"  alt="image-20200420191023099"></p>
+<p>movsx告诉了我们我们默认都是有符号的：<code>char —— byte short —— word int——dword</code></p>
+<p>我现在换成无符号的(unsigned)试一下</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200420191257262.png"  alt="image-20200420191257262"></p>
+<p>好的是movzx 👴了解了，汇编真好玩👍 补充：小的往大的放是填充，大的往小的放是截取</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200420191739140.png"  alt="image-20200420191739140"></p>
+<p>👴这么笨都懂了，估计都能懂</p>
+<h4 id="表达式"><a class="header-anchor" href="#表达式">¶</a>表达式</h4>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void FUN(int a, int b) {</span><br><span class="line">	a + b + 1;</span><br><span class="line">}</span><br><span class="line">int main() {</span><br><span class="line">	FUN(1,2);</span><br><span class="line">	return 0;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>表达式看到了，没有变量存储这个表达式的值，👴看看干什么了</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200420192454927.png"  alt="image-20200420192454927"></p>
+<p>好的，啥也没干，void fun()；啥样他啥样👍，所以酱样子是不对的，所以编译通过但是不生成代码，需要与赋值或者其他控制语句一起组合时候才可以，😡有人会问表达式如果数据类型不一样怎么办，👴再去试一下</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200420192946548.png"  alt="image-20200420192946548"></p>
+<p>看到了吧，把b强转位a的类型但是最后跟的 i 的数据类型走的，<strong>如果表达式中变量存在无符号数的时候，最后本身的结构会变成无符号数</strong></p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200420224435766.png"  alt="image-20200420224435766"></p>
+<p>👵直接丢例子给老子懂！😡这里本可爱最脑瘫瘫的地方就是<code>unsigned int i =0xffffffff</code>我去进行 %d ,结果是-1，😡真够脑瘫的，人家本来符号位就是<code>1 1111111</code>%d就是4位且有符号输出，变成%u就是4294967295！不需要什么movsx和movzx的操作！真的是笨笨笨！😭</p>
+<p><strong>自己总结：</strong></p>
+<p>正常我们进行强转类型的时候，如果不是unsigned那么就是movsx如果是的话就是movzx，有符号和无符号相加结果是计算机到时候怎么看都可以</p>
+<h4 id="表达式与语句"><a class="header-anchor" href="#表达式与语句">¶</a>表达式与语句</h4>
+<p>影响cpu或者影响了内存的分配我们称为语句，后面要有一个分号才可以称为语句</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">int FUN(int a, short b) {</span><br><span class="line">	int i = a + b;</span><br><span class="line">	return i;</span><br><span class="line">}</span><br><span class="line">int main() {</span><br><span class="line">	FUN(1,2);</span><br><span class="line">	return 0;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>这里👴提一嘴 函数调用的返回，一般我们程序执行完堆栈的分配的空间都变成了垃圾数据，但是我程序return一个i，我直接把i的值返回给eax</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200421003311008.png"  alt="image-20200421003311008"></p>
+<p>这里看一下 <code>int a = b == c;</code>的功能</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200421010211507.png"  alt="image-20200421010211507"></p>
+<p>如果不相等就跳转到0xD1254D，如果相等就不跳转：等同于</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">xor ecx,ecx</span><br><span class="line">cmp dword ptr [a],eax</span><br><span class="line">sete cl</span><br><span class="line">mov dword ptr [i],ecx</span><br></pre></td></tr></tbody></table></figure>
+<p><code>sete cl</code>这两个值如果一样的话就会把cx的值设置成1，如果不相等就不sete，也有个(setne)</p>
+<hr>
+<h4 id="开始小黄书："><a class="header-anchor" href="#开始小黄书：">¶</a>开始小黄书：</h4>
+<h5 id="OD基本使用"><a class="header-anchor" href="#OD基本使用">¶</a>OD基本使用</h5>
+<table>
+<thead>
+<tr>
+<th>快捷键</th>
+<th>功能说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F2</td>
+<td>断点</td>
+</tr>
+<tr>
+<td>F3</td>
+<td>加载一个可执行程序，进行分析</td>
+</tr>
+<tr>
+<td>F4</td>
+<td>程序执行到光标处</td>
+</tr>
+<tr>
+<td>F7</td>
+<td>单步步入</td>
+</tr>
+<tr>
+<td>F8</td>
+<td>单步步过</td>
+</tr>
+<tr>
+<td>F9</td>
+<td>直接运行程序，遇见断点处停止</td>
+</tr>
+<tr>
+<td>Ctrl+F2</td>
+<td>重新运行程序到起始位置</td>
+</tr>
+<tr>
+<td>Ctrl+F9</td>
+<td>执行函数到返回处，用于跳出函数实现</td>
+</tr>
+<tr>
+<td>Alt+F9</td>
+<td>执行到用户代码处，用于快速跳出系统函数</td>
+</tr>
+<tr>
+<td>Ctrl+G</td>
+<td>定位地址</td>
+</tr>
+</tbody>
+</table>
+<h5 id="IDA基本使用"><a class="header-anchor" href="#IDA基本使用">¶</a>IDA基本使用</h5>
+<table>
+<thead>
+<tr>
+<th>快捷键</th>
+<th>功能说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Enter</td>
+<td>跟进函数实现</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>返回跟进位置</td>
+</tr>
+<tr>
+<td>A</td>
+<td>解释光标处的地址为一个字符串的首地址</td>
+</tr>
+<tr>
+<td>B</td>
+<td>十六进制转化为二进制</td>
+</tr>
+<tr>
+<td>C</td>
+<td>解释光标处地址为一条指令</td>
+</tr>
+<tr>
+<td>D</td>
+<td>解释该地址为数据</td>
+</tr>
+<tr>
+<td>G</td>
+<td>查找地址</td>
+</tr>
+<tr>
+<td>H</td>
+<td>十六进制转化成十进制</td>
+</tr>
+<tr>
+<td>K</td>
+<td>数据解释为栈变量</td>
+</tr>
+<tr>
+<td>：</td>
+<td>注释</td>
+</tr>
+<tr>
+<td>M</td>
+<td>解释为枚举成员</td>
+</tr>
+<tr>
+<td>N</td>
+<td>重命名</td>
+</tr>
+<tr>
+<td>O</td>
+<td>字符串标号</td>
+</tr>
+<tr>
+<td>T</td>
+<td>解释为结构体成员</td>
+</tr>
+<tr>
+<td>X</td>
+<td>转化视图为交叉参考模式</td>
+</tr>
+<tr>
+<td>Shift+F9</td>
+<td>添加结构体</td>
+</tr>
+</tbody>
+</table>
+<p>👴第一次看到这么多快捷键学到了</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200421013142819.png"  alt="image-20200421013142819"></p>
+<p>三个选项</p>
+<p>1.分析文件为一个PE格式的文件</p>
+<p>2.分析文件为一个DOS控制台下的一个文件</p>
+<p>3.分析文件为一个二进制的文件</p>
+<h5 id="sig："><a class="header-anchor" href="#sig：">¶</a>sig：</h5>
+<p><strong><u>这里👴大概说一下这个sig：</u></strong></p>
+<p>我们一般IDA可以识别函数的MessageBoxA等等参数信息，是因为IDA通过SIG文件来识别的，所以在安装的时候我们会有相应的.sig在pc那个文件夹下面了，所以我们可以利用这个，来去识别第三方的库函数，简化分析</p>
+<p>SIG制作流程：</p>
+<p>创建模式文件  pcf.exe xxx.lib xxx.pat<br>
+创建签名文件  sigmake.exe xxx.pat xxx.sig</p>
+<p>直接举书上的例子好吧！</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void ShowSig(){</span><br><span class="line">	printf("showSig");</span><br><span class="line">}</span><br><span class="line">int main(int argc,char* argv[]){</span><br><span class="line">	ShowSig();</span><br><span class="line">	return 0;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="./images/image-20200421015638523.png"  alt="image-20200421015638523"></p>
+<p>没有加载sig之前，那么我们制作一下</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200421020608733.png"  alt="image-20200421020608733"></p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200421020601223.png"  alt="image-20200421020601223"></p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200421020703962.png"  alt="image-20200421020703962"></p>
+<p>可以看到恢复了符号表，真香🍔，👴感觉书上说的复杂了点，直接我们在ida中有</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200421020907638.png"  alt="image-20200421020907638"></p>
+<p>打开powershell，搞就完事，然后把生成的.sig丢到 sig文件下的pc文件夹即可，👴睡了 晚安</p>
+<h2 id="4-21日更新"><a class="header-anchor" href="#4-21日更新">¶</a>4.21日更新</h2>
+<p>👴迷迷糊糊睡到了下午1.27，感觉脑袋😴的，不说这么多，™的学习</p>
+<p>今日任务：滴水逆向+小黄书更新+(看雪CTF第三题研究:不知道能研究多少😡)</p>
+<h3 id="步入正题！"><a class="header-anchor" href="#步入正题！">¶</a>步入正题！</h3>
+<h4 id="循环"><a class="header-anchor" href="#循环">¶</a>循环</h4>
+<p>do while循环和while 循环就不用👴说了吧，还有个循环是for循环，<code>for(表达式1;表达式2;表达式3){//执行代码4}</code>第一次执行为1 2 4 3，第二次为2 4 3…到最后一次2不满足了退出</p>
+<p>👴这里举一个好玩的for的例子假设：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">for(;;){</span><br><span class="line">printf("L0x1c");</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="./images/image-20200421143126171.png"  alt="image-20200421143126171"></p>
+<p>看到了吗，这里是无限执行的，所以假设这里如果什么都不写，这里表达式2的位置的地方是永真的</p>
+<p>👴在这里看到了个好玩的就是，不用第三个值来完成两个值交换（目测是数学问题，反正记录一下嘛😁）</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">int x=2;</span><br><span class="line">int y=3;</span><br><span class="line">int z=x;</span><br><span class="line">x=y;</span><br><span class="line">y=z;</span><br><span class="line">//第二种</span><br><span class="line">x = x+y;</span><br><span class="line">y = x-y;</span><br><span class="line">x = x-y;</span><br></pre></td></tr></tbody></table></figure>
+<p>这里只能说数学牛逼！👍</p>
+<p>其实一个函数可以有多个return，但是多个return里面只进行了一个</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200421145653115.png"  alt="image-20200421145653115"></p>
+<p>于是👴去网上看了一下<code>return 0 return 1 return -1</code>的作用</p>
+<ol>
+<li>return 0：一般用在主函数结束时，按照程序开发的一般惯例，表示成功完成本函数</li>
+<li>return -1 ：表示返回一个代数值，一般用在子函数结尾。按照程序开发的一般惯例，表示该函数失败</li>
+</ol>
+<p>布尔类型时候：</p>
+<ol>
+<li>return 0：返回假</li>
+<li>return 1：返回真</li>
+</ol>
+<p>我进行了一个猜想，我在想<code>return 2 3 4</code>可以吗，干什么的，我去vs试一下吧看一下汇编做了什么<img src="/" class="lazyload" data-src="./images/image-20200421160049166.png"  alt="image-20200421160049166"></p>
+<p>大概清楚，跟正常返回一样，给eax值，然后让别人到时候调用eax返回值用的</p>
+<p>大概听了海哥的两节课，👴感觉他讲了很多的正向知识，大概自己都了解，我这里就不记录了，直接自己搞一下简简单单的冒泡排序的正向写法吧</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">while(m&lt;length-1){</span><br><span class="line">	for(int i=0;i&lt;length-1;i++)//int i=0这句是cpp的用法正常c语言是八可以的</span><br><span class="line">	{</span><br><span class="line">		if(arr[i]&gt;arr[i+1]){</span><br><span class="line">			int t=arr[i];</span><br><span class="line">			arr[i]=arr[i+1];</span><br><span class="line">			arr[i+1]=t;</span><br><span class="line">		}</span><br><span class="line">	}</span><br><span class="line">	m++;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<hr>
+<h4 id="开始小黄书：-v2"><a class="header-anchor" href="#开始小黄书：-v2">¶</a>开始小黄书：</h4>
+<h5 id="反汇编引擎的工作原理"><a class="header-anchor" href="#反汇编引擎的工作原理">¶</a>反汇编引擎的工作原理</h5>
+<p>👴第一次了解准备好好学一手</p>
+<p>X86平台下使用的汇编指令对应的二进制机器码是Intel指令集——Opcode</p>
+<table>
+<thead>
+<tr>
+<th>Prefix</th>
+<th>code</th>
+<th>Mode R/M</th>
+<th>SIB            Displacement</th>
+<th>Immediate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>指令前缀</td>
+<td>指令操作码</td>
+<td>操作数类型</td>
+<td>辅助Mode R/M，计算地址偏移</td>
+<td>立即数</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Opcode</strong>这里书上没有给太多解释，我直接在CSDN找到了一篇文章，说的挺不错的，这里自己总结一下(网址：<a href="https://blog.csdn.net/kl195375/article/details/89788837" target="_blank" rel="noopener">https://blog.csdn.net/kl195375/article/details/89788837</a>)</p>
+<p>我们的计算机只认识0与1是没毛病的，但是我们写的源程序并不是0与1，那么计算机如何知道我们程序的含义？👴现在就来学习一下！</p>
+<p>好的！我从CSDN学完🏃‍♂️回来了！</p>
+<p>假设我们写一个汇编的<code>NOP</code>，我们在编译的时候，汇编语言会扫描整个源代码，所以我们知道计算机只认识0与1，那么源代码<code>NOP</code>无法运行，所以为了让计算机生成能运行的东西，我们要用<code>0x90</code>来代替</p>
+<p>这里的<code>0x90</code>是我们说的Opcode，而Nop是我们说的助记符(<code>menemonic</code>)</p>
+<p>可是一个Opcode对应一个menemonic吗</p>
+<table>
+<thead>
+<tr>
+<th>Opcode</th>
+<th>mnemonic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x90</td>
+<td>NOP</td>
+</tr>
+<tr>
+<td>0x90</td>
+<td>XCHG AX,AX</td>
+</tr>
+<tr>
+<td>0x90</td>
+<td>XCHG EAX,EAX</td>
+</tr>
+</tbody>
+</table>
+<p>那么一个mnemonic对应一个Opcode吗</p>
+<table>
+<thead>
+<tr>
+<th>menemonic</th>
+<th>Opcode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ADD EAX, 1</td>
+<td>0x83C001</td>
+</tr>
+<tr>
+<td>ADD EAX, 1</td>
+<td>0x0501000000</td>
+</tr>
+<tr>
+<td>ADD EAX, 1</td>
+<td>0x81C001000000</td>
+</tr>
+</tbody>
+</table>
+<p>所以：一个OpCode 不只对应一个menemonic ，一个menemonic不只对应一个OpCode ，<u>其实这里👴有个疑问，就是为什么是一对多的情况，有点八太懂，这里我一会查阅一下资料！就回来补充😭</u></p>
+<p>上面说的那个Opcode的6个域排列顺序，是不可以改变的，一般来说最不可少的就是code这个域</p>
+<table>
+<thead>
+<tr>
+<th><strong>OpCode</strong></th>
+<th><strong>menemonic</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0xC3</td>
+<td>RETN</td>
+</tr>
+<tr>
+<td>0x2F</td>
+<td>DAS</td>
+</tr>
+<tr>
+<td>0x90</td>
+<td>NOP</td>
+</tr>
+<tr>
+<td>0xAC</td>
+<td>LODSB</td>
+</tr>
+</tbody>
+</table>
+<p>假设这几个Opcode都只用到了code这一项，那么我们拿出0xAC这个code，我们做个测试</p>
+<p>0xAC ------- 0xF3AC：<code>REP LODSB</code>，大概我们会猜到改变是因为F3的添加(Prefixes)的问题</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">AC</span><br><span class="line">--{code</span><br><span class="line">}</span><br><span class="line">F3 AC</span><br><span class="line">--{Prefix}{code</span><br><span class="line">}</span><br><span class="line">//F3为Prefix的域</span><br></pre></td></tr></tbody></table></figure>
+<p>这里说一下他们的顺序不可以变举个例子：</p>
+<table>
+<thead>
+<tr>
+<th><strong>OpCode</strong></th>
+<th><strong>menemonic</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4004</td>
+<td>INC EAX</td>
+</tr>
+<tr>
+<td>0440</td>
+<td>ADD AL, 40h</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>
+<p>Prefix：指令前缀，作为指令的补助</p>
+<ul>
+<li>重复指令：如REP，REPE</li>
+<li>跨段指令：如MOV DWORD PTR FS:[xxxxx],0</li>
+<li>将操作数从32位转为16位：如MOV AX,WORD PTR DS:[EAX]</li>
+<li>将地址从16位转为32位：如MOV EAX,DWORD PTR DS:[BX+SI]</li>
+</ul>
+</li>
+<li>
+<p>code：指令操作码，有时候还需要Mode R/M , SIB , Displacement帮助，才可以完善信息</p>
+</li>
+<li>
+<p>Mode R/M：操作数类型：用来辅助menemonic后的操作数类型，R寄存器，M内存单元，6 7位的4种可能，用来描述，0 1 2位是寄存器还是内存单元，以及3中寻址方式</p>
+<table>
+<thead>
+<tr>
+<th>7         6</th>
+<th>5         4        3</th>
+<th>2       1     0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>指定寄存器及寻址方式</td>
+<td>寄存器/Opcode</td>
+<td>寄存器/内存单元</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>SIB：辅助Mode R/M，计算地址偏移，SIB寻址方式就是基址+变址，<code>MOV EAX,DWORD PTR DS:[EBX+ECX*2]</code>其中ECX和</p>
+<p>2都是SIB来制定的，这里的指定乘数，只有4种可能：1 2 4 8</p>
+<table>
+<thead>
+<tr>
+<th>7         6</th>
+<th>5         4        3</th>
+<th>2       1     0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>指定乘数</td>
+<td>指定变址寄存器</td>
+<td>指定基质寄存器</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>Displacement：辅助Mode R/M，计算地址偏移，比如<code>MOV EAX,DWORD PTR DS:[EBX+ECX*2+3]</code>，其中+3是由Displacement决定的</p>
+</li>
+<li>
+<p>Immediate：立即数，用于解释语句中操作数为常量的情况</p>
+</li>
+</ul>
+<h5 id="反汇编引擎Proview源码片段"><a class="header-anchor" href="#反汇编引擎Proview源码片段">¶</a>反汇编引擎Proview源码片段</h5>
+<p>给出汇编：👍这里🐶十月还是有点作用的 给了pdf</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200421215049107.png"  alt="image-20200421215049107"></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//机器码解析函数</span><br><span class="line">/*</span><br><span class="line">DISASSEMBLY 结构说明</span><br><span class="line">typedef struct Decoded{</span><br><span class="line">	char Assembly[256];	//汇编指令信息</span><br><span class="line">	char Remarks[256];	//汇编指令说明信息</span><br><span class="line">	char Opcode[30];	//Opcode机器码信息</span><br><span class="line">	DWORD Address;	//当前指令地址</span><br><span class="line">	BYTE OpodeSize	//Opcode机器码长度</span><br><span class="line">	BYTE PrefixSize //指令前缀长度</span><br><span class="line">}DISASSEMBLY;</span><br><span class="line">*/</span><br><span class="line">void Decode(DISASSEMBLY *Disasm,char *Opcode,DWORD *Index){</span><br><span class="line">/*源码中函数说明信息，便令局部定义略*/</span><br><span class="line">//机器码格式分析略</span><br><span class="line">//判断是否符合Opcode机器码格式，Op为参数Opcode[0]项</span><br><span class="line">switch(Op){//分析Op对应机器码</span><br><span class="line">case 0x68:</span><br><span class="line">//0x68为PUSH后面的四个字节入栈的机器码  0x6A为PUSH后面的一个字节入栈的机器码</span><br><span class="line">//方式1：push 4字节内存地址信息</span><br><span class="line">//判断寄存器指令前缀</span><br><span class="line">if(RegPrefix == 0){</span><br><span class="line">	//PUSH指令后按4字节方式解释</span><br><span class="line">	//例子当前机器码为：6800304000</span><br><span class="line">	//由于在内存中为小尾方式排序，因此取出内容需要重新排列数据</span><br><span class="line">	//此函数对指令地址+1，偏移到00304000处，将其排序为00403000</span><br><span class="line">	//提取出的机器指令存放在dwOp中</span><br><span class="line">	//转换中的地址信息保存在dwMem中</span><br><span class="line">	SwapDword((BYTE *)(Opcode+i+1),&amp;dwOp,&amp;dwMem);</span><br><span class="line">	//将机器指令信息转换为汇编指令信息</span><br><span class="line">	wsprintf(menemonic,push %08X,dwMem);</span><br><span class="line">	//保存汇编指令语句到Disasm结构中，用于返回</span><br><span class="line">	lstrcat(Disasm-&gt;Assembly,menemonic);</span><br><span class="line">	//组装机器码信息，用空格将指令码与操作数分离</span><br><span class="line">	wsprintf(menemonic,68 %08X",dwOp);</span><br><span class="line">	//将机器码信息保存到Disasm结构中，用于返回</span><br><span class="line">	lstrcat(Disasm-&gt;Opcode,menemonic);</span><br><span class="line">	//设置指令要占用的内存空间</span><br><span class="line">	Disasm-&gt;OpcodeSize = 5;</span><br><span class="line">	//设置指令前缀长度</span><br><span class="line">	Disasm-&gt;PrefixSize = PrefixesSize;</span><br><span class="line">	//对当前分析指令地址下标加4字节偏移量</span><br><span class="line">	(*Index)+=4;</span><br><span class="line">}</span><br><span class="line">else{</span><br><span class="line">	//push指令后按2字节方式解释</span><br><span class="line">	//解析机器码，以上代码相同</span><br><span class="line">	SwapDword((BYTE *)(Opcode+i+1),&amp;wOp,&amp;wMem);</span><br><span class="line">	//按2字节解释操作数:"push %04X"</span><br><span class="line">	wsprintf(menemonic,push %04X,wMem);</span><br><span class="line">	lstrcat(Disasm-&gt;Assembly,menemonic);</span><br><span class="line">	//按2字节解释操作数:"push %04X"</span><br><span class="line">	wsprintf(menemonic,68 %04X",wOp);</span><br><span class="line">	lstrcat(Disasm-&gt;Opcode,menemonic);</span><br><span class="line">	//设置指令长度</span><br><span class="line">	Disasm-&gt;OpcodeSize = 3;</span><br><span class="line">	//设置指令前缀长度</span><br><span class="line">	Disasm-&gt;PrefixSize = PrefixesSize;</span><br><span class="line">	//对当前分析指令地址下标加2字节偏移量</span><br><span class="line">	(*Index)+=2;</span><br><span class="line">}</span><br><span class="line">}</span><br><span class="line">break;</span><br><span class="line">case 0x6A:</span><br><span class="line">//方式2：push指令的操作数是小于等于1字节的立即数</span><br><span class="line">{</span><br><span class="line">//有符号数判断，负数处理</span><br><span class="line">	if((BYTE)Opcode[i+1]&gt;=0x80){</span><br><span class="line">	//负数在内存中为补码，用0x100-补码得回源码(自己理解是因为0x100满足海哥说的那个圆而且是一字节)</span><br><span class="line">	//"push -%02X"中对原码加符号</span><br><span class="line">	wsprintf(menemonic,"push -%02X",(0x100-(BYTE)Opcode[i+1]));</span><br><span class="line">	}</span><br><span class="line">//有符号处理，正数处理</span><br><span class="line">else{</span><br><span class="line">	//正数直接转换</span><br><span class="line">	wsprintf(menemonic,"push %02X",(0x100-(BYTE)Opcode[i+1]));</span><br><span class="line">}</span><br><span class="line">	//保存汇编语句</span><br><span class="line">	lstrcat(Disasm-&gt;Assembly,menemonic);</span><br><span class="line">	//组装机器码信息</span><br><span class="line">	wsprintf(menemonic,"6A%02X",(BYTE)*(Opcode+i+1));</span><br><span class="line">	//保存机器码信息</span><br><span class="line">	lstrcat(Disasm-&gt;Opcode,menemonic);</span><br><span class="line">	//设置指令长度与指令前缀长度</span><br><span class="line">	Disasm-&gt;OpcodeSize = 2;</span><br><span class="line">	Disasm-&gt;PrefixSize = PrefixesSize;</span><br><span class="line">	//对当前分析指令地址下标加2字节偏移量</span><br><span class="line">	++(*Index);</span><br><span class="line">}</span><br><span class="line">break;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>刚把柴佬的任务完成，急忙🏃‍♂️回来，继续整理笔记😁</p>
+<p>代码省略了其他机器码的解析过程，列举了push的两种机器指令方式，自己大概了解了：通过解析Opcode指令操作码，找到对应的解析方式，将机器码重组为汇编代码。通过第一个参数DISASSEMBLY *Disasm传出解析结果，将机器码指令长度由参数Index传出，用于寻找下一个Opcode指令操作码</p>
+<h5 id="Decode对机器码进行分析"><a class="header-anchor" href="#Decode对机器码进行分析">¶</a>Decode对机器码进行分析</h5>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//假设此字符数组为机器指令编码</span><br><span class="line">unsigned char szAsmData[]={</span><br><span class="line">	0x6A,0x00,	//push 00</span><br><span class="line">	0x68,0x00,0x30,0x40,0x00,	//push 00403000</span><br><span class="line">	0x50,	//push eax</span><br><span class="line">	0x51,	//push ecx</span><br><span class="line">	0x52,	//push edx</span><br><span class="line">	0x53,	//push ebx</span><br><span class="line">};</span><br><span class="line">char szCode[256]={0};	//存放汇编指令信息</span><br><span class="line">unsigned int nIndex = 0;	//每条机器指令的长度，用于地址偏移</span><br><span class="line">unsigned int nLen = 0l	//分析机器码总长度</span><br><span class="line">unsigned char *pCode = szAsmData;</span><br><span class="line"></span><br><span class="line">//获取分析机器码长度</span><br><span class="line">nLen = sizeof(szAsmData);IN</span><br><span class="line">while(nLen){</span><br><span class="line">	//检查是否超出分析范围</span><br><span class="line">	if(nLen &lt; nIndex){</span><br><span class="line">		break;</span><br><span class="line">	}</span><br><span class="line">	//修改pCode偏移</span><br><span class="line">	pCode + = nIndex；</span><br><span class="line">	//解析机器码(转下一个函数)Decode2Asm函数</span><br><span class="line">	//pCode：分析机器码首地址</span><br><span class="line">	//szCode：返回值，保存解析后的汇编指令语句信息</span><br><span class="line">	//nIndex: 返回值，保存机器码指令长度</span><br><span class="line">	//模拟机器码，没有对应代码地址，因此传入0</span><br><span class="line">	Decode2Asm(pCode,szCode,&amp;nIndex,0);</span><br><span class="line">	//显示汇编指令</span><br><span class="line">	puts(szCode);</span><br><span class="line">	memset(szCode,0,sizeof(szCode));</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>通过函数Decode2Asm，启动反汇编引擎Proview，解析出对应汇编指令语句代码，并输出</p>
+<h5 id="Decode2Asm实现流程"><a class="header-anchor" href="#Decode2Asm实现流程">¶</a>Decode2Asm实现流程</h5>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void_stdcall</span><br><span class="line">Decode2Asm(IN PBYTE pCodeEntry,	//分析Opcode地址，无符号字符型指针</span><br><span class="line">		   OUT char* strAsmCode,	//传出值，保存汇编指令的语句信息</span><br><span class="line">		   OUT OINT* pnCodeSize，	//传出值，保存机器码指令的大小</span><br><span class="line">		   UINT nAddress)	//分析机器码所在地址</span><br><span class="line">{</span><br><span class="line">	DISASSEMBLY Disasm;	//结构体在上上面啦</span><br><span class="line">	//保存Opcode指针，用于传递函数参数</span><br><span class="line">	char *Linear = (char *)pCodeEntry;</span><br><span class="line">	//初始化指令长度</span><br><span class="line">	DWORD	Index = 0;</span><br><span class="line">	//设置机器码所在地址</span><br><span class="line">	Disasm.Address = nAddress;</span><br><span class="line">	//初始化Disasm</span><br><span class="line">	FlushDecoded(&amp;Disasm);</span><br><span class="line">	//调用Decode进行机器码分析</span><br><span class="line">	Decode(&amp;Disasm,Linear,&amp;Index);</span><br><span class="line">	//保存汇编指令语句信息</span><br><span class="line">	strcpy(strAsmCode,Disasm.Assembly);</span><br><span class="line">	//组装汇编语句的字符串，从参数strAsmCode返回信息</span><br><span class="line">	if(strstr((char*)Disasm.Opcode,":")){</span><br><span class="line">	Disasm.OpcodeSize++;</span><br><span class="line">	char ch='';</span><br><span class="line">	strncat(strAsmCode,&amp;ch,sizeof(char));</span><br><span class="line">	}</span><br><span class="line">	strcat(strAsmCode,Disasm.Remarks);</span><br><span class="line">	*pnCodeSize = Disasm.OpcodeSize;</span><br><span class="line">	FlushDecoded(&amp;Disasm);</span><br><span class="line">	return;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>对汇编引擎Proview的使用进行了封装，以简化Decode函数的调用过程，方便使用者调用</p>
+<p>👌后面看了3页讲的是整数类型，有符号和无符号，以及浮点数类型，大该了解不是很难，笔记不用写！👴就是这么嚣张！</p>
+<hr>
+<h5 id="小插曲：柴佬的作业"><a class="header-anchor" href="#小插曲：柴佬的作业">¶</a>小插曲：柴佬的作业</h5>
+<p>😁受到柴佬的拜托，帮忙完成一个作业，👴义不容辞</p>
+<p>看到是个crackme：</p>
+<p>od打开好吧</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200421232536675.png"  alt="image-20200421232536675"></p>
+<p>程序多数会用 GetWindowTextA,GetDlgItemTextA 这类 API 来得到文字方块里的字符串。程序弹出信息时候，这个信息由MessageBoxA 提供，bp MessageBoxA 直接下断</p>
+<p>我们输入以下用户名，密码，点击register</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200421234509454.png"  alt="image-20200421234509454"></p>
+<p>返回调用的反汇编窗口发现，这里有成功和失败的信息，正常来说我们直接把上面的jnz改成je就完事，但是我们需要分析序列号的算法，上面看test eax,eax就是想看看eax是不是0，所以这个程序最大的问题就是这个eax，那么我们猜测和 00401230有关，我们去看看</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200421235041729.png"  alt="image-20200421235041729"></p>
+<p>我们开始分析</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200421235424313.png"  alt="image-20200421235424313"></p>
+<p>这里我们可以看到我们存放的用户名，eax为我们用户名的长度，进行比较，如果小于3直接失败，大于3才跳转，所以说用户名大于3</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422000613562.png"  alt="image-20200422000613562"></p>
+<p>我们到这里可以看到这个位置是存放了序列号的字符</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422000712343.png"  alt="image-20200422000712343"></p>
+<p>可以看到用GetDlgltemTextA得到序号</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422001501373.png"  alt="image-20200422001501373"></p>
+<p>这个位置把我们的用户名的前两位放到了eax,ecx中</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422001626104.png"  alt="image-20200422001626104"></p>
+<p>cdq将eax扩展为edx:eax，idiv ecx将 edx:eax除以ecx，余数放到edx中</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422001907711.png"  alt="image-20200422001907711"></p>
+<p>把名字的第三位放在edx中，刚才余数在ecx中，他们相乘</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422002009287.png"  alt="image-20200422002009287"></p>
+<p>ECX自增1，EDX=0，EAX/ECX，推导成公式就是<br>
+$$<br>
+0xFFFFFFFF/(1+(arr[0]%arr[1]*arr[2]))<br>
+$$<br>
+<img src="/" class="lazyload" data-src="./images/image-20200422002311480.png"  alt="image-20200422002311480"></p>
+<p>CALL 401340：</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422002438903.png"  alt="image-20200422002438903"></p>
+<p>进行两个魔性的操作，ret返回了</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422002722783.png"  alt="image-20200422002722783"></p>
+<p>看一下 CALL 40134A：</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422002820201.png"  alt="image-20200422002820201"></p>
+<p>进行了一系列运算，等到47BB</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422003552131.png"  alt="image-20200422003552131"></p>
+<p>进行了把EAX原来的值扩展，(edx:eax%1a)+41将余数的下8位存到ESP+ESI+18，循环16次</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422004011646.png"  alt="image-20200422004011646"></p>
+<p>获取名字长度</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422004505331.png"  alt="image-20200422004505331"></p>
+<p>可以发现所有的东西都跟这个eax有关，所以我们需要所有循环的eax值就可以了</p>
+<p>第 58 4D 58 4C 4A 41 满足6位密码</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422004754369.png"  alt="image-20200422004754369"></p>
+<p>所以用户名为cailao时候密码为XMXLJA试一下<img src="/" class="lazyload" data-src="./images/image-20200422004948692.png"  alt="image-20200422004948692"></p>
+<p>总结：今日任务完成了2/3，看雪的CTF没有复现😭，明天争取复现，可是明天要去吃🍛，估计又得搁置了！尽量完成明天，奥里给💪，👴是无敌的</p>
+<hr>
+<h2 id="4-22日更新"><a class="header-anchor" href="#4-22日更新">¶</a>4.22日更新</h2>
+<p>今日任务：滴水逆向+小黄书更新(看雪CTF暂时停更新)</p>
+<p>👴今日，带了姑父洗澡，晚上恰饭，所以不知道能更新多少😭良心受到谴责</p>
+<h3 id="步入正题！-v2"><a class="header-anchor" href="#步入正题！-v2">¶</a>步入正题！</h3>
+<h4 id="返回值是如何传递"><a class="header-anchor" href="#返回值是如何传递">¶</a>返回值是如何传递</h4>
+<p>返回值的类型和return回去的类型是匹配的，这里举了个例子</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">char fun(){</span><br><span class="line">	return 12;</span><br><span class="line">}</span><br><span class="line">int main(){</span><br><span class="line">	char i = fun();</span><br><span class="line">	return 0;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>和👴之前说的一样，用的寄存器就是EAX，AX , AL寄存器和返回值类型有关，这里直接看一下汇编代码，印象深刻一下</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422170006845.png"  alt="image-20200422170006845"></p>
+<p>假设，我这边调用的时候的类型不同</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422170117940.png"  alt="image-20200422170117940"></p>
+<p>直接用<code>movsx</code>进行补全就可以，类型转换，<code>offset</code>为偏移，可以看成具体的地址</p>
+<p>如果这里是64位的，<code>_int64</code>，会将后8位放在eax中，前8位放在edx中</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422171544691.png"  alt="image-20200422171544691"></p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422171811660.png"  alt="image-20200422171811660"></p>
+<p>取出来的时候，先是把ebp-8的值给eax压入堆栈，再把i的那个局部变量的地址给了ecx，再把ecx压入堆栈，我们可以看到，我们是把eax压入当前的局部变量i那个位置，然后把edx压入ebp-0x8的放局部变量的那个位置</p>
+<h4 id="参数传递的本质"><a class="header-anchor" href="#参数传递的本质">¶</a>参数传递的本质</h4>
+<p>把值传递，用堆栈和寄存器来传都可以，<strong>调用约定</strong>，告诉编译器我们用的stdcall,cdecl,fastcall那些等等，这里需要注意的就是，我们函数传递的时候，<strong>我们假设定义的是一个字节，但是我们传递的时候，按照的是4个字节，因为堆栈每次都-0x4</strong></p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422173416939.png"  alt="image-20200422173416939"></p>
+<p>实际上传递都是int 4字节，原因就是本机尺寸的原理，比如说本机是32位的，他对32位的数据处理是最好的(这里用走路的步的大小做了个例子)，编译器也遵守了这个规则，char和short根本没有节省空间，所以整数类型的参数，使用的就是int类型</p>
+<p>总结：将上层函数的变量，或者表达式的值“复制一份”，传递给下层函数</p>
+<h4 id="局部变量的内存分配"><a class="header-anchor" href="#局部变量的内存分配">¶</a>局部变量的内存分配</h4>
+<p>当我们函数什么都不做的时候，默认给我们的分的缓冲区大小就是0x40</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422185224712.png"  alt="image-20200422185224712"></p>
+<p>在vc++6.0中一般是0x40，但是我们换了一个编译器来说比如说我的是vs2019就是0xC0大小(默认分配的)，如果我们需要假设一个int类型的值，我们看一下缓冲区怎么给我们进行分配的</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422185556796.png"  alt="image-20200422185556796"></p>
+<p>vs中是多了0xC，vc++6.0是多了0x4，多的多少跟数据类型无关，用多少个分多少个</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422190007319.png"  alt="image-20200422190007319"></p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422190040665.png"  alt="image-20200422190040665"></p>
+<p>所以说不需要定义什么char和short的局部变量根本不会浪费空间，参数与局部变量没有任何区别，参数实在函数执行前，局部变量是在函数执行时，本质上讲参数和局部变量没什么区别：唯一区别是一个是ebp+，一个是ebp-</p>
+<h4 id="赋值语句的本质"><a class="header-anchor" href="#赋值语句的本质">¶</a>赋值语句的本质</h4>
+<p>将某个值存储到变量中的过程就是赋值</p>
+<p>没错代码在汇编下面没有秘密可言！👍优先级问题，👴有小括号记什么优先级</p>
+<h4 id="数组的本质"><a class="header-anchor" href="#数组的本质">¶</a>数组的本质</h4>
+<p>假设我现在这么写代码，我们看一下反汇编</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">int v_0 = 1;</span><br><span class="line">int v_1 = 2;</span><br><span class="line">int v_2 = 3;</span><br><span class="line">int v_3 = 4;</span><br><span class="line">int v_4 = 5;</span><br><span class="line">int v_5 = 6;</span><br><span class="line">int v_6 = 7;</span><br><span class="line">int v_7 = 8;</span><br><span class="line">int v_8 = 9;</span><br><span class="line">int v_9 = 10;</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422192831408.png"  alt="image-20200422192831408"></p>
+<p>从 ebp-0x4开始一直往上开始存入，这么写比较麻烦，所以有一种简写方式，就是数组，我们去观察一下反汇编</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422213825074.png"  alt="image-20200422213825074"></p>
+<p>数据就是一排数据且等宽的变量，声明数组的时候[ ]里面的值必须用常量不可以用变量，因为比如说用了变量，我们这里写反汇编的代码的时候，不知道应该提升多少好(后面动态数组再说动态数组的问题)</p>
+<p>👴看完了，大概今天讲的就是这些，溜溜球去看小黄书去</p>
+<hr>
+<h4 id="开始小黄书：-v3"><a class="header-anchor" href="#开始小黄书：-v3">¶</a>开始小黄书：</h4>
+<p>上次自己的问题就是 <code>Opcode</code>和<code>menemonic</code>对应的原则，群里的大佬给出了答案</p>
+<p><img src="/" class="lazyload" data-src="./images/PJ63_QD0%5D0U4BC51BXZZJ$X.png"  alt="img"></p>
+<p>👴准备开始看书啦！估计今天可以早睡觉！嘿嘿嘿嘿！</p>
+<h5 id="浮点数编码方式"><a class="header-anchor" href="#浮点数编码方式">¶</a>浮点数编码方式</h5>
+<p>浮点数编码采用的是IEEE规定的编码标准，IEEE规定的浮点数编码会将一个浮点数转换为二进制数，以科学计数法划分，将浮点数拆分为3部分：符号，指数，尾数</p>
+<h6 id="float类型的IEEE编码"><a class="header-anchor" href="#float类型的IEEE编码">¶</a>float类型的IEEE编码</h6>
+<p>float 4字节(32位)，最高位用于表示符号：在剩余的31位中，从左向右取8位用于表示指数，其余用于表示尾数</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422223744183.png"  alt="image-20200422223744183"></p>
+<p>假设：12.25f 转化成对应的二进制数 1100.01，整数部分是1100，小数部分01，小数点向左移动，每移动一次指数+1，移动到除符号位的最高位为1处，停止移动，这里移动了3次，变成1.10001，指数部分为3，在IEEE编码规则瞎，最高位一定是1的，所以如果这里如果是整数符号位就填写0</p>
+<p>12.25f 经过IEEE转换后情况：</p>
+<p>符号位：0</p>
+<p>指数位：十进制 3+127，转换为二进制是10000010 这里👴又不懂了，去看看为什么是+127，🏃‍♂️回来了：<strong>由于指数可能出现负数，十进制数127可表示为二进制数01111111.IEEE编码方式规定，当指数域小于01111111时为一个负数，反之为正数，因此01111111为0</strong>（MD，书的下一页有！脑瘫小源源在线百度 哈哈哈😂搞明白就行）</p>
+<p>尾数位10001 000000000000000000 （不足23位的时候，低位补0填充）</p>
+<p>变换成16进制位0x41440000，由于小端序所以内存变成了这个样子</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422225402526.png"  alt="image-20200422225402526"></p>
+<p>-0.125f 经过IEEE转化后的情况</p>
+<p>符号位：1</p>
+<p>指数位：127+(-3)，二进制 ‭00011000‬，如果不足8为，则高位补0</p>
+<p>尾数位：00000000000000000000000</p>
+<p>转化为16进制为0xBE000000</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422231512042.png"  alt="image-20200422231512042"></p>
+<p>1.3f 经过IEEE转化情况 (1.3f转化比较奇怪，因为小数部分是一直有，由于规则尾数部分所以到23位停止的：0.3 0.6 1.2 0.4 0.8 1.6 1.2 0.4…)</p>
+<p>符号位：0</p>
+<p>指数位：127+0 二进制 01111111</p>
+<p>尾数位：010011001001100100110</p>
+<p>转化为16进制为0x3FA66666</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200422232126544.png"  alt="image-20200422232126544"></p>
+<p>所以说这个浮点数计算是一个近似值，存在一定的误差，如果把这个转化成小数的话，那么就是 1.299999523162841796875 四舍五入之后为1.3，所以这就解释了为什么C++在比较浮点数值是否为0时候，要进行一个区间比较，并不是等值比较</p>
+<p><strong>浮点数比较代码</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">float fTemp = 0.0001f;	//精确范围</span><br><span class="line">if (fFloat &gt;= -fTemp &amp;&amp; fFloat &lt;= fTemp){</span><br><span class="line">	//fTemp等于0</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<h6 id="double类型的IEEE编码"><a class="header-anchor" href="#double类型的IEEE编码">¶</a>double类型的IEEE编码</h6>
+<p>double类型为8字节 64位 指数11位 剩余52位标识位数 double中的指数为+1023 用于指数符号的判断，剩下的 同float</p>
+<h5 id="基本浮点数指令"><a class="header-anchor" href="#基本浮点数指令">¶</a>基本浮点数指令</h5>
+<p>浮点数操作是通过浮点寄存器来实现的，浮点寄存器通过栈结构来实现，由ST(0) ---- ST(7)的8个栈空间组成，每个浮点寄存器占8个字节，每次使用浮点寄存器的时候先使用ST(0)，不能越过ST(0)直接使用ST(1)，当ST(0)存在数据时，执行压栈操作后，将ST(0)的数据装入ST(1)，如果没有出栈的操作就一直压，一直到浮点寄存器占满   <code>IN</code>表示操作数入栈，<code>OUT</code>表示操作数出栈</p>
+<p>指令表</p>
+<table>
+<thead>
+<tr>
+<th>指令名称</th>
+<th>使用格式</th>
+<th>指令功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FLD</td>
+<td>FLD IN</td>
+<td>将浮点数IN压入ST(0)中，IN (mem 32/64/80)</td>
+</tr>
+<tr>
+<td>FILD</td>
+<td>FILD IN</td>
+<td>将整数IN压入ST(0)中，IN (mem 32/64/80)</td>
+</tr>
+<tr>
+<td>FLDZ</td>
+<td>FLDZ</td>
+<td>将0.0 压入ST(0)中</td>
+</tr>
+<tr>
+<td>FLD1</td>
+<td>FLD1</td>
+<td>将1.0压入ST(0)中</td>
+</tr>
+<tr>
+<td>FST</td>
+<td>FST OUT</td>
+<td>ST(0)中的数据以浮点形式存入OUT地址中  OUT (mem 32/64)</td>
+</tr>
+<tr>
+<td>FSTP</td>
+<td>FSTP OUT</td>
+<td>和FST作用一样，但是会执行一次出栈的操作</td>
+</tr>
+<tr>
+<td>FIST</td>
+<td>FIST OUT</td>
+<td>ST(0)数据以整数形式存入OUT地址中   OUT (mem 32/64)</td>
+</tr>
+<tr>
+<td>FISTP</td>
+<td>FISTP OUT</td>
+<td>和FIST指令一样，但是会执行一次出栈的操作</td>
+</tr>
+<tr>
+<td>FCOM</td>
+<td>FCOM IN</td>
+<td>将IN地址数据与ST(0)进行实数比较，影响对应的标记为</td>
+</tr>
+<tr>
+<td>FTST</td>
+<td>FTST</td>
+<td>比较ST(0)是否为0.0，影响对应标记位</td>
+</tr>
+<tr>
+<td>FADD</td>
+<td>FADD IN</td>
+<td>将IN地址内的数据与ST(0)做加法运算，结果放到ST(0)中</td>
+</tr>
+<tr>
+<td>FADDP</td>
+<td>FADDP ST(N),ST</td>
+<td>将ST(N)中的数据与ST(0)中的数据做加法运算，N为 0-7 ，先执行一次出栈操作，然后将相加的结果放入ST(0)中</td>
+</tr>
+</tbody>
+</table>
+<p>使用浮点指令的时候，都要用ST(0)先进行运算，如果ST(0)中有值时，会将ST(0)中的数据向下存放到ST(1)中，然后再将数据放到ST(0)中，如果再次执行ST(0)，那么就把ST(1)放到ST(2)中，如果8个寄存器都有值，继续像ST(0)存入数据的时候，我们会舍弃ST(7)的数据</p>
+<p>这里介绍个C语言函数：<code>_ftol</code>将float型转化为int型</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//c++源码对比，argc为命令行参数</span><br><span class="line">float fFloat = (float)argc;</span><br><span class="line">//将地址ebp+8的整数类型数据转换成浮点型，并放入ST[0]中，对应的变量是argc</span><br><span class="line">0040E9D8	fild dword ptr [ebp+0x8]</span><br><span class="line">//从ST[0]中取出数据以浮点编码的形式放入ebp-4，对应变量fFloat</span><br><span class="line">0040E9D8	fst	dword ptr [ebp-0x4]</span><br><span class="line">总结一下：将argc转化为浮点型，然后存入fFloat的变量中</span><br><span class="line">//c++源码对比，浮点数作为函数参数进行传递</span><br><span class="line">printf("%f",fFloat);</span><br><span class="line">//esp-8,需要转化成双精度浮点数，提前准备好8个字节的栈空间，便于存访double数组</span><br><span class="line">0040E9DE	sub	esp,0x8</span><br><span class="line">//将ST(0)中的数据传入esp中，并弹出ST(0)</span><br><span class="line">0040E9E1	fstp qword ptr [esp]</span><br><span class="line">//printf调用，略了 都懂</span><br><span class="line">//c++源码对比，将float类型转换成int类型</span><br><span class="line">argc = (int)fFloat</span><br><span class="line">//将ebp-4处额数据以浮点型压入ST[0]中</span><br><span class="line">0040E9F1	fld dword ptr [ebp-0x4]</span><br><span class="line">//调用函数_ftol进行浮点数转换(下面源码会写)</span><br><span class="line">0040E9F4	call _ftol(0040e688)</span><br><span class="line">//转换后结果放入eax中，并传递到ebp+8地址处</span><br><span class="line">0040E9F9	mov dword ptr [ebp+0x8],eax</span><br><span class="line">//printf代码略 都会！👴就是这么强大</span><br></pre></td></tr></tbody></table></figure>
+<p>总结：float类型浮点数，占4个字节，但是都是以8个字节方式处理即double形式，当浮点数作为参数的时候，不能直接压入栈，push传的4字节，会丢失4个字节，所以printf使用整数方式输出浮点数会报错，printf以整数方式输出的时候，将对应参数作为4字节数据，按照补码的方式解释，而压入参数为浮点数类型的时候，数据长度为8字节，需要按浮点编码方式解释</p>
+<h5 id="浮点数作为返回值"><a class="header-anchor" href="#浮点数作为返回值">¶</a>浮点数作为返回值</h5>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//c++源码对比，返回值为浮点数的函数调用</span><br><span class="line">fFloat = GetFloat();</span><br><span class="line">//调用函数GetFloat</span><br><span class="line">0040EA3D	call @ILT+5(GetFloat)(0040100a)</span><br><span class="line">//由于浮点数要进行特殊处理，浮点数占8个字节，无法使用eax传递，使用浮点寄存器ST[0]作为返回值</span><br><span class="line">0040EA42	fst	dword ptr [ebp-4]</span><br><span class="line"></span><br><span class="line">//c++源码对比，GetFloat函数实现</span><br><span class="line">float GetFloat()</span><br><span class="line">{</span><br><span class="line">	//C++源码对比，返回浮点数12.25f</span><br><span class="line">	return 12.25f</span><br><span class="line">	//将浮点数保存在ST[0],返回时浮点数情况无法使用eax</span><br><span class="line">	0040E9D8	fld	dword ptr[(0042301c)]</span><br><span class="line">	//附加代码 略</span><br><span class="line">	0040E9E4	ret</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<h5 id="类型转换函数-ftol的实现"><a class="header-anchor" href="#类型转换函数-ftol的实现">¶</a>类型转换函数_ftol的实现</h5>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//提升堆栈</span><br><span class="line">push ebp</span><br><span class="line">mov ebp,esp</span><br><span class="line">add esp,0F4h</span><br><span class="line">//浮点异常检查，CPU与FPU同步工作(FPU是专用于浮点运算的处理器，以前的FPU是一种单独芯片，在486之后，英特尔把FPU集成在CPU之内)</span><br><span class="line">wait</span><br><span class="line">fnstcw	word ptr [ebp-0x2]    //FNSTCW浮点不检查保存控制器</span><br><span class="line">wait</span><br><span class="line">mov	ax,word	ptr	[ebp-0x2]</span><br><span class="line">or ah,0ch</span><br><span class="line">mov word ptr [ebp-0x4],ax</span><br><span class="line">fldcw word ptr [ebp-0x4]       //FLDCW 浮点加载控制器</span><br><span class="line">//从ST[0]中取出8字节数据转换成整型并存入ebp-0ch中</span><br><span class="line">//将ST[0]从栈中弹出来</span><br><span class="line">fistp	qword ptr [ebp-0ch]</span><br><span class="line">fldcw	word ptr [ebp-0x2]</span><br><span class="line">//用eax保存长整型数据的低四位用于返回</span><br><span class="line">mov	eax,dword ptr [ebp-0ch]</span><br><span class="line">//使用edx保存长整型数据的高4字节用于返回</span><br><span class="line">mov	edx,dword ptr [ebp-0x8]</span><br><span class="line">//释放栈</span><br><span class="line">leave</span><br><span class="line">ret</span><br></pre></td></tr></tbody></table></figure>
+<h5 id="字符和字符串"><a class="header-anchor" href="#字符和字符串">¶</a>字符和字符串</h5>
+<p>字符串的结束标记为’\0’，每个字符都记录在一张表中，他们各自对应了一个编号，系统通过标号来找到对应的字符来显示，👴一看这不说的ASCII码表吗</p>
+<p>VC++6.0中，char定义ASCII编码格式字符，wchar_t定义Unicode编码格式的字符，如果wchar_t保存ASCII编码，不足位补0，假设’a’ ASCII码 0x61 那么Unicode就是0x0061</p>
+<p>汉字编码使用ASCII GB2312-80 保存6763常用汉字编码 Unicode 使用UCS-2 为了让汉字都容纳进来，使用的两个Unicode编码解释一个汉字，UCS-4</p>
+<p>VC6.0，为了使char于wchar_t通用，使用了预编译宏TCHAR来代替他们，TCHAR会根据编译选项定义对应的字符类型，👴还是第一次知道</p>
+<h5 id="字符串的存储方式"><a class="header-anchor" href="#字符串的存储方式">¶</a>字符串的存储方式</h5>
+<p>确定字符串的总长度有两种方法：</p>
+<ol>
+<li>在首地址的4字节中保存字符串的总长度</li>
+<li>在结尾处规定一个特殊字符</li>
+</ol>
+<p>优缺点</p>
+<ul>
+<li>保存总长度</li>
+<li>优点：不需要遍历每个字符，取前n个字节就可以知道总长度，一般来说就是(1,2,4)字节</li>
+<li>缺点：不能超过n的长度，且要多开销n字节，通信情况，双方需要事先知道通信字符串的长度</li>
+<li>结束符</li>
+<li>优点：没有记录开销，设计通信可以通过实际情况来决定</li>
+<li>缺点：获取字符时候要遍历所有字符，比较慢</li>
+</ul>
+<p>C++使用结束符’\0’为字符串结束标识，ASCII码使用1个字节\0，Unicode使用两个字节\0，不能使用ASCII的处理函数对Unicode处理，会报错</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200423013907882.png"  alt="image-20200423013907882"></p>
+<p>一般程序中会使用一个字符型指针来保存字符串首地址，char* wchar_t* TCHAR*</p>
+<p>IDA这里有个操作是快捷键A，直接分析到’\0‘，解释字符串！👍我也是第一次知道这个东西</p>
+<p>布尔类型不说了！👴会 （内存占1位 0 1）</p>
+<p>地址，指针，引用，👴提一句吧，地址就是&amp;那个，只有变量才存在内存地址，常量给爷🔪，(除了const 嘿嘿嘿)，指针用来保存地址的，引用就是取别名，别名的操作就是对源变量的操作</p>
+<h5 id="指针和地址的区别关系："><a class="header-anchor" href="#指针和地址的区别关系：">¶</a>指针和地址的区别关系：</h5>
+<p>👴放个图就懂了：</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200423014925082.png"  alt="image-20200423014925082"></p>
+<p>不同点：</p>
+<table>
+<thead>
+<tr>
+<th>指针</th>
+<th>地址</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>变量，保存变量地址</td>
+<td>常量，内存编号</td>
+</tr>
+<tr>
+<td>可修改，再次保存其他变量地址</td>
+<td>不可以修改</td>
+</tr>
+<tr>
+<td>可以对其执行地址操作得到地址</td>
+<td>不可以执行取地址操作</td>
+</tr>
+<tr>
+<td>包含对保存地址的解释信息</td>
+<td>仅仅有地址值无法解释数据</td>
+</tr>
+</tbody>
+</table>
+<p>相同点：</p>
+<table>
+<thead>
+<tr>
+<th>指针</th>
+<th>地址</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>取出指向地址内存中的数据</td>
+<td>取出地址对应内存中的数据</td>
+</tr>
+<tr>
+<td>对地址偏移后，取数据</td>
+<td>偏移后取数据，自身不变</td>
+</tr>
+<tr>
+<td>求两个地址的差</td>
+<td>求两个地址的差</td>
+</tr>
+</tbody>
+</table>
+<p>👴整理完啦，今天拔了罐，特别疼，呜呜呜，后背难受！看雪CTF果断搁置了！</p>
+<p>👴睡不着，于是乎做一下buu的</p>
+<h5 id="FlareOn6-Memecat-Battlestation"><a class="header-anchor" href="#FlareOn6-Memecat-Battlestation">¶</a>[FlareOn6]Memecat Battlestation</h5>
+<p><img src="/" class="lazyload" data-src="./images/image-20200423021459344.png"  alt="image-20200423021459344"></p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200423021507368.png"  alt="image-20200423021507368"></p>
+<p>发现让我们输入code，我们用dnspy分析</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200423022129903.png"  alt="image-20200423022129903"></p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200423022153568.png"  alt="image-20200423022153568"></p>
+<p>发现了第一个字符串RAINBOW</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200423022313807.png"  alt="image-20200423022313807"></p>
+<p>第二个我们发现了与A进行一个异或</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;iostream&gt;</span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">int main() {</span><br><span class="line">	char B[12] = {</span><br><span class="line">		'\u0003',</span><br><span class="line">			' ',</span><br><span class="line">			'&amp;',</span><br><span class="line">			'$',</span><br><span class="line">			'-',</span><br><span class="line">			'\u001e',</span><br><span class="line">			'\u0002',</span><br><span class="line">			' ',</span><br><span class="line">			'/',</span><br><span class="line">			'/',</span><br><span class="line">			'.',</span><br><span class="line">			'/'</span><br><span class="line">	};</span><br><span class="line">	for (int i = 0;B[i];i++) {</span><br><span class="line">		B[i] ^= 0x41;</span><br><span class="line">		printf("%c", B[i]);</span><br><span class="line">	}</span><br><span class="line">	return 0;</span><br><span class="line">}</span><br><span class="line">//Bagel_Cannon</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="./images/image-20200423022651915.png"  alt="image-20200423022651915"></p>
+<p>flag：Kitteh_save_galixy@flare-on.com</p>
+<p>👴做了个flare-on最简单的题放松一下 嘿嘿！准备看会动漫睡觉觉了</p>
+<hr>
+<h3 id="4-23日更新"><a class="header-anchor" href="#4-23日更新">¶</a>4.23日更新</h3>
+<p>👴今天又是2点多起的床，贼蒙！👍 起床赶紧学习吧！为了晚上可以玩玩生化危机3重制版 😘</p>
+<h4 id="步入正题！-v3"><a class="header-anchor" href="#步入正题！-v3">¶</a>步入正题！</h4>
+<h5 id="多维数组"><a class="header-anchor" href="#多维数组">¶</a>多维数组</h5>
+<p>存放相同类型的数据的时候会用到数组，存放的地址是低地址到高地址来排序的</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">int	arr[6]={0,1,2,3,4,5}</span><br><span class="line">arr[0] = 0   arr[1] = 2</span><br></pre></td></tr></tbody></table></figure>
+<p>👌这个例子应该就懂了，低地址到高地址这样的，没毛病</p>
+<p>假设数组没满怎么办，看一下</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200423152226620.png"  alt="image-20200423152226620"></p>
+<p>看到了，会异或eax，然后把eax给数组剩下的空间，数量不够，自动补上0，数组在引用的时候，可以里面写成变量</p>
+<p>如果数组下标越界，他虽然不在数组里但是一定在堆栈里，测试一下</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200423161601028.png"  alt="image-20200423161601028"></p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200423161634958.png"  alt="image-20200423161634958"></p>
+<p>直接举个例子，👴懂了，这里注意一下每个编译器的规则都是不同的</p>
+<p><strong>这里跟说一下，当初遗留的问题：缓冲区溢出的时候，</strong><code>int a = (int)helloword</code>这里的helloword是一个函数名，上面有，那么在这个程序里，他也相当于一个全局变量，我们打印出来就是这个程序中他的地址，本质上和全局变量没有什么区别，所以这么说来根据上面的溢出的试验，就可以很好的去说明，为什么vs中用这个不好使，因为溢出的时候，他给的是ebp-0x4的当前的地址，那么就会出现大问题，ebp-0x4是局部变量，所以就会失败，在vc6.0中，是改变了ebp+0x4的地址所以美欧问题</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200423163114170.png"  alt="image-20200423163114170"></p>
+<p>举这个例子就该懂了(👴为了让自己看的清楚一些，把那个地址都搞了出来看，这样就无敌了)</p>
+<p>总结：<strong>假设数组为a[5] 那么我取a[5]的时候为ebp+0x4，a[6]为ebp，a[7] 为ebp-0x4</strong>，vs预留了一字节的空间</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200423174150423.png"  alt="image-20200423174150423"></p>
+<p>👴搞明白了</p>
+<h6 id="二维数组"><a class="header-anchor" href="#二维数组">¶</a>二维数组</h6>
+<p>直接去观察反汇编</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200423183517030.png"  alt="image-20200423183517030"></p>
+<p>好像和一维数组的反汇编差不多，测试了一下，他们是一摸一样的，啥区别没有，不管一维数组还是多维的数组，实际上反汇编上没有区别 实际上<code>a[x][y]</code>相当于了<code>a[x*y]</code>分配x*y的空间</p>
+<p>二维数组，更加直观，假设我要是找一下<code>a[q][p]</code>编译器寻找的时候是满足 <code>a[q*x+p*y]</code>二维数组打印的时候，用的是两层循环</p>
+<p>👴看了一下，后面海哥讲的就是三维数组了，三维数组和两维数组类似，无非就是多了一组大括号，反正再底层来说n维数组就等同于一维数组，只是方便于我们观看而已，👴吃完饭，准备看小黄书了</p>
+<hr>
+<h4 id="开始小黄书：-v4"><a class="header-anchor" href="#开始小黄书：-v4">¶</a>开始小黄书：</h4>
+<h5 id="各类型指针的工作方式"><a class="header-anchor" href="#各类型指针的工作方式">¶</a>各类型指针的工作方式</h5>
+<p>今天鸽一天小黄书，身体扛不住了，很难受😭明天补回来！</p>
+<hr>
+<h3 id="4-24日更新"><a class="header-anchor" href="#4-24日更新">¶</a>4.24日更新</h3>
+<p>👴今天7点就起床了，但是我磨蹭了一会，到了9.15才开始学习，今天任务先是小黄书把昨天的那份也补回来，然后看滴水逆向，🏃‍♂️去拿书开始看</p>
+<h4 id="步入正题！-v4"><a class="header-anchor" href="#步入正题！-v4">¶</a>步入正题！</h4>
+<h4 id="开始小黄书：-v5"><a class="header-anchor" href="#开始小黄书：-v5">¶</a>开始小黄书：</h4>
+<h5 id="各类型指针的工作方式-v2"><a class="header-anchor" href="#各类型指针的工作方式-v2">¶</a>各类型指针的工作方式</h5>
+<p>指针保存的都是地址，每种数据类型在内存中所占的内存空间不同，指针中只保存了存放数据的首地址，没有指明在哪里结束，所以需要根据对应的类型来寻找解释数据的结束地址，同一个地址使用不同类型指针进行访问，取出的内容就会不一样</p>
+<h6 id="各类指针访问同一地址代码"><a class="header-anchor" href="#各类指针访问同一地址代码">¶</a>各类指针访问同一地址代码</h6>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//c++源码对比，定义int类型变量，初始化为0x12345678</span><br><span class="line">int nVar = 0x12345678;</span><br><span class="line">//为地址赋值4字节数据12345678h</span><br><span class="line">0040EB1D	mov	dword ptr [ebp-10h],12346578h</span><br><span class="line">//c++源码对比，定义int类型指针变量，初始化为变量nVar地址</span><br><span class="line">int *pnVar = &amp;nVar;</span><br><span class="line">0040EB24	lea	ecx,[ebp-10h]</span><br><span class="line">0040EB27	mov	dword ptr [ebp-14h],ecx</span><br><span class="line">//c++源码对比，定义char类型指针变量，初始化为变量nVar地址</span><br><span class="line">char *pcVar = (char*)&amp;nVar;</span><br><span class="line">0040EB2A	lea edx,[ebp-10h]</span><br><span class="line">0040EB2D	mov dword ptr [ebp-18h],edx</span><br><span class="line">//c++源码对比，定义short类型指针变量，初始化为变量nVar地址</span><br><span class="line">short *psVar = (short*)&amp;nVar;</span><br><span class="line">0040EB30	lea eax,[ebp-10h]</span><br><span class="line">0040EB33	mov dword ptr [ebp-1Ch],eax</span><br><span class="line">//c++源码对比，取出指针pnVar指向的地址内容并显示</span><br><span class="line">printf("%08x \r\n",*pnVar);</span><br><span class="line">//取出pnVar中保存的地址值并放入ecx中</span><br><span class="line">0040EB36	mov	ecx,dword ptr [ebp-14h]</span><br><span class="line">//从ecx保存的地址中，以4字节方式读取数据，存入edx中</span><br><span class="line">0040EB39	mov edx,dword ptr [ecx]</span><br><span class="line">//printf函数调用部分略</span><br><span class="line">//c++源码对比，取出指针pnVar指向的地址内容并显示</span><br><span class="line">printf("%08x \r\n",*pcVar);</span><br><span class="line">//取出pcVar中保存的地址并放入eax中</span><br><span class="line">0040EB49	mov	eax,dword ptr [ebp-18h]</span><br><span class="line">//从eax保存的地址中，以1字节的方式读取数据，存入ecx中</span><br><span class="line">0040EB4C	movsx ecx,byte ptr [eax]</span><br><span class="line">//printf函数调用部分略</span><br><span class="line">//c++源码对比，取出指针pnVar指向的地址内容并显示</span><br><span class="line">printf("%08x \r\n",*psnVar);</span><br><span class="line">//取出psnVar中保存的地址并放入edx中</span><br><span class="line">0040EB5D	mov edx,dword ptr [ebp-1Ch]</span><br><span class="line">//从edx保存的地址中，以2字节方式读取数据，存入eax中</span><br><span class="line">0040EB60	movsx eax,word ptr [edx]</span><br><span class="line">//printf函数调用部分略</span><br></pre></td></tr></tbody></table></figure>
+<p>👴这里要去vs测试一下，看看我自己对源码的分析对不对，我分析的就是，取出来的地址会根据指针类型的长读来取出来</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200424100537599.png"  alt="image-20200424100537599"></p>
+<p>这里测试没有问题的，我们去反汇编看一下，🏃‍♂️gogo！</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200424100932740.png"  alt="image-20200424100932740"></p>
+<p>看了一下反汇编，和源码解析的差不多，反汇编的意思大概差不多，差别就是编译器的不同，👍只要有汇编，他编译器干什么就都会知道了</p>
+<p>总结：在我存入的是<code>0x12345678</code>的时候再内存中存放是根据小端序存放<code>78 56 34 12</code>，首地址从7 8 开始，指针pnVar为int类型指针，以int类型在内存中占用的空间大小和排列的方式对地址进行解释，然后取出数据，int占4字节，所以取出来<code>12345678</code>，我们知道如上图所示，大地址到小地址会进行截取，eax本身就是4字节的空间，那么我分给word和byte的时候，会把前面的低地址位置进行一个截取，取高地址的位置，所以说会把前面的数据砍掉，然后用movsx进行分析符号位的填充</p>
+<p>所有类型的指针对地址的解释都取决于自己本身的指针类型，指针做加法和减法比较有意义，因为指针是保存和解析地址而存在的，我们对指针的地址偏移时，偏移会根据自身的指针类型来决定</p>
+<h6 id="各类型指针寻址方式代码"><a class="header-anchor" href="#各类型指针寻址方式代码">¶</a>各类型指针寻址方式代码</h6>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//c++源码对比，定义字符型数组，占5字节内存空间</span><br><span class="line">//内存对齐的原则，cVar实际占用8字节 (第5个开始的时候，要根据上面加一起的4字节进行一个对齐的原则)</span><br><span class="line">char cVar[5] = {0x01,0x23,0x45,0x67,0x89};</span><br><span class="line">//数组成员赋值，数组为char类型，每次赋值使用的时byte ptr</span><br><span class="line">0040EB1D	mov byte ptr [ebp-14h],1</span><br><span class="line">0040EB21	mov byte ptr [ebp-13h],23h</span><br><span class="line">0040EB25	mov byte ptr [ebp-12h],45h</span><br><span class="line">0040EB29	mov byte ptr [ebp-11h],67h</span><br><span class="line">0040EB2D	mov byte ptr [ebp-10h],89h</span><br><span class="line">//c++源码对比，定义int类型的指针变量保存数组的首地址</span><br><span class="line">int	*pnVar = (int*)cVar;</span><br><span class="line">//取出数组的首地址保存在ebp-18h中(ebp-0x4往上都是局部变量)(测试一下)</span><br><span class="line">0040EB31	lea ecx,[ebp-14h]</span><br><span class="line">0040EB34	mov,dword ptr [ebp-18h],ecx</span><br><span class="line">//c++源码对比，定义char类型的指针变量保存数组的首地址</span><br><span class="line">char *pcVar = (char*)cVar;</span><br><span class="line">//取出数组的首地址并保存到ebp-1ch中</span><br><span class="line">0040EB37	lea	edx,[ebp-14h]</span><br><span class="line">0040EB3A	mov	dword ptr [ebp-1Ch],edx</span><br><span class="line">//c++源码对比，定义short类型的指针变量保存数组的首地址</span><br><span class="line">short *psnVar = (short*)cVar;</span><br><span class="line">//取出数组首地址保存在ebp-20h</span><br><span class="line">0040EB3D	lea eax,[ebp-14h]</span><br><span class="line">0040EB40	mov dword ptr [ebp-20h],eax</span><br><span class="line">//c++源码对比，对int指针加1</span><br><span class="line">pnVar += 1;</span><br><span class="line">//取出指针内保存的地址并放入ecx中</span><br><span class="line">0040EB43	mov	ecx,dword ptr [ebp-18h]</span><br><span class="line">//保存指针类型获取便宜长度，int类型的指针，追加偏移值4</span><br><span class="line">0040EB46	add	ecx,4</span><br><span class="line">//存回指针中</span><br><span class="line">0040EB49	mov dword ptr [ebp-18h],ecx</span><br><span class="line">//c++源码对比，对char指针加1</span><br><span class="line">pcVar += 1;</span><br><span class="line">0040EB49	mov edx,dword ptr [ebp-1Ch]</span><br><span class="line">//根据指针类型获取偏移长度，char类型指针，追加偏移值1</span><br><span class="line">0040EB4F	add	edx,1</span><br><span class="line">0040EB52	mov dword ptr [ebp-1Ch],edx</span><br><span class="line">//c++源码对比，对short指针加1</span><br><span class="line">psnVar += 1;</span><br><span class="line">0040EB55	mov	eax,dword ptr [ebp-20h]</span><br><span class="line">//根据指针类型获取编译长度，short类型指针，追加偏移值2</span><br><span class="line">0040EB58	add	eax,2</span><br><span class="line">0040EB5B	mov	dword ptr [ebp-20h],eax</span><br></pre></td></tr></tbody></table></figure>
+<p>总结：编译量的计算方式为指针类型长度乘以移动次数，因此得出指针寻址公式如下<br>
+$$<br>
+(p+n)目标地址 = 首地址 + sizeof(指针类型)*n (n为移动次数)<br>
+$$<br>
+两指针做减法，可以求出两地址之间的元素个数(必须同类指针相减)，两指针相加没有作用，公式如下<br>
+$$<br>
+p-q = ((int)p - (int)q) / sizeof(指针类型)<br>
+$$</p>
+<h5 id="引用"><a class="header-anchor" href="#引用">¶</a>引用</h5>
+<p>引用类型在c++中被描述为变量的别名，c++为了简化指针的操作，对指针的操作进行了封装，产生了引用类型，实际上引用类型就是指针类型，只不过它用于存放地址的内存空间对使用者而言是隐藏的</p>
+<h6 id="引用类型代码"><a class="header-anchor" href="#引用类型代码">¶</a>引用类型代码</h6>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//c++源码对比，定义int类型的变量并附初始值0x12345678</span><br><span class="line">int nVar = 0x12345678;</span><br><span class="line">0040E6F8	mov	dword ptr [ebp-4],12345678h</span><br><span class="line">//c++源码对比，定义变量nVar的引用类型nVarType</span><br><span class="line">int	&amp;nVarType = nVar;</span><br><span class="line">//取出变量nVar的地址并放入eax中</span><br><span class="line">0040E6FF	lea	eax,[ebp-4]</span><br><span class="line">//将变量nVar的地址存入地址ebp-8处，这个ebp-8就是引用类型nVarTpye的地址</span><br><span class="line">0040E702	mov	dword ptr [ebp-8],eax</span><br><span class="line">//调用函数Add,Add的参数为int引用类型，将变量nVar作为参数传递</span><br><span class="line">Add(nVar);</span><br><span class="line">//取出变量nVar的地址并放入ecx中</span><br><span class="line">0040E705	lea	ecx,[ebp-4]</span><br><span class="line">//将ecx作为参数入栈，也就是传递变量nVar的地址作为参数</span><br><span class="line">//Add函数代码在下面了,马上就写!</span><br><span class="line">0040E708	push ecx</span><br><span class="line">0040E709	call @ILT+15(ADD)(00401014)</span><br><span class="line">0040E70E	add	esp,4</span><br></pre></td></tr></tbody></table></figure>
+<p>引用类型的存储方式和指针是一样的，都是使用内存空间存访地址值，所以在C++中，引用和指针没有区别，引用时通过编译器实现寻址，而指针需要手动寻址，所以说如果操作失误会有比较糟糕的结果，但是引用就不会存在这种问题，所以c++很推荐使用引用类型，并不是指针</p>
+<h6 id="引用类型作为函数参数代码"><a class="header-anchor" href="#引用类型作为函数参数代码">¶</a>引用类型作为函数参数代码</h6>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void Add(int &amp;nVar){</span><br><span class="line">//c++源码对比，对引用类型进行nVar执行++操作</span><br><span class="line">	nVar++;	</span><br><span class="line">//取出参数nVar中的内容放入eax中</span><br><span class="line">00401078	mov	eax,dword ptr[ebp+8]</span><br><span class="line">//对eax执行取内容操作</span><br><span class="line">0040107B	mov	ecx,dword ptr [eax]</span><br><span class="line">0040107D	add	ecx,1</span><br><span class="line">00401080	mov	edx,dword ptr [ebp+8]</span><br><span class="line">00401083	mov dword ptr [edx],ecx</span><br><span class="line">}</span><br><span class="line">0040108B	ret</span><br></pre></td></tr></tbody></table></figure>
+<p>这里我看到的结论就是引用的时候，并没有像指针一样进行了数据类型的那种的移动，而就是单纯的进行了数据+1，我们测试一下</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200424124405103.png"  alt="image-20200424124405103"></p>
+<p>因为前面有一个lea的操作把地址给了eax，然后eax给了ebp-0x24，所以引用也相当于取别名</p>
+<h5 id="常量"><a class="header-anchor" href="#常量">¶</a>常量</h5>
+<p>常量数据在程序运行前就已经存在，他们被编译到可执行文件中，当程序启动后，他们会加载进来，数据通常会在常量数据区中保存，该节区的属性没有写权限，所以不可以修改</p>
+<p>常量数据的地址减去基质就是文件中的编译地址</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200424134603028.png"  alt="image-20200424134603028"></p>
+<h6 id="常量的定义"><a class="header-anchor" href="#常量的定义">¶</a>常量的定义</h6>
+<p>C++中，使用#define来定义常量，也可以使用const将变量定义为一个常量，#define定义的常量名称，编译器对其进行编译时，会将代码中的宏名称替换成对应信息，宏的使用可以增加代码的可读性，const是为了增加程序的健壮性而参在的，常用字符串处理函数stcpy的第二个参数被定义为一个常量，为了防止该参数在函数内被修改，对原字符串造成破坏</p>
+<h6 id="宏与const的使用"><a class="header-anchor" href="#宏与const的使用">¶</a>宏与const的使用</h6>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//定义NUMBER_ONE 为常量1</span><br><span class="line">#define NUMBER_ONE 1</span><br><span class="line">//将常量NUMBER_ONE 赋值给const常量nVar</span><br><span class="line">const int nVar = NUMBER_ONE;</span><br><span class="line">//输出</span><br><span class="line">printf("const = %d #define =%d \r\n",nVar,NUMBER_ONE);</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="./images/image-20200424142250055.png"  alt="image-20200424142250055"></p>
+<h6 id="define和const的区别"><a class="header-anchor" href="#define和const的区别">¶</a>#define和const的区别</h6>
+<p>#define是一个真常量，而const却是由编译器判断实现的常量，是一个假常量，实际中使用const，最终还是一个变量，只是在编译器内进行了检查，发现有修改则报错</p>
+<p>由于编译器在编译期间对const变量进行检查，因此被const修饰过的变量是可以修改的，利用指针获取到const修饰过的变量地址，强制将指针的const修饰去掉，就可以修改对应的数据内容</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//c++源码对比，将变量nConst修饰为const</span><br><span class="line">const int nConst = 5;</span><br><span class="line">//将地址ebo-4赋值为4字节数据5</span><br><span class="line">004010B8	mov dword ptr [ebp-4],5</span><br><span class="line">//c++源码对比，定义int类型的指针，保存nConst地址</span><br><span class="line">int *pConst = (int*)&amp;nConst;</span><br><span class="line">//获取ebp-4地址并存入eax中</span><br><span class="line">004010BF	lea eax,[ebp-4]</span><br><span class="line">//将eax中的数据赋值到地址ebp-8处</span><br><span class="line">004010C2	mov	dword ptr [ebp-8],eax</span><br><span class="line">//c++源码对比，修改指针pConst并指向地址中的数据</span><br><span class="line">*pConst = 6;</span><br><span class="line">//获取地址ebp-8的数据并存入ecx</span><br><span class="line">004010C5	mov ecx,dword ptr [ebp-8]</span><br><span class="line">//将地址ebp-8中保存的数据修改为6</span><br><span class="line">004010C8	mov dword ptr [ecx],6</span><br><span class="line">//C++源码对比，将修饰为const的变量nConst赋值给nVar</span><br><span class="line">int nVar = nConst;</span><br><span class="line">//将5赋值到ebp-0Ch处</span><br><span class="line">004010CE	mov dword ptr [ebp-0Ch],5</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="./images/image-20200424144617844.png"  alt="image-20200424144617844"></p>
+<p>所以说const修饰的变量nConst被赋值了一个常量5，编译过程中发现nConst的初值是可知的，并修饰为const，之后所有使用的nConst的位置都用这个可预知值替换，所以最后nVar替换的是预知的常量值5，如果nConst是未知的值就不会进行这个优化</p>
+<p><strong>#define与const两者的区别</strong></p>
+<table>
+<thead>
+<tr>
+<th>#define</th>
+<th>const</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>编译期间查找替换</td>
+<td>编译期间检查const修饰的变量是否被修改</td>
+</tr>
+<tr>
+<td>由系统判断是否修改</td>
+<td>由编译器限制修改</td>
+</tr>
+<tr>
+<td>字符串定义在文件只读数据区，数据常量编译为立即数寻址方式，成为二进制代码的一部分</td>
+<td>根据作用域决定所在的内存位置和属性</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p>👴昨天的补完了，开始今天的美滋滋的小生活，🏃‍♂️趁热打铁，去继续看小黄书7777777777777777</p>
+<h5 id="继续小黄书："><a class="header-anchor" href="#继续小黄书：">¶</a>继续小黄书：</h5>
+<h5 id="程序入口"><a class="header-anchor" href="#程序入口">¶</a>程序入口</h5>
+<p>一般VC++调试的程序，一般都是在main或者WinMain函数开始的，所以说很多人包括👴很久之前就认为他们是程序的第一条指令处，这个是不对的，main或者是WinMain来说是一个函数，也是需要被调用的，他们没有被调用之前，编译器做了很多的事情，所以main和WinMain来说是<strong>语法规定的用户入口</strong>，<strong>并不是应用程序的入口</strong>，其实我们的程序被操作系统加载的时候，操作系统会分析执行文件内的数据</p>
+<hr>
+<h2 id="4-25日更新"><a class="header-anchor" href="#4-25日更新">¶</a>4.25日更新</h2>
+<p>最近这两天爷有点小忙，呜呜呜😭学校作业都没做，在狂补，然后最近身体不太好，经常学一会就休息，坐不住，今天尽量完成计划任务！</p>
+<p>任务：滴水逆向+小黄书+安恒月赛(1.30开始)</p>
+<h4 id="步入正题！-v5"><a class="header-anchor" href="#步入正题！-v5">¶</a>步入正题！</h4>
+<h4 id="结构体"><a class="header-anchor" href="#结构体">¶</a>结构体</h4>
+<p>类型从小到大：<code>char</code> <code>short</code> <code>int</code> <code>float</code> <code>double</code> <code>_int64</code> <code>数组</code></p>
+<p>数组的问题：类型必须一样</p>
+<p>结构体里面想存什么类型就存什么类型</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">struct AA{</span><br><span class="line">	int 生命;</span><br><span class="line">	int 魔法;</span><br><span class="line">	short 技能;</span><br><span class="line">	float 移动速度;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="开始小黄书：-v6"><a class="header-anchor" href="#开始小黄书：-v6">¶</a>开始小黄书：</h4>
+<p>👴接着昨天的说，最近要出题那些，搞的静不下心来看书，小黄书看完，我就去把c++看一手</p>
+<h5 id="程序入口-v2"><a class="header-anchor" href="#程序入口-v2">¶</a>程序入口</h5>
+<p>昨天说到了，main或者WinMain是语法规定的用户入口，而不是应用程序入口，在应用程序被操作系统加载的时候，操作系统会分析执行文件内的数据，分配相关的资源，读取执行文件中的代码和数据到合适的内存单元，然后才是执行入口代码，入口代码通常是<code>mainCRTStartup</code>，<code>wmianCRTStartup</code>，<code>WinMainCRTStartup</code>或<code>wWinMainCRTStartup</code>，具体的要根据编译选项来定夺，其中mainCRTStartup和wmainCRTStartup是控制台环境下多字节编码和Unicode编码的启动函数，而WinMainCRTStartup和wWinMainCRTStartup是Windows环境下多字节编码和Unicode编码的启动函数，vc++也可以让自己去指定入口</p>
+<h5 id="VC-6-0启动函数"><a class="header-anchor" href="#VC-6-0启动函数">¶</a>VC++ 6.0启动函数</h5>
+<p>VC++6.0 控制台和多字节编码环境下的启动函数<code>mainCRTStartup</code>，由系统库KERNEL32.dll负责调用</p>
+<p><img src="/" class="lazyload" data-src="./images/image-20200425191405630.png"  alt="image-20200425191405630"></p>
+<p>👴去安装了个vc++ 6.0  可以看到程序运行时调用了三个函数，KERNEL32.dll，mainCRTStartup和main</p>
+<p>其中KERNEL32！76606359()表示在76606359地址调用了mainCRTStartup，VC++提供了mainCRTStartup的源码，直接过去看一下，分析一下(自己没有安装完整版的，导致看不到，直接用书上的一点一点分析了)</p>
+<h6 id="mainCRTStartup函数代码片段"><a class="header-anchor" href="#mainCRTStartup函数代码片段">¶</a>mainCRTStartup函数代码片段</h6>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//预编译宏</span><br><span class="line">#else	/* _WINMAIN_ */</span><br></pre></td></tr></tbody></table></figure>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>个人笔记</category>
+      </categories>
+      <tags>
+        <tag>RE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>One Week</title>
     <url>/2020/04/27/One%20Week/</url>
     <content><![CDATA[<p>玛德！从今天开始补基础，谁都别拦我 👴要成为带手子</p>
 <h2 id="4-20日更新"><a class="header-anchor" href="#4-20日更新">¶</a>4.20日更新</h2>
