@@ -1825,7 +1825,7 @@ $$</p>
       </tags>
   </entry>
   <entry>
-    <title>re加密算法</title>
+    <title>RE加密算法</title>
     <url>/2020/04/27/re%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/</url>
     <content><![CDATA[<h1>RSA算法</h1>
 <h2 id="数学基础知识"><a class="header-anchor" href="#数学基础知识">¶</a>数学基础知识</h2>
@@ -2099,6 +2099,12 @@ D为E关于1模L的乘法逆元</p>
             document.body.appendChild(img);
           });
       </script>]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>CTF-RE</tag>
+      </tags>
   </entry>
   <entry>
     <title>IAT结构分析</title>
@@ -2150,6 +2156,12 @@ D为E关于1模L的乘法逆元</p>
             document.body.appendChild(img);
           });
       </script>]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>RE</tag>
+      </tags>
   </entry>
   <entry>
     <title>GWCTF</title>
@@ -2229,9 +2241,15 @@ Y0u_hav3_r3v3rs3_1t!</p>
             document.body.appendChild(img);
           });
       </script>]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>CTF-RE</tag>
+      </tags>
   </entry>
   <entry>
-    <title>go逆向</title>
+    <title>GO逆向</title>
     <url>/2020/04/26/go%E9%80%86%E5%90%91/</url>
     <content><![CDATA[<h2 id="Go逆向"><a class="header-anchor" href="#Go逆向">¶</a>Go逆向</h2>
 <p>第一次接触go逆向，帮柴佬搞事情！</p>
@@ -2259,9 +2277,15 @@ Y0u_hav3_r3v3rs3_1t!</p>
             document.body.appendChild(img);
           });
       </script>]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>CTF-RE</tag>
+      </tags>
   </entry>
   <entry>
-    <title>vn招新</title>
+    <title>VN招新赛</title>
     <url>/2020/04/26/vn%E6%8B%9B%E6%96%B0/</url>
     <content><![CDATA[<h2 id="CSRe"><a class="header-anchor" href="#CSRe">¶</a>CSRe</h2>
 <p>一个C#的文件看了一下加了混淆直接de4dot</p>
@@ -2303,19 +2327,17 @@ Y0u_hav3_r3v3rs3_1t!</p>
             document.body.appendChild(img);
           });
       </script>]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>CTF-RE</tag>
+      </tags>
   </entry>
   <entry>
     <title>xctf</title>
     <url>/2020/04/26/xctf/</url>
-    <content><![CDATA[<p>title: xctf<br>
-tags:<br>
-- ctf-re<br>
-author: L0x1c<br>
-updated: ‘2020/2/6 23:20:00’<br>
-categories:<br>
-- ctf-RE<br>
-date: 2020-02-06 23:03:00</p>
-<p><img src="/" class="lazyload" data-src="./images/image-20200309165739244.png"  alt="image-20200309165739244"></p>
+    <content><![CDATA[<p><img src="/" class="lazyload" data-src="./images/image-20200309165739244.png"  alt="image-20200309165739244"></p>
 <p>线性移位反馈寄存器：</p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">do</span><br><span class="line">{</span><br><span class="line">    v5 = 0;</span><br><span class="line">    v6 = 8i64;</span><br><span class="line">    do</span><br><span class="line">    {</span><br><span class="line">        v7 = v4 &amp; 0x17FA06;</span><br><span class="line">        for (i = 0; v7; v7 &gt;&gt;= 1)</span><br><span class="line">            i ^= v7 &amp; 1;</span><br><span class="line">        v4 = (i ^ 2 * v4) &amp; 0x1FFFFF;</span><br><span class="line">        v9 = v3 &amp; 0x2A9A0D;</span><br><span class="line">        for (j = 0; v9; v9 &gt;&gt;= 1)</span><br><span class="line">            j ^= v9 &amp; 1;</span><br><span class="line">        v3 = (j ^ 2 * v3) &amp; 0x3FFFFF;</span><br><span class="line">        v11 = v2 &amp; 0x5E5E6A;</span><br><span class="line">        for (k = 0; v11; v11 &gt;&gt;= 1)</span><br><span class="line">            k ^= v11 &amp; 1;</span><br><span class="line">        v2 = (k ^ 2 * v2) &amp; 0x7FFFFF;</span><br><span class="line">        v13 = 2 * v5;</span><br><span class="line">        v14 = v3;</span><br><span class="line">        if (v4 &amp; 1)</span><br><span class="line">            v14 = v2;</span><br><span class="line">        v5 = v14 &amp; 1 ^ v13;</span><br><span class="line">        --v6;</span><br><span class="line">    } while (v6);</span><br><span class="line">    byte_140008980[v1++] = v5;</span><br><span class="line">}</span><br><span class="line">	while ( v1 &lt; 0x100000 );</span><br></pre></td></tr></tbody></table></figure>
 <p>&amp;同时为1才为1 &gt;&gt;==为右移/左移赋值，上面可以看出来先是三个lfsr，下面的把这个三个v4,v3,v2这三个输出组合了一下</p>
@@ -2381,9 +2403,15 @@ date: 2020-02-06 23:03:00</p>
             document.body.appendChild(img);
           });
       </script>]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>CTF-RE</tag>
+      </tags>
   </entry>
   <entry>
-    <title>i春秋公益赛</title>
+    <title>公益赛</title>
     <url>/2020/04/26/i%E6%98%A5%E7%A7%8B%E5%85%AC%E7%9B%8A%E8%B5%9B/</url>
     <content><![CDATA[<h2 id="i春秋公益赛"><a class="header-anchor" href="#i春秋公益赛">¶</a>i春秋公益赛</h2>
 <h3 id="有趣的安装包"><a class="header-anchor" href="#有趣的安装包">¶</a>有趣的安装包</h3>
@@ -2452,9 +2480,15 @@ date: 2020-02-06 23:03:00</p>
             document.body.appendChild(img);
           });
       </script>]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>CTF-RE</tag>
+      </tags>
   </entry>
   <entry>
-    <title>dump upx壳</title>
+    <title>PE</title>
     <url>/2020/04/26/dump%20upx%E5%A3%B3/</url>
     <content><![CDATA[<h3 id="PE结构"><a class="header-anchor" href="#PE结构">¶</a>PE结构</h3>
 <p>PE文件是windows操作系统下使用的可执行文件，PE文件值32位的可执行文件，也称为PE32. 64位的可执行文件称为PE+或PE32+，是PE文件的另一种扩展形式但是并不是PE64.</p>
@@ -2633,9 +2667,15 @@ $$</p>
             document.body.appendChild(img);
           });
       </script>]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>CTF-RE</tag>
+      </tags>
   </entry>
   <entry>
-    <title>Flare-on 4</title>
+    <title>Flare-ON</title>
     <url>/2020/04/26/Flare-on%204/</url>
     <content><![CDATA[<h1>Flare-on 4</h1>
 <h2 id="Challenge-1-Login-html"><a class="header-anchor" href="#Challenge-1-Login-html">¶</a>Challenge #1: Login.html</h2>
@@ -2724,6 +2764,12 @@ $$</p>
             document.body.appendChild(img);
           });
       </script>]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>CTF-RE</tag>
+      </tags>
   </entry>
   <entry>
     <title>看雪CTF</title>
@@ -2794,9 +2840,15 @@ $$</p>
             document.body.appendChild(img);
           });
       </script>]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>CTF-RE</tag>
+      </tags>
   </entry>
   <entry>
-    <title>空指针gatesXgame</title>
+    <title>空指针</title>
     <url>/2020/04/26/%E7%A9%BA%E6%8C%87%E9%92%88gatesXgame/</url>
     <content><![CDATA[<h2 id="gatesXgame"><a class="header-anchor" href="#gatesXgame">¶</a>gatesXgame</h2>
 <h3 id="1-upx"><a class="header-anchor" href="#1-upx">¶</a>1 upx</h3>
@@ -2841,6 +2893,12 @@ $$</p>
             document.body.appendChild(img);
           });
       </script>]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>CTF-RE</tag>
+      </tags>
   </entry>
   <entry>
     <title>内存中操作字符串</title>
@@ -2889,9 +2947,15 @@ $$</p>
             document.body.appendChild(img);
           });
       </script>]]></content>
+      <categories>
+        <category>内核</category>
+      </categories>
+      <tags>
+        <tag>RE</tag>
+      </tags>
   </entry>
   <entry>
-    <title>内核里操作文件</title>
+    <title>内核中操作文件</title>
     <url>/2020/04/26/%E5%86%85%E6%A0%B8%E9%87%8C%E6%93%8D%E4%BD%9C%E6%96%87%E4%BB%B6/</url>
     <content><![CDATA[<h3 id="内核里操作文件"><a class="header-anchor" href="#内核里操作文件">¶</a>内核里操作文件</h3>
 <p>RING0 操作文件和 RING3 操作文件在流程上没什么大的区别，也是“获得文件句柄-&gt;读/ 写/删/改-&gt;关闭文件句柄”的模式。当然了，只能用内核 API，不能用 WIN32API</p>
@@ -2899,7 +2963,6 @@ $$</p>
 <p>Intel的x86处理器是通过Ring级别来进行访问控制的，级别共分4层，从Ring0到Ring3（后面简称R0、R1、R2、R3）。R0层拥有最高的权限，R3层拥有最低的权限。按照Intel原有的构想，应用程序工作在R3层，只能访问R3层的数据；操作系统工作在R0层，可以访问所有层的数据；而其他驱动程序位于R1、R2层，每一层只能访问本层以及权限更低层的数据</p>
 <p>这应该是很好的设计，这样操作系统工作在最核心层，没有其他代码可以修改它；其他驱动程序工作在R1、R2层，有要求则向R0层调用，这样可以有效保障操作系统的安全性。但现在的OS，包括Windows和Linux都没有采用4层权限，而只是使用2层——R0层和R3层，分别来存放操作系统数据和应用程序数据，从而导致一旦驱动加载了，就运行在R0层，就拥有了和操作系统同样的权限，可以做任何事情，而所谓的rootkit也就随之而生了</p>
 <p>rootkit在字面上来理解，是拥有“根权限”的工具。实际上，所有的内核代码都拥有根权限，当然，并不一定它们都叫做rootkit，这要看你用它来做什么。用rootkit技术开发的木马和病毒正在迅速发展，它们往往极难清除，以往杀毒软件可以轻松清除掉系统中病毒的时代似乎已经一去不复返了</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -2919,6 +2982,12 @@ $$</p>
             document.body.appendChild(img);
           });
       </script>]]></content>
+      <categories>
+        <category>内核</category>
+      </categories>
+      <tags>
+        <tag>RE</tag>
+      </tags>
   </entry>
   <entry>
     <title>内核中使用内存</title>
@@ -2979,9 +3048,15 @@ $$</p>
             document.body.appendChild(img);
           });
       </script>]]></content>
+      <categories>
+        <category>内核</category>
+      </categories>
+      <tags>
+        <tag>RE</tag>
+      </tags>
   </entry>
   <entry>
-    <title>驱动程序与应用程序通信</title>
+    <title>驱动程序与应用程序通讯</title>
     <url>/2020/04/26/%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E4%B8%8E%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E9%80%9A%E4%BF%A1/</url>
     <content><![CDATA[<h3 id="驱动程序与应用程序通信"><a class="header-anchor" href="#驱动程序与应用程序通信">¶</a>驱动程序与应用程序通信</h3>
 <p><img src="/" class="lazyload" data-src="./images/Z36BOHJK%5BZR@L45NUIQ01%7B4-1583151931908.png"  alt="img"></p>
@@ -3022,9 +3097,15 @@ $$</p>
             document.body.appendChild(img);
           });
       </script>]]></content>
+      <categories>
+        <category>内核</category>
+      </categories>
+      <tags>
+        <tag>RE</tag>
+      </tags>
   </entry>
   <entry>
-    <title>【Side_Lau】Re</title>
+    <title>汇编基础</title>
     <url>/2020/04/26/%E3%80%90Side_Lau%E3%80%91Re/</url>
     <content><![CDATA[<h1>汇编基础</h1>
 <h2 id="汇编指令集"><a class="header-anchor" href="#汇编指令集">¶</a>汇编指令集</h2>
@@ -3312,6 +3393,12 @@ $$</p>
             document.body.appendChild(img);
           });
       </script>]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>CTF-RE</tag>
+      </tags>
   </entry>
   <entry>
     <title>HGAME-2020</title>
