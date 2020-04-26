@@ -2,6 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://l0x1c.github.io/music/index.html</loc>
+    
+    <lastmod>2020-04-26T14:44:33.845Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://l0x1c.github.io/movies/index.html</loc>
+    
+    <lastmod>2020-04-26T14:44:25.718Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://l0x1c.github.io/gallery/index.html</loc>
+    
+    <lastmod>2020-04-26T14:44:04.227Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://l0x1c.github.io/link/index.html</loc>
+    
+    <lastmod>2020-04-26T14:43:23.632Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://l0x1c.github.io/categories/index.html</loc>
     
     <lastmod>2020-04-26T14:31:49.093Z</lastmod>
@@ -12,13 +40,6 @@
     <loc>https://l0x1c.github.io/tags/index.html</loc>
     
     <lastmod>2020-04-26T14:31:31.146Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://l0x1c.github.io/link/index.html</loc>
-    
-    <lastmod>2020-04-26T14:26:24.576Z</lastmod>
     
   </url>
   
@@ -82,27 +103,6 @@
     <loc>https://l0x1c.github.io/2019/11/18/%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E4%BB%A5%E5%8F%8A%E5%87%BD%E6%95%B0%E6%A0%88/</loc>
     
     <lastmod>2020-04-26T13:35:22.977Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://l0x1c.github.io/music/index.html</loc>
-    
-    <lastmod>2020-04-26T12:57:45.540Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://l0x1c.github.io/movies/index.html</loc>
-    
-    <lastmod>2020-04-26T12:57:45.539Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://l0x1c.github.io/gallery/index.html</loc>
-    
-    <lastmod>2020-04-26T12:57:45.538Z</lastmod>
     
   </url>
   
