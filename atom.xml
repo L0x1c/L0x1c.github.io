@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>人间风雪客</title>
+  <title>二进制的小白</title>
   
-  <subtitle> By:CX330</subtitle>
+  <subtitle> By:L0x1c</subtitle>
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://cx-330.github.io/"/>
@@ -10,7 +10,7 @@
   <id>https://cx-330.github.io/</id>
   
   <author>
-    <name>CX330</name>
+    <name>L0x1c</name>
     
   </author>
   
