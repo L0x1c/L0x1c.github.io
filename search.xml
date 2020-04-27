@@ -1,6 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>4.27更新(Week 2)</title>
+    <url>/2020/04/27/2020-4-27/</url>
+    <content><![CDATA[<h2 id="4-27日更新">4.27日更新</h2>
+<p>😭我搞了一天博客，于是乎上周日那天鸽了，今天刚搞好，一看已经13.24了，不多说了学习！</p>
+<p>今日任务：小黄书 + 对抗反汇编 x86</p>
+<h3 id="启动函数">启动函数</h3>
+<h4 id="mainCRTStartup函数代码片段分析">mainCRTStartup函数代码片段分析</h4>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//预编译宏</span><br><span class="line">#else	/* _WINMAIN_ */</span><br><span class="line">#ifdef WPRFLAG</span><br><span class="line">//宽字符版控制台启动函数</span><br><span class="line">void wmainCTRStartup(</span><br><span class="line">#else	/* WPRFLAG* /</span><br><span class="line">//多字节版控制台启动函数</span><br><span class="line">void mainCRTStartup(</span><br><span class="line">#endif	/* WPRFLAG */</span><br><span class="line">#endif	/* _WINMAIN_ */</span><br><span class="line">	void</span><br><span class="line">	)</span><br><span class="line">{</span><br><span class="line">	//获取版本信息</span><br><span class="line">	_osver = GetVersion();</span><br><span class="line">	_winminor = (_osver &gt;&gt; 8) &amp; 0x00FF;</span><br><span class="line">	_winmajor = _osver &amp; 0x00FF;</span><br><span class="line">	_winver = (_winmajor &lt;&lt; 8) + _winminor;</span><br><span class="line">	_osver = (_osver &gt;&gt;16) &amp; 0x00FFFF;</span><br><span class="line">	</span><br><span class="line">	//堆空间初始化过程，在这个函数中，制定了程序中堆空间的起始位置</span><br><span class="line">	//_MT是多线程标记</span><br><span class="line">#ifdef _MT</span><br><span class="line">	if(!_heap_init(1))</span><br><span class="line">#else	/* _MT */</span><br><span class="line">	if(!_heap_init(0))</span><br><span class="line">#endif	/*_MT */</span><br><span class="line">	fast_error_exit(_RT_HEAPINIT);</span><br><span class="line">	//初始化多线程环境</span><br><span class="line">#ifdef _MT</span><br><span class="line">	if(!_mtinit())</span><br><span class="line">		fast_error_exit(_RT_THREAD);</span><br><span class="line">#endif	/* _MT* /</span><br><span class="line">	_try{</span><br><span class="line">		//宽字节处理代码略</span><br><span class="line">		</span><br><span class="line">		//多字节版获取命令行</span><br><span class="line">		_acmdln = (char*)GetCommandLineA();</span><br><span class="line">	//多字节版获取环境变量信息</span><br><span class="line">		_aenvptr = (char*)_crtGetEnvironmentStringsA();</span><br><span class="line">		//多字节版获取命令行信息</span><br><span class="line">		_setargv();</span><br><span class="line">		//多字节版获取环境变量信息</span><br><span class="line">		_setenvp();</span><br><span class="line">#endif	/* WPRFLAG */</span><br><span class="line">		//初始化全局数据和浮点寄存器</span><br><span class="line">		_cinit();</span><br><span class="line">		//窗口程序处理代码略</span><br><span class="line">		</span><br><span class="line">		//宽字符处理代码略</span><br><span class="line">		</span><br><span class="line">		//获取环境变量信息</span><br><span class="line">		_initenv = _environ;</span><br><span class="line">		//调用main函数，传递命令行参数信息</span><br><span class="line">		mainret = main(_argc,_argv,_environ);</span><br><span class="line">#endif	/* WPRFLAG */</span><br><span class="line"></span><br><span class="line">#endif	/* _WINMAIN_ */</span><br><span class="line">		//检查main函数返回值执行析构函数或atexit注册的函数指针，并结束程序</span><br><span class="line">		exit(mainret);</span><br><span class="line">	}</span><br><span class="line">	//退出结束代码略</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>这里面👴通读了一下，有很多的函数不知道干什么的，总结一下：</p>
+<ul>
+<li><code>GetVersion</code>函数：获取当前运行平台的版本号，控制台程序运行在Windows模拟的DOS下，因此这里获取的版本号为MS-DOS的版本信息</li>
+<li><code>_heap_init</code>函数：用于初始化堆空间，在函数实现中使用HeapCreate申请堆空间，申请空间的大小由<code>_heap_init</code>传递的参数决定，<code>_sbh_heap_init</code>函数用于初始化堆结构信息</li>
+<li><code>GetCommandLineA</code>函数：获取命令行参数信息的首地址</li>
+<li><code>_crtGetEnvironmentStringsA</code>函数：获取环境变量信息的首地址</li>
+<li><code>_setargv</code>函数：根据<code>GetCommandLineA</code>获取命令行参数信息的首地址并进行参数分析，将分离出的参数的个数保存在全局变量<code>_argc</code>中，将分析出的每个命令行参数的首地址存放在数组中，并将这个字符指针数组的首地址保存在全局变量<code>_argv</code>中，从而得到命令行参数的个数以及命令行参数的信息</li>
+<li><code>_setenvp</code>函数：根据<code>_crtGetEnvironmentStringA</code>函数获取环境变量信息的首地址进行分析，将得到的每条环境变量字符串的首地址存放在字符指针数组内，并将这个数组的首地址存放在全局变量<code>env</code>中</li>
+</ul>
+<p>所以当我们的main函数得到这三个参数，<code>_argc</code>,<code>_argv</code>,<code>env</code>三个全局变量，他们作为参数以栈传递的方式传到main函数中</p>
+<ul>
+<li>
+<p><code>_cinit</code>函数：用于全局数据和浮点寄存器的初始化，全局对象和IO流的初始化都是这个函数实现的，利用函数<code>_initterm</code>进行数据链初始化，这个函数由两个参数组成，类型为<code>_PVFV*</code>，这是一个函数指针数组，保留了每个初始化函数的地址，初始化函数的类型为<code>_PVFV</code></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">typedef void(_cdecl *_PVFV)(void);</span><br></pre></td></tr></tbody></table></figure>
+</li>
+</ul>
+<p>所以，这个初始化函数是无参数也是无返回值的，c++规定全局对象和静态对象必须在main函数前构造，在main函数返回后析构，所以这里是用来代理构造析构函数的</p>
+<h4 id="cinit函数代码">_cinit函数代码</h4>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//用于初始化寄存器</span><br><span class="line">if(_FPinit != NULL)</span><br><span class="line">(*_FPinit)();	//初始化浮点寄存器</span><br><span class="line">//用于初始化C语法中的数据</span><br><span class="line">_initterm( _xi_a, _xi_z);</span><br><span class="line">//用于初始化C++语法中的数据</span><br><span class="line">_initterm( _xc_a , _xc_z);</span><br></pre></td></tr></tbody></table></figure>
+<p>这里<code>_Fpinit</code>是一个全局函数指针，类型是<code>_PVFV</code>，如果编译器扫描代码的时候，发现有浮点计算，则这个指针保存了初始化浮点寄存器的代码地址，否则就是0，如果浮点寄存器没有被出刷，会有异常错误👴在上周的时候说过了，参数<code>xi_a</code>为函数指针数组的其实地址，<code>_xi_z</code>为结束地址，第一个_initterm初始化的都是C支持库中所需要的数据</p>
+<h4 id="initterm函数代码">_initterm函数代码</h4>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">static void _cdecl _initterm (</span><br><span class="line">	_PVFV * pfbegin, _PVFV * pfend )</span><br><span class="line">{</span><br><span class="line">	//遍历数组的各元素</span><br><span class="line">    while(pfbegin &lt; pfend){</span><br><span class="line">    	//若函数指针不为空，则执行该函数</span><br><span class="line">    	if(*pfbegin!=NULL)</span><br><span class="line">    		(**pfbegin)();</span><br><span class="line">    	++pfbegin;</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>C++初始化操作会在第二次的<code>_initterm</code>进行调用，一般是全局变量或者静态对象的初始化函数(这里😥不咋懂，书上说第10章会说)</p>
+<p>正常的mainCRTStartup函数会根据编译器版本的不同所有不同！👴早就猜到了，如vs2005，其中的<code>mainCRTStartup</code>变成<code>_tmainCRTStartup</code>，在我们的默认情况下，入口函数是main，这时候会从mainCRTStartup启动，再传入main所需要的三个参数<code>argc</code>，<code>argv</code>，<code>env</code>，最后再调用main</p>
+<p>如果我们重新指定入口函数</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427145345539.png"  alt="image-20200427145345539"></p>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427145438829.png"  alt="image-20200427145438829"></p>
+<p>可以看到没有调用mainCRTStartup函数，我们可以再测试一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427145535373.png"  alt="image-20200427145535373"></p>
+<p>我再写一个新的函数调用并不是main来看一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427145843968.png"  alt="image-20200427145843968"></p>
+<p>如果我没有调用mainCRTStartup函数，我们的堆空间是没有被初始化的，所以用到堆就会报错</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427151105530.png"  alt="image-20200427151105530"></p>
+<p>我们看一下，正常的情况</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427151458866.png"  alt="image-20200427151458866"></p>
+<p>张长是可以分配的，所以说如果书用了malloc函数，没有初始化堆空间会出错的</p>
+<h3 id="main函数识别">main函数识别</h3>
+<p>VC++6.0main函数特征，三个参数：命令行参数个数，命令行参数信息，环境变量信息，main是启动函数中唯一一个具有3个参数的函数，WinMain也是启动函数中为一具有4个参数的函数</p>
+<p>VC++6.0，main函数被调用前，要先调用的函数：</p>
+<p><code>GetVersion()</code> <code>_heap_int()</code> <code>GetCommandLineA()</code> <code>_crtGetEnvironmentStringsA()</code> <code>_setargv()</code> <code>_setenvp()</code></p>
+<p><code>_cinit()</code>这些函数调用结束后就会调用main函数，根据main函数调用的特征，将argc，argv，env压入栈作为参数</p>
+<p>用ida可以看到_mainCRTStartup的大概流程</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427160426209.png"  alt="image-20200427160426209"></p>
+<p>我们用od去看看做了什么，od会直接暂停在程序的入口处，并不是定位在main函数的位置，我们试着通过main函数的特性查找一下他在哪个位置</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427160802795.png"  alt="image-20200427160802795"></p>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427161042351.png"  alt="image-20200427161042351"></p>
+<p>自己根据分析，我在断点的位置就是main的函数入口</p>
+<p>我用书上的代码做一个例子，便于分析！🏃‍♂️奥里给冲！👍</p>
+<h4 id="OD反汇编信息">OD反汇编信息</h4>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//省略部分代码</span><br><span class="line">//OD识别函数名称为GetCommandLineA</span><br><span class="line">00401210	|. FF15 38514200 call dword ptr ds:[&lt;&amp;KERNEL32.GetCommand&gt;]</span><br><span class="line">//得到命令行参数</span><br><span class="line">00401216	|. A3 444F4200	mov dword ptr ds :[424F44],eax </span><br><span class="line">//根据main函数的特性，此处为_crtGetEnvirinmentStringsA()调用</span><br><span class="line">0040121B	|. E8 E0240000	call ProgramE.00403700</span><br><span class="line">00401220	|. A3 BC354200	mov dword ptr ds:[4235BC],eax</span><br><span class="line">//根据main函数特性，此处为函数_setargv()调用</span><br><span class="line">00401225	|. E8 C61F0000	call ProgramE.004031F0</span><br><span class="line">//根据main函数特性，此处为函数_setenvp()调用</span><br><span class="line">0040122A	|. E8 711E0000	call ProgramE.004030A0</span><br><span class="line">//根据main函数特性，此处为函数_cinit()调用</span><br><span class="line">004012FF	|. E8 8C1A0000	call PromgramE.00402CC0</span><br><span class="line">00401234	|. 8B0D 00364200 mov ecx,dword ptr ds:[423600]</span><br><span class="line">0040123A	|. 890D 04364200 mov dword ptr ds:[423604],ecx</span><br><span class="line">00401240	|. 8B15 00364200 mov edx,dword ptr ds:[423600]</span><br><span class="line">//压栈传参，环境变量信息</span><br><span class="line">00401246	|. 52	push edx</span><br><span class="line">00401247	|. A1 F8354200 mov eax,dword ptr ds:[4235F8]</span><br><span class="line">//压栈传参，命令行参数信息</span><br><span class="line">0040124C	|. 50	push eax</span><br><span class="line">0040124D	|. 8B0D	F4354200 mov ecx,dword ptr ds:[4235F4]</span><br><span class="line">//压栈传参，命令行参数个数</span><br><span class="line">00401253	|. 51	push ecx</span><br><span class="line">//此处为卖弄函数的调用出，跟进到函数中便是main函数的实现代码流程</span><br><span class="line">00401254	|. E8 ACFDFFFF	call ProgramE.00401005</span><br></pre></td></tr></tbody></table></figure>
+<p>大概👴总结一下，一般我们用od的时候，来到的应该是mainCRTStartup的位置，那么我们寻找main函数的时候，我们需要去找到相应的调用前的函数的流程结束，从<code>GetVersion()</code>获取平台版本号 <code>_heap_init</code>初始化堆空间 <code>GetCommandLineA</code>获取命令行参数信息的首地址，<code>_crtGetEnvironmentStringA</code>获取环境变量信息的首地址，<code>_setargv</code>得到命令行参数个数，以及命令行参数信息，<code>_setenvp</code>获取环境变量字符串的首地址 <code>_cinit</code>全局数据和浮点寄存器初始化，之后main函数所需要的参数压入堆栈，调用main</p>
+<p>👍小黄书的第三章也算完结了，明天开始搞第四章，😡家里实在是太冷了，我倒在床上就睡着了，呜呜呜，准备开始深入搞一下对抗反汇编x86的问题，在52破解上也找到了相关的文章，准备学习一下！</p>
+<h3 id="对抗反汇编x86">对抗反汇编x86</h3>
+<p>52破解原帖子：<a href="https://bbs.pediy.com/thread-259064.htm" target="_blank" rel="noopener">https://bbs.pediy.com/thread-259064.htm</a></p>
+<p>Gstalker师傅给了一个Opcode在线转化网站：<a href="https://onlinedisassembler.com/odaweb/" target="_blank" rel="noopener">https://onlinedisassembler.com/odaweb/</a></p>
+<h4 id="相同的跳转指令">相同的跳转指令</h4>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">void 相同的跳转指令()</span><br><span class="line">{</span><br><span class="line">    printf("定位");</span><br><span class="line">    _asm</span><br><span class="line">    {</span><br><span class="line">        jz _P2</span><br><span class="line">        jnz _P2</span><br><span class="line">        _P1 :</span><br><span class="line">        __emit 0xE8</span><br><span class="line">    }</span><br><span class="line">_P2:</span><br><span class="line">    return;</span><br><span class="line">}</span><br><span class="line">int main(int argc, char* argv[]) {</span><br><span class="line">    相同的跳转指令();</span><br><span class="line">    return 0;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427215715803.png"  alt="image-20200427215715803"></p>
+<p>在ida中会骗到ida，实际上动态分析调试的时候，会转到相应的pop的功能，但是静态分析会欺骗到</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427215836987.png"  alt="image-20200427215836987"></p>
+<p>我跳转过去看一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427215857904.png"  alt="image-20200427215857904"></p>
+<p>直接退出堆栈，就不会像ida中那样说的是对应的CALL</p>
+<h4 id="固定条件的跳转指令">固定条件的跳转指令</h4>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">void 固定条件的跳转指令()</span><br><span class="line">{</span><br><span class="line">    printf("定位");</span><br><span class="line">    _asm</span><br><span class="line">    {</span><br><span class="line">        xor eax, eax</span><br><span class="line">        jz _P2</span><br><span class="line">        __emit 0xE9</span><br><span class="line">    }</span><br><span class="line">_P2:</span><br><span class="line">    return;</span><br><span class="line">}</span><br><span class="line">int main(int argc, char* argv[]) {</span><br><span class="line">    固定条件的跳转指令();</span><br><span class="line">    return 0;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>可以看到我们直接是跳转到jmp这里</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427220338465.png"  alt="image-20200427220338465"></p>
+<p>但是我们正常进行动态分析的时候不会这样，还是进行一个pop出原来现场的问题</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427220549550.png"  alt="image-20200427220549550"></p>
+<h4 id="无效的反汇编码：内部跳转的jmp指令">无效的反汇编码：内部跳转的jmp指令</h4>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">void 无效的反汇编码1()</span><br><span class="line">{</span><br><span class="line">    //内部跳转的jmp指令</span><br><span class="line">    printf("定位");</span><br><span class="line">    _asm</span><br><span class="line">    {</span><br><span class="line">        __emit 0xEB</span><br><span class="line">        __emit 0xFF</span><br><span class="line">        __emit 0xC0</span><br><span class="line">        __emit 0x48</span><br><span class="line">    }</span><br><span class="line">    return;</span><br><span class="line">}</span><br><span class="line">int main(int argc , char* argv[]) {</span><br><span class="line">    无效的反汇编码1();</span><br><span class="line">	return 0;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427224442652.png"  alt="image-20200427224442652"></p>
+<p>动态调试直接过来就可以了</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427224801827.png"  alt="image-20200427224801827"></p>
+<h4 id="无效的反汇编码：多层内部调转序列">无效的反汇编码：多层内部调转序列</h4>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">void 无效的反汇编码2()</span><br><span class="line">{</span><br><span class="line">    //多层内部调转序列</span><br><span class="line">    printf("定位");</span><br><span class="line">    _asm</span><br><span class="line">    {</span><br><span class="line">        __emit 0x66</span><br><span class="line">        __emit 0xB8</span><br><span class="line">        jmp _P1</span><br><span class="line">        __emit 0x31</span><br><span class="line">        __emit 0xC0</span><br><span class="line">        __emit 0x74</span><br><span class="line">        __emit 0xFA</span><br><span class="line">        __emit 0xE8</span><br><span class="line">    }</span><br><span class="line">_P1:</span><br><span class="line">    printf("真实代码！");</span><br><span class="line">    return;</span><br><span class="line">}</span><br><span class="line">int main(int argc , char* argv[]) {</span><br><span class="line">    无效的反汇编码2();</span><br><span class="line">	return 0;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>第一次的跳转：</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427225442861.png"  alt="image-20200427225442861"></p>
+<p>第二次的跳转：</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427225504730.png"  alt="image-20200427225504730"></p>
+<p>第三次的跳转：</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427225514408.png"  alt="image-20200427225514408"></p>
+<p>去ida看一下：</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427225618251.png"  alt="image-20200427225618251"></p>
+<h4 id="滥用返回指针：">滥用返回指针：</h4>
+<p>在反汇编部分我们看不出函数有调用_P2就retn了，成功欺骗了F5</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">void 滥用返回指针()</span><br><span class="line">{</span><br><span class="line">    printf("定位");</span><br><span class="line">    _asm</span><br><span class="line">    {</span><br><span class="line">        call _P1</span><br><span class="line">        _P1 :</span><br><span class="line">        add[esp], 5</span><br><span class="line">            retn</span><br><span class="line">    }</span><br><span class="line">_P2:</span><br><span class="line">    printf("模糊函数边界！");  //这里会被执行</span><br><span class="line">    return;</span><br><span class="line">}</span><br><span class="line">int main(int argc , char* argv[]) {</span><br><span class="line">    滥用返回指针();</span><br><span class="line">	return 0;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427225817551.png"  alt="image-20200427225817551"></p>
+<p>感觉正常的程序调试没什么毛病，我们去ida看一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427225959658.png"  alt="image-20200427225959658"></p>
+<p>直接就是栈指针不平衡的问题了，不能f5需要手动去修复</p>
+<h4 id="滥用结构化异常处理：">滥用结构化异常处理：</h4>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void 滥用结构化异常处理()</span><br><span class="line">{</span><br><span class="line">    printf("定位");</span><br><span class="line">    _asm</span><br><span class="line">    {</span><br><span class="line">        mov eax, _PE1</span><br><span class="line">        push eax</span><br><span class="line">        push fs : [0]</span><br><span class="line">        mov fs : [0], esp</span><br><span class="line">        xor ecx, ecx</span><br><span class="line">        div ecx</span><br><span class="line">        retn</span><br><span class="line">_PE1:</span><br><span class="line">        mov esp,[esp+8] </span><br><span class="line">        mov eax, fs : [0]</span><br><span class="line">        mov eax, [eax]</span><br><span class="line">        mov eax, [eax]</span><br><span class="line">        mov fs : [0], eax</span><br><span class="line">        add esp, 8</span><br><span class="line">    }</span><br><span class="line">    printf("结构化异常");</span><br><span class="line">    return;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="挫败的栈帧分析">挫败的栈帧分析:</h4>
+<p>F5后发现有很多参数</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">void 挫败的栈帧分析()</span><br><span class="line">{</span><br><span class="line">    printf("定位");</span><br><span class="line">    _asm</span><br><span class="line">    {</span><br><span class="line">        xor eax, eax</span><br><span class="line">        add eax, 2</span><br><span class="line">        ret 0xff</span><br><span class="line">    }</span><br><span class="line">    printf("挫败的栈帧分析");</span><br><span class="line">    return;</span><br><span class="line">}</span><br><span class="line">int main(int argc , char* argv[]) {</span><br><span class="line">    挫败的栈帧分析();</span><br><span class="line">	return 0;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427230644253.png"  alt="image-20200427230644253"></p>
+<p><img src="/" class="lazyload" data-src="/2020/04/27/2020-4-27/image-20200427230846072.png"  alt="image-20200427230846072"></p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>个人笔记</category>
+      </categories>
+      <tags>
+        <tag>RE</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>第一周笔记</title>
     <url>/2020/04/27/2020-4-21/</url>
     <content><![CDATA[<p>玛德！从今天开始补基础，谁都别拦我 👴要成为带手子</p>
