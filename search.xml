@@ -1,6 +1,170 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>4.28日笔记 (week 2)</title>
+    <url>/2020/04/28/2020-4-28/</url>
+    <content><![CDATA[<h2 id="4-28日更新">4.28日更新</h2>
+<p>👴今天又起来晚了，呜呜呜，已经14.04了！不多说了开始学习！</p>
+<p>今日任务：小黄书 + Buu题</p>
+<h3 id="步入正题！">步入正题！</h3>
+<h3 id="算术运算和赋值">算术运算和赋值</h3>
+<p>👴看书的时候感觉，这个位置好像在哪里学过，想了一下在上周海哥的时候有讲过，这里稍微说一下，举一个例子，赋值运算类似于数学中的等于，本质就是将一个内存空间的数据传递到另一个内存空间中，但是内存没有处理器那种的控制能力，所以各个内存单元之间是无法直接传递数据的，必须用过处理器访问并中转，才可以实现两个内存单元之间的数据传输(cpu里的寄存器包括通用寄存器、专用寄存器和控制寄存器)，正常来说，算术运算与传递计算结果的代码组合才可以被看作是一个有效的语句，单独的运算会被视为空语句，应该在上周测试过了，我再测试一下，🧐GoGoGo！</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200428141456757.png"  alt="image-20200428141456757"></p>
+<p>看到了吗，如果算术运算，没有赋值的结合是一条无意义的语句，下面的就直接压在了ebp-0x4局部变量那个位置</p>
+<h3 id="各种算术运算的工作形式">各种算术运算的工作形式</h3>
+<h4 id="加法：">加法：</h4>
+<p>加法运算对应的汇编指令 <code>ADD</code>，执行加法运算的时候，针对不同的操作数，转换的指令也会不一样，编译器会根据优化方式选择比较好的匹配方案，VC++ 6.0中常用的优化方案有两种方案：</p>
+<ul>
+<li>1方案：生成文件占用空间最小</li>
+<li>2方案：执行效率最快</li>
+</ul>
+<p>Release编译选项组的默认选项为2方案 <strong>(执行效率优先)</strong> ，在Debug编译选项组中，使用的是Od+ZI选项，这个选项使编译器产生的代码都便于调试，为了便于单步跟踪，以及源码和目标代码块的对应阅读，从而可能增加冗余代码，在不影响调试的前提下，尽可能的优化</p>
+<h5 id="加法运算——Debug版">加法运算——Debug版</h5>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码说明：加法运算</span><br><span class="line">//无效语句，不参与编译</span><br><span class="line">15+20</span><br><span class="line">//变量定义</span><br><span class="line">int nVarOne = 0;</span><br><span class="line">int nVarTwo = 0;</span><br><span class="line">//变量加常量的加法运算</span><br><span class="line">nVarOne = nVarOne + 1;</span><br><span class="line">//两个常量加法的加法运算</span><br><span class="line">nVarOne = 1 + 2;</span><br><span class="line">//两个变量相加的加法运算</span><br><span class="line">nVarOne = nVarOne + nVarTwo</span><br><span class="line">printf("nVarOne = %d \r\n", nVarOne);</span><br><span class="line"></span><br><span class="line">//C++源码与对应汇编代码</span><br><span class="line"></span><br><span class="line">//C++源码对比，变量赋值</span><br><span class="line">int nVarOne = 0;</span><br><span class="line">//将立即数0，传入地址ebp-0x4中，即变量nVarOne所在的地址</span><br><span class="line">00401028 mov dword ptr [ebp-4],0</span><br><span class="line">//C++源码对比，变量赋值</span><br><span class="line">int nVarTwo = 0;</span><br><span class="line">0040102F mov dword ptr [ebp-8],0</span><br><span class="line">//C++源码对比，变量 + 常量</span><br><span class="line">nVarOne = nVarOne + 1;</span><br><span class="line">//取出变量nVarOne数据放入eax中</span><br><span class="line">00401036 mov eax,dword ptr [ebp-4]</span><br><span class="line">//对eax执行加等于1运算</span><br><span class="line">00401039 add eax,1</span><br><span class="line">//将结果返回变量nVarOne中，完成加法运算</span><br><span class="line">0040103C mov dword ptr [ebp-4],eax</span><br><span class="line">//C++源码对比，常量 + 常量</span><br><span class="line">nVarOne = 1 + 2;</span><br><span class="line">//这里编译器直接计算出了两个常量相加后的结构，放入变量nVarOne中</span><br><span class="line">0040103F mov dword ptr [ebp-4],3</span><br><span class="line">//C++源码对比，变量 + 变量</span><br><span class="line">nVarOne = nVarOne + nVarTwo;</span><br><span class="line">//使用ecx存放变量nVarOne</span><br><span class="line">00401046 mov ecx,dword ptr [ebp-4]</span><br><span class="line">//使用ecx对变量nVarTwo执行加等于操作</span><br><span class="line">00401049 add ecx,dword ptr [ebp-8]</span><br><span class="line">//将结果存入地址ebp-4处，即变量nVarOne</span><br><span class="line">0040104C mov dword ptr [ebp-4],ecx</span><br></pre></td></tr></tbody></table></figure>
+<p>👴这里搞了3中操作数的加法运算，总结一下：</p>
+<ul>
+<li>两个常量相加的情况下，编译器在编译期间就计算出两个常量相加后的结果，将这个结果作为立即数参与运算，减少了运行期间的计算</li>
+<li>变量参与加法运算的时候，会取出内存中的数据，放入通用寄存器，再通过加法的指令来完成计算的结果，最后存入内存空间中</li>
+</ul>
+<p>如果我们开启Release的时候，会发生比较大的变化，我记得😁这里我和小哲哲研究过好像，由于效率优先，编译器会把无用的代码去除，并将可合并的代码进行归并处理，我们测试一下刚才的那一段Debug的那段代码🧐</p>
+<p>擦！我的vc++ 6.0 release 不好使！😡气死了，我去用一下vs</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200428160856279.png"  alt="image-20200428160856279"></p>
+<p>可以看到，类似于nVarOne = nVarOne +1 这样的代码会被删除，因为后面对其进行了重新赋值操作，所以编译器判定这句话的代码是可以被删除的，可以看到唯一的add是进行的参数平衡，并没有源码中的加法运算，在编译过程中，编译器常常会采用 <strong>常量传播</strong> 和 <strong>常量折叠</strong>这样的方案对代码中的变量与常量进行优化</p>
+<h5 id="常量传播">常量传播</h5>
+<p>将编译期间可计算出的结果的变量转换成常量，这样就减少了变量的使用</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void main(){</span><br><span class="line">	int nVar = 1;</span><br><span class="line">	printf("nVar = %d \r\n", nVar);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200428162906092.png"  alt="image-20200428162906092"></p>
+<p>变量nVar是一个在编译期间可以计算出结果的变量，因此，程序中引用nVar的地方直接引用常量1，代码等于</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void main(){</span><br><span class="line">	printf("nVar = %d \r\n",1);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200428175354770.png"  alt="image-20200428175354770"></p>
+<p>反汇编的release的改变代码和上面的一样，那么结论就是正确的👍</p>
+<h5 id="常量折叠">常量折叠</h5>
+<p>当计算公式中出现，多个常量计算的时候，编译器会在编译期间计算出结果时，源码中所有的常量计算都会被计算结果代替，测试代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void main(){</span><br><span class="line">	int nVar = 1 + 5 - 3*6;</span><br><span class="line">	printf("nVar = %d \r\n", nVar);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200428180821687.png"  alt="image-20200428180821687"></p>
+<p>我们看到release版本的反汇编，我们看到将值也是直接算了出来 push 0FFFFFFF4h，从而推断一下，在编译过程中计算出来的计算出 -12 从而代替原来表达式，替换代码1：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void main(){</span><br><span class="line">	int nVar = -12;</span><br><span class="line">	printf("nVar = %d \r\n", nVar);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>替换代码2(最终等价)：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void main(){</span><br><span class="line">	printf("nVar = %d \r\n", -12);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<h5 id="测试release的代码想法">测试release的代码想法</h5>
+<p>我们对常量折叠和常量传播了解过后，就知道上面Debug的时候，为什么直接push 3了，那么我们按照自己想法，做一个测试，如果变量的值是命令行参数argc，那么argc在编译期间无法确定，所以编译器无法在提前计算出结果，那么变量就不会被编译器计算出的常量替换掉，测试代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">int main(int argc, char* argv[])</span><br><span class="line">{</span><br><span class="line">	int nVarOne = argc;</span><br><span class="line">	int nVarTwo = argc;</span><br><span class="line">	nVarOne = nVarOne + 1;</span><br><span class="line">	nVarOne = 1 + 2;</span><br><span class="line">	nVarOne = nVarOne + nVarTwo;</span><br><span class="line">	printf("nVarOne = %d \r\n", nVarOne);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200428190325576.png"  alt="image-20200428190325576"></p>
+<p>我们只看到了一个参数变量偏移，而我们应该定义了两个局部变量都没了</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">int main(int argc, char* argv[])</span><br><span class="line">{</span><br><span class="line">	int nVarOne = argc;	//在后面的代码中被常量代替</span><br><span class="line">	int nVarTwo = argc;	//虽然不能用常量代替，但是由于后面没有对nVarTwo进行修改，所以nVarTwo等价于引用argc,nVarTwo被删除掉：叫做复写传播</span><br><span class="line">	nVarOne = nVarOne + 1;	//后面对nVarOne赋值了，所以删除了这句话</span><br><span class="line">	nVarOne = 1 + 2;	//常量折叠，等价于nVarOne = 3</span><br><span class="line">	nVarOne = nVarOne + nVarTwo;	//常量传播加复写传播，nVarOne = 3 + argc</span><br><span class="line">	printf("nVarOne = %d \r\n", nVarOne);</span><br><span class="line">	//后面没有nVarOne被访问，所以用3+argc代替</span><br><span class="line">	printf("nVarOne = %d")</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>总结：nVarTwo可以省略，因为它付给了第一个参数argc，在nVarOne被赋值了3以后，做了加法，等同于了nVarOne = 3 + argc，之后的printf引用nVarOne，等价于上面的 3 + argc 于是乎nVarOne也可以删除掉</p>
+<h4 id="减法：">减法：</h4>
+<p>减法对应的汇编指令是<code>sub</code>，但是我们的计算机只会做加法，我们可以通过补码的方式转换将减法转化为加法形式来完成</p>
+<p>假设有一个二进制数Y，反码为Y(反)，假设二进制长度为8位：<br>
+$$<br>
+Y+Y反 = 1111\ 1111B<br>
+$$</p>
+<p>$$<br>
+Y + Y反 + 1 = 0(进位丢失)<br>
+$$</p>
+<p>$$<br>
+Y(反) + 1 =0-Y &lt;==&gt; Y(反) + 1 = -Y &lt;==&gt; Y(补) == -Y<br>
+$$</p>
+<p>所以负数的补码可以简化为取反+1</p>
+<p>假设一个 算术为 5 - 2<br>
+$$<br>
+5+(0-2)&lt;==&gt;5+(2(反)+1)&lt;==&gt;5+2(补)<br>
+$$<br>
+所以说根据这个公式，所有的减法都可以当作加法来运算</p>
+<h5 id="减法运算——Debug版">减法运算——Debug版</h5>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码说明：减法运算</span><br><span class="line">//变量定义</span><br><span class="line">int nVarOne = argc;</span><br><span class="line">int nVarTwo = 0;</span><br><span class="line">//获取变量nVarTwo的数据，使用scanf防止被常量化</span><br><span class="line">scanf("%d",&amp;nVarTwo);</span><br><span class="line">//变量减常量的减法运算</span><br><span class="line">nVarOne = nVarOne - 100;</span><br><span class="line">//减法与加法混合运算</span><br><span class="line">nVarOne = nVarOne + 5 - nVarTwo;</span><br><span class="line">printf("nVarOne = %d \r\n",nVarOne);</span><br><span class="line"></span><br><span class="line">//C++源码对应汇编代码讲解</span><br><span class="line">//C++源码对比，变量 - 常量</span><br><span class="line">nVarOne = nVarOne - 100;</span><br><span class="line">//取变量nVarOne的数据到eax中</span><br><span class="line">00401125	mov	eax,dword ptr [ebp-4]</span><br><span class="line">//是用减法指令sub，对eax执行减等于100操作</span><br><span class="line">00401128	sub	eax,64h</span><br><span class="line">//将结果赋值回nVarOne中</span><br><span class="line">0040112B	mov dword ptr [ebp-4],eax</span><br><span class="line">//C++源码对比，减法与加法混合运算</span><br><span class="line">nVarOne = nVarOne +5 - nVarTwo;</span><br><span class="line">//按照自左向右顺序依次执行</span><br><span class="line">0040112E	mov	ecx,dword ptr [ebp-4]</span><br><span class="line">00401131	add	ecx,5</span><br><span class="line">00401134	sub	ecx,dword ptr [ebp-8]</span><br><span class="line">00401137	mov	dword ptr [ebp-4],ecx</span><br><span class="line">//printf函数调用显示略</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200428205809617.png"  alt="image-20200428205809617"></p>
+<p>总结：实际分析中，根据加法操作数的情况，当加数为负数的时候，执行的并不是加法，而是减法的操作，release和加法同就不说了</p>
+<h4 id="乘法：">乘法：</h4>
+<p>乘法运算对应的汇编指令为有符号<code>imul</code>和无符号<code>mul</code>两种，由于乘法指令的执行周期比较长，在编译过程中，编译器会先尝试将乘法转换成加法，或者使用移位等周期较短的指令，当他们都不可以转换的时候，才会使用乘法指令</p>
+<h5 id="乘法转换——Debug版">乘法转换——Debug版</h5>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码说明，乘法运算</span><br><span class="line">//防止被视为无效代码，将每条运算作为printf参数使用</span><br><span class="line">//变量定义</span><br><span class="line">int nVarOne = argc;</span><br><span class="line">int nVarTwo = argc;</span><br><span class="line">//变量乘常量(常量为非2的幂)</span><br><span class="line">printf("nVarOne*15 = %d \r\n",nVarOne * 15);</span><br><span class="line">//变量乘常量(常量值为2的幂)</span><br><span class="line">printf("nVarOne*16 = %d",nVarOne * 16)</span><br><span class="line">//两常量相乘</span><br><span class="line">printf("2*2 = %d",2 * 2);</span><br><span class="line">//混合运算</span><br><span class="line">printf("nVarTwo *4 +5 = %d",nVarTwo * 4 + 5);</span><br><span class="line">//两变量相乘</span><br><span class="line">printf("nVarOne * nVarTwo = %d",nVarOne * nVarTwo);</span><br><span class="line"></span><br><span class="line">//C++源码对应汇编</span><br><span class="line">//C++源码对比，变量 * 常量</span><br><span class="line">printf("nVarOne*15 = %d \r\n",nVarOne * 15);</span><br><span class="line">0040B8A4	mov	edx,dword ptr [ebp-4]</span><br><span class="line">//直接使用有符号乘法指令imul</span><br><span class="line">0040B8A7	imul	edx,edx,0Fh</span><br><span class="line"></span><br><span class="line">//C++源码对比 常量*常量(常量值为2的幂)</span><br><span class="line">printf("nVarOne*16 = %d",nVarOne * 16)</span><br><span class="line">0040B8B8	mov	eax,dword ptr [ebp-4]</span><br><span class="line">//使用左移运算代替乘法运算</span><br><span class="line">0040B8BB	shl	eax,4</span><br><span class="line"></span><br><span class="line">//C++源码对比，常量*常量</span><br><span class="line">printf("2*2 = %d",2 * 2);</span><br><span class="line">//在编译期间计算出2*2的结果，将表达式转换为常量值</span><br><span class="line">0040B8CC	push 4</span><br><span class="line">0040B8CE	push offest string "2 * 2 = %d"(0041ffac)</span><br><span class="line">0040B8D3	call printf(0040B750)</span><br><span class="line">0040B8D8	add esp,8</span><br><span class="line"></span><br><span class="line">//c++源码对比，变量*常量+常量(组合运算)</span><br><span class="line">printf("nVarTwo *4 +5 = %d",nVarTwo * 4 + 5);</span><br><span class="line">0040B8DB	mov	ecx,dword ptr [ebp-8]</span><br><span class="line">//利用lea指令完成组合运算</span><br><span class="line">0040B8DE	lea	edx,[ecx*4+5]</span><br><span class="line"></span><br><span class="line">//c++源码对比，变量*变量</span><br><span class="line">printf("nVarOne * nVarTwo = %d",nVarOne * nVarTwo);</span><br><span class="line">0040B90A	mov	ecx,dword ptr [ebp-4]</span><br><span class="line">//直接使用有符号乘法指令</span><br><span class="line">0040B90D	imul ecx,dword ptr [ebp-8]</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200428223154371.png"  alt="image-20200428223154371"></p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200428223212478.png"  alt="image-20200428223212478"></p>
+<p>上面的代码大概👴都能搞明白，总结一下😋：在二进制数中乘以2的时候等同于位依次向左移动(shl)1位，假设十进制3的二进制数为0011，3乘2以后等于6，相当于0110，当乘数和被乘数都是未知变量的时候，无法运用优化的方式，这时候处理器不会优化处理，直接变成乘法指令完成乘法计算(imul)</p>
+<p>我们可以看到这里面有几个地方用了lea指令，😡我也不太懂，于是乎了解一下嘛！分析了一下！如果我们乘法运算与加法的运算结合了编译器会采用lea指令来处理，我们按照猜想去测试一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200428223929170.png"  alt="image-20200428223929170"></p>
+<p>测试一下我猜想的1 2 4 8为lea</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200428224044646.png"  alt="image-20200428224044646"></p>
+<p>1不行，1不就相当于一个加法了，👴真是傻了</p>
+<p>那么我们如果组合运算中的乘数，不等于2 4 8如何处理</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码对比 变量*常量*常量 (乘数超过8)</span><br><span class="line">printf("nVarTwo * 9 + 5 = %d",nVarTwo * 9 + 5);</span><br><span class="line">0040B8F3	mov	eax,dword ptr [ebp-8]</span><br><span class="line">0040B8F6	imul eax,eax,9</span><br><span class="line">0040B8F9	add	eax,5</span><br><span class="line">0040B8FC	push eax</span><br><span class="line">0040B8FD	push offset string "nVarTwo * 9 + 5 = %d"(0041ff7c)</span><br><span class="line">0040B902	call printf(0040b750)</span><br><span class="line">0040B907	add esp,8</span><br></pre></td></tr></tbody></table></figure>
+<p>我们看一下release版本的</p>
+<h5 id="各类型乘法转换——release版">各类型乘法转换——release版</h5>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//IDA直接将参数作为局部变量使用</span><br><span class="line">arg_0 = dword ptr 4</span><br><span class="line">//保存环境</span><br><span class="line">push esi</span><br><span class="line">//取出参数变量存入esi中</span><br><span class="line">mov esi,[esp+4+arg_0]</span><br><span class="line">//经过优化后，将nVarOne*15先转化为 乘2加自身，相当于乘3</span><br><span class="line">//eax = esi*2+esi = 3*esi</span><br><span class="line">lea	eax,[esi+esi*2]</span><br><span class="line">//将上一步操作结果乘4加自身，等同于乘15</span><br><span class="line">//eax = eax * 4 + eax = 5 * eax = 5 * (3*esi)</span><br><span class="line">lea	eax,[eax+eax*4]</span><br><span class="line">push eax</span><br><span class="line">push offset aNvaronel15D; "nVarOne * 15 = %d"</span><br><span class="line">call _printf</span><br><span class="line">// esi中的数据传送到ecx，esi中保存的为参数数据</span><br><span class="line">mov	ecx,esi</span><br><span class="line">//将ecx中的数据左移4为，ecx乘以2^4</span><br><span class="line">shl	ecx,4</span><br><span class="line">push ecx</span><br><span class="line">push offset aNvarone15D; "nVarOne * 16 = %d"</span><br><span class="line">call _printf</span><br><span class="line">//两常量相乘直接转换常量值</span><br><span class="line">push 4</span><br><span class="line">push offset a22D;	"2*2 = %d"</span><br><span class="line">call _printf</span><br><span class="line">//这句话等等同于lea edx,[esi*4+5]都是混合运算</span><br><span class="line">lea	edx,ds:5[esi*4]</span><br><span class="line">push edx</span><br><span class="line">push offset aNvartwo45D;	"nVarTwo * 4 +5 =%d"</span><br><span class="line">call _printf</span><br><span class="line">//此处为乘数不等于2 4 8 情况，编译优化9进行分解：(nVarTwo*1+nVarTwo*8),这样就可以使用lea了</span><br><span class="line">lea eax,[esi+esi*8+5]</span><br><span class="line">push eax</span><br><span class="line">push _offset aNvartwo95D;	"nVarTwo * 9 +5 =%d"</span><br><span class="line">call _printf</span><br><span class="line">//此处为两个变量相乘，都是未知数，无忧化</span><br><span class="line">mov	ecx,esi</span><br><span class="line">imul ecx,esi</span><br><span class="line">push ecx</span><br><span class="line">push offest aNvaroneNvartwo;	"nVarOne * nVarTwo = %d"</span><br><span class="line">call _printf</span><br><span class="line">add	esp,30h</span><br><span class="line">pop	esi</span><br></pre></td></tr></tbody></table></figure>
+<p>可以看到除了两个未知变量的乘法没有优化外，其它形式的乘法运算都可以进行优化</p>
+<p>👴除法这里总结不完了，目测有20多页，明天总结除法，去buu找点题做咯！🏃‍♂️</p>
+<h3 id="BUU">BUU</h3>
+<h4 id="FlareOn6-Snake">[FlareOn6]Snake</h4>
+<p>得到的是一个snake.nes文件，直接用fceux打开</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200428231329801.png"  alt="image-20200428231329801"></p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200428232117139.png"  alt="image-20200428232117139"></p>
+<p>我们不难看出来，经过👴的几次测试可以看出来，0007位置是x轴，0008位置是y轴，0009位置是走的步数</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200428232309772.png"  alt="image-20200428232309772"></p>
+<p>经过几次测试可以看出来000A是吃了一个苹果加的长度，吃一个加5，000B是当前的长度</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200428232449165.png"  alt="image-20200428232449165"></p>
+<p>找到0025是吃的苹果数量，我真的看不懂英文了 不知道怎么暂停 👴直接去下了一个汉化版</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200428233511046.png"  alt="image-20200428233511046"></p>
+<p>分析的大概正确，我们直接去调式看看</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200428234414490.png"  alt="image-20200428234414490"></p>
+<p>我直接用了16进制编辑器 发现当我们把25的位置修改成32的时候，28的位置应该是等级数量</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200428234551177.png"  alt="image-20200428234551177"></p>
+<p>调试器的位置，可以看到CMP 33猜测就是苹果数量导致了等级的上升 我再去看看</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200428234849953.png"  alt="image-20200428234849953"></p>
+<p>我发现变换的是32 - 00   00 - 01 所以改变了想法应该是0027为level 0025为苹果 那么我直接改成 32 003好了！</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200428235013631.png"  alt="image-20200428235013631"></p>
+<p>没问题！👴无敌！</p>
+<h4 id="MRCTF2020-PixelShooter">[MRCTF2020]PixelShooter</h4>
+<p>发现是一个PixelShooter.apk文件，我记得安卓在swpu的那时候的经验可以节压进行分析，搞一下！</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200429001251969.png"  alt="image-20200429001251969"></p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200429001317547.png"  alt="image-20200429001317547"></p>
+<p>我好像放进ida找到main跳转过去就有flag了 emmmm😂</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200429001516892.png"  alt="image-20200429001516892"></p>
+<h4 id="MRCTF2020-Xor">[MRCTF2020]Xor</h4>
+<p>打开后一个exe文件直接丢进ida</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200429002107607.png"  alt="image-20200429002107607"></p>
+<p>可以看到一个主要逻辑就是xor cmp的位置，直接动态调试呗！</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200429002812188.png"  alt="image-20200429002812188"></p>
+<p>可以看到第一次的al是0，第二次我这次测试是1 那么直接异或呗</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200429003240427.png"  alt="image-20200429003240427"></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">string A = "MSAWB~FXZ:J:`tQJ\"N@ bpdd}8g";</span><br><span class="line">	for (int i = 0;A[i];i++) {</span><br><span class="line">		A[i] = A[i] ^ i;</span><br><span class="line">		printf("%c", A[i]);</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="WUSTCTF2020-level2">[WUSTCTF2020]level2</h4>
+<p>拿到题目有upx直接脱壳</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200429003718890.png"  alt="image-20200429003718890"></p>
+<p>放到ida</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200429003809471.png"  alt="image-20200429003809471"></p>
+<p>迷惑行为🙃，明天我去做一下flare-on的那个题吧</p>
+<h4 id="WUSTCTF2020-level1">[WUSTCTF2020]level1</h4>
+<p>放到ida看一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200429004017511.png"  alt="image-20200429004017511"></p>
+<p>这不会是直接跑一下吧🙃发现不是，直接反过来操作写一下了</p>
+<p><img src="/" class="lazyload" data-src="/2020/04/28/2020-4-28/image-20200429004708722.png"  alt="image-20200429004708722"></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">int main(int argc, char* argv[]) {</span><br><span class="line">	int a[19] = { 198,</span><br><span class="line">232,</span><br><span class="line">816,</span><br><span class="line">200,</span><br><span class="line">1536,</span><br><span class="line">300,</span><br><span class="line">6144,</span><br><span class="line">984,</span><br><span class="line">51200,</span><br><span class="line">570,</span><br><span class="line">92160,</span><br><span class="line">1200,</span><br><span class="line">565248,</span><br><span class="line">756,</span><br><span class="line">1474560,</span><br><span class="line">800,</span><br><span class="line">6291456,</span><br><span class="line">1782,</span><br><span class="line">65536000  </span><br><span class="line">	};</span><br><span class="line">    for (int i = 1; i &lt;= 18; ++i)</span><br><span class="line">    {</span><br><span class="line">        if (i &amp; 1)</span><br><span class="line">            printf("%c\n", (unsigned int)(a[i-1] &gt;&gt; i));</span><br><span class="line">        else</span><br><span class="line">            printf("%c\n", (unsigned int)( a[i-1]/i));</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>👴去看会书去了，今天有点水 没学什么，明天多学点吧！</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>个人笔记</category>
+      </categories>
+  </entry>
+  <entry>
     <title>4.27日笔记 (week 2)</title>
     <url>/2020/04/27/2020-4-27/</url>
     <content><![CDATA[<h2 id="4-27日更新">4.27日更新</h2>
