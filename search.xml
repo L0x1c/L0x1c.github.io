@@ -2,6 +2,63 @@
 <search>
   <entry>
     <title>4.30日笔记 (week 2)</title>
+    <url>/2020/05/01/2020-5-1/</url>
+    <content><![CDATA[<h2 id="5-1日更新">5.1日更新</h2>
+<p>今天是劳动节！好的本可爱不放假，继续看书，最近调整身体，调整了两天，有点身体不太好😭学习！</p>
+<p>今日任务：小黄书+看雪CTF</p>
+<h3 id="步入正题！">步入正题！</h3>
+<h4 id="各类型输出转换——Release版">各类型输出转换——Release版</h4>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//IDA中的参数标识，经过优化后，省去了局部变量，直接使用参数</span><br><span class="line">arg_0 = dword ptr 4</span><br><span class="line">//变量 / 变量 和Debug版相同，此处省略</span><br><span class="line">//......</span><br><span class="line">//变量 / 常量 (常量值为2的幂)和Debug版相同，此处省略</span><br><span class="line">//.....</span><br><span class="line">//变量 / 常量 (常量值为非2的幂)，这里的汇编代码和Debug版的汇编代码差别很大</span><br><span class="line">//将数值 92492493h放到eax中</span><br><span class="line">mov	eax,92492493h</span><br><span class="line">//有符号乘法，用esi乘以eax，esi中保存被除数</span><br><span class="line">imul esi</span><br><span class="line">//edx为扩展的高位</span><br><span class="line">add	edx,esi</span><br><span class="line">//右移2位</span><br><span class="line">sar	edx,2</span><br><span class="line">//结果放回eax</span><br><span class="line">mov	eax,edx</span><br><span class="line">//将eax右移31次</span><br><span class="line">shr	eax，1Fh</span><br><span class="line">//加以右移结果，放入edx中</span><br><span class="line">add	edx,eax</span><br><span class="line">push edx</span><br><span class="line">push offset aNvarTwo7D; "nVarTwo / 7 = %d"</span><br><span class="line">call _printf</span><br><span class="line">//其余代码和Debug版类似，略</span><br><span class="line">//......</span><br></pre></td></tr></tbody></table></figure>
+<p>这个方式有点没看懂，出现了一个大数据0x92492493，我去搞一下数学证明：</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/01/2020-5-1/image-20200501154537929.png"  alt="image-20200501154537929"></p>
+<p>搞几个例子，反推一下吧，这样便于多方面的理解</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">.text:00401000	_main proc near ; CODE XREF: start+AF p</span><br><span class="line">.text:00401000	arg_0 = dword ptr 4</span><br><span class="line">.text:00401000	mov	ecx,[esp+arg_0]</span><br><span class="line">.text:00401004	mov	eax,38E38E39h</span><br><span class="line">.text:00401000  imul ecx	//ecx乘以参数</span><br><span class="line">.text:0040100B	sar	edx,1	//有符号移位</span><br><span class="line">.text:0040100D	mov eax,edx</span><br><span class="line">.text:0040100F	shr	eax,1Fh	//无符号移位</span><br><span class="line">.text:00401012	add	edx,eax</span><br><span class="line">.text:00401014	push edx</span><br><span class="line">.text:00401015	push offset Format ; "%d"</span><br><span class="line">.text:0040101A	call _printf</span><br><span class="line">.text:0040101F	add esp,8</span><br><span class="line">.text:00401022	retn</span><br><span class="line">.text:00401022_main endp</span><br></pre></td></tr></tbody></table></figure>
+<p>看一下我们的.text:00401004位置，是<code>mov eax,38E38E39h</code>，之后做了乘法和移位的操作，最后<code>push edx</code>，乘法指令中，<code>edx</code>存放乘积数据的高4字节，所以直接用<code>edx</code>相当于，将我们的乘积直接右移32位，之后又进行了一次右移1位，那么这里就相当于一个 2^33 的除法，在地址.text:0040100D处，eax得到了ecx的值，然后对eax右移了1F位，对应10进制也就是右移了31位，然后有一个加法，其实这里移位的目的是得到有符号数的符号位，如果结果是正数，那么<code>add edx,eax</code>就是加0，等于什么都没干，如果结果是负数，那么后面的代码直接使用edx作为计算结果，需要对除法的商调整+1，满足向零取，数学证明：</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/01/2020-5-1/image-20200501165014099.png"  alt="image-20200501165014099"></p>
+<p>所以我们可以反推出C代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">printf("%d",argc / 9);</span><br></pre></td></tr></tbody></table></figure>
+<p>总结：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">mov	eax,MagicNumber</span><br><span class="line">imul ...</span><br><span class="line">sar	edx,...</span><br><span class="line">mov	reg,edx</span><br><span class="line">shr	reg,1Fh</span><br><span class="line">add	edx,reg</span><br><span class="line">//之后就直接用edx的值，eax的不用</span><br></pre></td></tr></tbody></table></figure>
+<p>遇到上面你的指令序列的时候，基本可以判定是除法优化后的代码，除法的原型为<code>a/o</code>，<code>imul</code>是表明的有符号计算，操作数是优前的被除数a，右移的总次数确定n的值，用公式<code>o= 2^n/c</code>，将MagicNumber作为c代入公式求我们的除数o的近似值，四舍五入取整，就可以恢复除法原型！</p>
+<p>👴再搞个例子</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">.text:00401080 _main proc near ; CODE xREF: start+AF p</span><br><span class="line">.text:00401080 arg_0 = dword ptr 4</span><br><span class="line">.text:00401080	mov ecx,[esp+arg_0]</span><br><span class="line">.text:00401084	mov eax,24924925h</span><br><span class="line">.text:00401089	mul	ecx</span><br><span class="line">.text:0040108B	sub	ecx,edx</span><br><span class="line">.text:0040108D	shr	ecx,1</span><br><span class="line">.text:0040108F	add	ecx,edx</span><br><span class="line">.text:00401091	shr	ecx,2</span><br><span class="line">.text:00401094	push ecx</span><br><span class="line">.text:00401095	push offset	Format</span><br><span class="line">.text:0040109A	call _printf</span><br><span class="line">.text:0040109F	add	esp,8</span><br><span class="line">.text:004010A2	xor	eax,eax</span><br><span class="line">.text:004010A4	retn</span><br><span class="line">.text:004010A4 _ma in endp</span><br></pre></td></tr></tbody></table></figure>
+<p>我们再去用公式推导一下：</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/01/2020-5-1/image-20200501180545772.png"  alt="image-20200501180545772"></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">printf("nVarTwo / 7 = %d\r\n", argc /7);</span><br></pre></td></tr></tbody></table></figure>
+<p>计算得出MagicNumber后，如果其值超出4字节整数的表达范围，编译器会对其进行调整，如上个例子中的<code>argc/7</code>，计算MagicNumber时，编译器选择 <code>2^35/7</code>，其结果超出了4字节整数的表达范围，所以编译器调整MagicNumber的取值为<code>2^35/7-2^32</code></p>
+<p>公式：<code>a/o = [(a-a*c/2^32)/2 + a*c/2^32]/2^(n-1)</code></p>
+<p>总结：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">mov eax,MagicNumber</span><br><span class="line">//reg表示通用寄存器</span><br><span class="line">mul reg</span><br><span class="line">sub	reg,edx</span><br><span class="line">shr	reg,1</span><br><span class="line">add	reg,edx</span><br><span class="line">shr	reg,A	//这句没有，那么n就是1，否则这里就是n-1的值</span><br></pre></td></tr></tbody></table></figure>
+<p>如果遇到上面的指令序列，基本可以判定出发优化后的代码，其除法原型为a/常量o，mul代表的无符号计算，用公式<code>o = 2^(32+n)/(2^32+c)</code>将MagicNumber作为c值代入公式求解常数除数o，即可恢复除法原型</p>
+<p>那么我们返回去深度分析最开始的代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//IDA中的参数标识，经过优化后，省去了局部变量，直接使用参数</span><br><span class="line">arg_0 = dword ptr 4</span><br><span class="line">//变量 / 变量 和Debug版相同，此处省略</span><br><span class="line">//......</span><br><span class="line">//变量 / 常量 (常量值为2的幂)和Debug版相同，此处省略</span><br><span class="line">//.....</span><br><span class="line">//变量 / 常量 (常量值为非2的幂)，这里的汇编代码和Debug版的汇编代码差别很大</span><br><span class="line">//将数值 92492493h放到eax中</span><br><span class="line">mov	eax,92492493h</span><br><span class="line">//有符号乘法，用esi乘以eax，esi中保存被除数</span><br><span class="line">imul esi</span><br><span class="line">//edx为扩展的高位</span><br><span class="line">add	edx,esi</span><br><span class="line">//右移2位</span><br><span class="line">sar	edx,2</span><br><span class="line">//结果放回eax</span><br><span class="line">mov	eax,edx</span><br><span class="line">//将eax右移31次</span><br><span class="line">shr	eax，1Fh</span><br><span class="line">//加以右移结果，放入edx中</span><br><span class="line">add	edx,eax</span><br><span class="line">push edx</span><br><span class="line">push offset aNvarTwo7D; "nVarTwo / 7 = %d"</span><br><span class="line">call _printf</span><br><span class="line">//其余代码和Debug版类似，略</span><br><span class="line">//......</span><br></pre></td></tr></tbody></table></figure>
+<p>编译器在计算MagicNumber时是作为无符号处理的，而代入除法转换乘法的代码中又是作为有符号乘数处理的，因为有符号的最高位不是数值，而是符号位，所以对应的符号乘法指令是不会让最高位参与数值计算的，这会导致乘数的数学意义和MagicNumber不一致</p>
+<p>暂时停止更新两天吧！明天要打de1ctf 所以要去做题！！嘎嘎嘎！晚安！😋</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>个人笔记</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>4.30日笔记 (week 2)</title>
     <url>/2020/04/30/2020-4-30/</url>
     <content><![CDATA[<h2 id="4-30日更新">4.30日更新</h2>
 <p>😀起来后，对作业没咋学，有点难受，今天把任务完成！奥里给✍</p>
