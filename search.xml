@@ -1,6 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>5.9日笔记 (week 3)</title>
+    <url>/2020/05/09/2020-5-9/</url>
+    <content><![CDATA[<h2 id="5-9日更新">5.9日更新</h2>
+<p>接着昨天的更新的来吧！😡以后一定不熬夜了，现在熬夜熬得身体扛不住，以后早起学习！</p>
+<h3 id="DontEatMe">DontEatMe</h3>
+<p>刚开始有个ZwSetInformationThread的反调试，直接nop了就好了</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/09/2020-5-9/image-20200509135832504.png"  alt="image-20200509135832504"></p>
+<p>继续分析分析逻辑</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/09/2020-5-9/image-20200509150932249.png"  alt="image-20200509150932249"></p>
+<p>这里生成了一个迷宫，直接把迷宫拿出来</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</span><br><span class="line">1 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1</span><br><span class="line">1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1</span><br><span class="line">1 0 1 1 1 1 1 1 1 0 1 1 1 1 1 1</span><br><span class="line">1 0 1 1 1 1 0 0 0 0 * 0 0 1 1 1</span><br><span class="line">1 0 1 1 1 1 0 1 1 1 1 1 0 1 1 1</span><br><span class="line">1 0 1 1 1 1 0 1 1 1 1 1 0 1 1 1</span><br><span class="line">1 0 1 1 1 1 0 0 0 0 1 1 0 1 1 1</span><br><span class="line">1 0 1 1 1 1 1 1 1 0 1 1 0 1 1 1</span><br><span class="line">1 0 1 1 1 1 1 1 1 0 1 1 0 1 1 1</span><br><span class="line">1 0 0 0 0 * 0 0 0 0 1 1 0 1 1 1</span><br><span class="line">1 1 1 1 1 0 1 1 1 1 1 1 0 1 1 1</span><br><span class="line">1 1 1 1 1 0 0 0 0 0 0 0 0 1 1 1</span><br><span class="line">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</span><br><span class="line">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</span><br><span class="line">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</span><br></pre></td></tr></tbody></table></figure>
+<p>初始下标为(10，5)，终点为(4，9)</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/09/2020-5-9/image-20200509152548614.png"  alt="image-20200509152548614"></p>
+<p>直接走一下ddddwwwaaawwwddd 应该是最短路径，然后寻找blowfish算法的key</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/09/2020-5-9/image-20200509155106535.png"  alt="image-20200509155106535">直接去od看一下key</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/09/2020-5-9/image-20200509161930114.png"  alt="image-20200509161930114"></p>
+<p>000F1A01353A3B20</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/09/2020-5-9/image-20200509160654145.png"  alt="image-20200509160654145"></p>
+<p>db824ef8605c5235b4bbacfa2ff8e0875c1a0401b3b63dd7，因为这个BLowfish是对称密码，我们的密文是32位的，所以明文就是32位</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/09/2020-5-9/image-20200509162344052.png"  alt="image-20200509162344052"></p>
+<p><code>RCTF{db824ef8605c5235b4bbacfa2ff8e087}</code></p>
+<h3 id="sourceguardian">sourceguardian</h3>
+<p>这个题打开像是个PHP强混淆，这个阿鹏哥直接给了我文件，(花钱就会让你变得更强，这个强混淆tb一手子)</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">function a($q, $y, $z, $p, $e, $k)</span><br><span class="line">{</span><br><span class="line">    return ($z &gt;&gt; 5 &amp; 134217727 ^ $y &lt;&lt; 2) + ($y &gt;&gt; 3 &amp; 536870911 ^ $z &lt;&lt; 4) ^ ($q ^ $y) + ($k[$p &amp; 3 ^ $e] ^ $z);</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">function verify($str)</span><br><span class="line">{</span><br><span class="line">    if( php_sapi_name() === "phpdbg" ) </span><br><span class="line">    {</span><br><span class="line">        exit( "Sorry but no phpdbg" );</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    if( ini_get("vld.active") == 1 ) </span><br><span class="line">    {</span><br><span class="line">        dir("Sorry but no vld");</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    $v = unpack("V*", $str . str_repeat("", 4 - strlen($str) % 4 &amp; 3));</span><br><span class="line">    $v = array_values($v);</span><br><span class="line">    $v[count($v)] = strlen($str);</span><br><span class="line">    $b = array( 1029560848, 2323109303, 4208702724, 3423862500, 3597800709, 2222997091, 4137082249, 2050017171, 4045896598 );</span><br><span class="line">    $k = array( 1752186684, 1600069744, 1953259880, 1836016479 );</span><br><span class="line">    $n = count($v) - 1;</span><br><span class="line">    $z = $v[$n];</span><br><span class="line">    $q = floor(6 + 52 / ($n + 1));</span><br><span class="line">    $sum = 0;</span><br><span class="line">    while( 0 &lt; $q-- ) </span><br><span class="line">    {</span><br><span class="line">        $sum = $sum + 2654435769 &amp; 4294967295;</span><br><span class="line">        $e = $sum &gt;&gt; 2 &amp; 3;</span><br><span class="line">        $p = 0;</span><br><span class="line">        while( $p &lt; $n ) </span><br><span class="line">        {</span><br><span class="line">            $y = $v[$p + 1];</span><br><span class="line">            $v[$p] = $v[$p] + a($sum, $y, $z, $p, $e, $k) &amp; 4294967295;</span><br><span class="line">            $z = $v[$p];</span><br><span class="line">            $p++;</span><br><span class="line">        }</span><br><span class="line">        $y = $v[0];</span><br><span class="line">        $v[$n] = $v[$n] + a($sum, $y, $z, $p, $e, $k) &amp; 4294967295;</span><br><span class="line">        $z = $v[$n];</span><br><span class="line">    }</span><br><span class="line">    $i = 0;</span><br><span class="line">    while( $i &lt; count($v) ) </span><br><span class="line">    {</span><br><span class="line">        $v[$i] = $v[$i] ^ $k[$i % 4];</span><br><span class="line">        $i++;</span><br><span class="line">    }</span><br><span class="line">    return $v == $b;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>看一下，就是个xxtea，加上一个异或，直接解吧</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdint.h&gt;</span><br><span class="line">#include&lt;iostream&gt;</span><br><span class="line">using namespace std;</span><br><span class="line">#define DELTA 0x9e3779b9</span><br><span class="line">#define MX (((z&gt;&gt;5^y&lt;&lt;2) + (y&gt;&gt;3^z&lt;&lt;4)) ^ ((sum^y) + (key[(p&amp;3)^e] ^ z)))</span><br><span class="line"></span><br><span class="line">void btea(long* v, int n, long* key)</span><br><span class="line">{</span><br><span class="line">    uint32_t y, z, sum;</span><br><span class="line">    unsigned p, rounds, e;</span><br><span class="line">    if (n &gt; 1)            /* Coding Part */</span><br><span class="line">    {</span><br><span class="line">        rounds = 6 + 52 / n;</span><br><span class="line">        sum = 0;</span><br><span class="line">        z = v[n - 1];</span><br><span class="line">        do</span><br><span class="line">        {</span><br><span class="line">            sum += DELTA;</span><br><span class="line">            e = (sum &gt;&gt; 2) &amp; 3;</span><br><span class="line">            for (p = 0; p &lt; n - 1; p++)</span><br><span class="line">            {</span><br><span class="line">                y = v[p + 1];</span><br><span class="line">                z = v[p] += MX;</span><br><span class="line">            }</span><br><span class="line">            y = v[0];</span><br><span class="line">            z = v[n - 1] += MX;</span><br><span class="line">        } while (--rounds);</span><br><span class="line">    }</span><br><span class="line">    else if (n &lt; -1)      /* Decoding Part */</span><br><span class="line">    {</span><br><span class="line">        n = -n;</span><br><span class="line">        rounds = 6 + 52 / n;</span><br><span class="line">        sum = rounds * DELTA;</span><br><span class="line">        y = v[0];</span><br><span class="line">        do</span><br><span class="line">        {</span><br><span class="line">            e = (sum &gt;&gt; 2) &amp; 3;</span><br><span class="line">            for (p = n - 1; p &gt; 0; p--)</span><br><span class="line">            {</span><br><span class="line">                z = v[p - 1];</span><br><span class="line">                y = v[p] -= MX;</span><br><span class="line">            }</span><br><span class="line">            z = v[n - 1];</span><br><span class="line">            y = v[0] -= MX;</span><br><span class="line">            sum -= DELTA;</span><br><span class="line">        } while (--rounds);</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">int main()</span><br><span class="line">{</span><br><span class="line">    long cipher[] = { 1029560848, 2323109303, 4208702724, 3423862500, 3597800709, 2222997091, 4137082249, 2050017171, 4045896598 };</span><br><span class="line">    long key[] = { 1752186684, 1600069744, 1953259880, 1836016479 };</span><br><span class="line">    for (int i = 0; i &lt; 9; i++)</span><br><span class="line">    {</span><br><span class="line">        cipher[i] ^= key[i % 4];</span><br><span class="line">    }</span><br><span class="line">    btea(cipher, -9, key);</span><br><span class="line">    cout &lt;&lt; (char*)cipher &lt;&lt; endl;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p><code>RCTF{h0w_d1d_you_crack_sg11?}</code></p>
+<h3 id="crack">crack</h3>
+<p><img src="/" class="lazyload" data-src="/2020/05/09/2020-5-9/image-20200509194120543.png"  alt="image-20200509194120543"></p>
+<p>打开程序后，看到了路飞！嗯！我喜欢的动漫😍，好啦不多说了，做题，感觉crackme大部分跟看雪的ctf差不多，我直接用od和ida搞一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/09/2020-5-9/image-20200509204254832.png"  alt="image-20200509204254832"></p>
+<p>用ida打开看一下</p>
+<p>算法问题：<a href="https://projecteuler.net/problem=67" target="_blank" rel="noopener">https://projecteuler.net/problem=67</a></p>
+<p>总共有0x200*0x200行数据，每行的前n个元素是金字塔中对应元素，其余的元素根据输入的过程拼接起来变成一个函数</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/09/2020-5-9/image-20200509231541875.png"  alt="image-20200509231541875">在00402762会被调用，相加总和要为0x100758E540F</p>
+<p>这里用到了动态规划，所以我要去认真学习一下了，估计明天的笔记，NO！是后天，明天网鼎杯，大概会写一下wp，写完回来学习动态规划，我去休息啦，晚安！😘</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>个人笔记</category>
+      </categories>
+  </entry>
+  <entry>
     <title>5.8日笔记 (week 3)</title>
     <url>/2020/05/06/2020-5-8/</url>
     <content><![CDATA[<h2 id="5-8日更新">5.8日更新</h2>
@@ -60,7 +120,7 @@
 <p>再把得到的data和0xCC异或</p>
 <p><img src="/" class="lazyload" data-src="/2020/05/06/2020-5-8/image-20200509012432908.png"  alt="image-20200509012432908"></p>
 <p>又用了xxtea</p>
-<p>这里用了点pwn的脚本，俺不太会！呜呜呜，这里直接看了wp，大概原理懂！</p>
+<p>我分析的就是 我们输入账号然后进行xxtea加密，然后password经过data操作后才变成第二个数据，把第二个数据进行异或，放入xxtea然后让他变成最开始的那个数据，这里用了点pwn的脚本，俺不太会！呜呜呜，这里直接看了wp，大概原理懂！</p>
 <p><img src="/" class="lazyload" data-src="/2020/05/06/2020-5-8/image-20200509013504002.png"  alt="image-20200509013504002"></p>
 <h3 id="DontEatMe">DontEatMe</h3>
 <p><img src="/" class="lazyload" data-src="/2020/05/06/2020-5-8/image-20200509014409848.png"  alt="image-20200509014409848"></p>
