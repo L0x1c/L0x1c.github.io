@@ -2,8 +2,11 @@
 <search>
   <entry>
     <title>5.12日笔记 (week 4)</title>
-    <url>/2020/05/12/Untitled/</url>
-    <content><![CDATA[<script>
+    <url>/2020/05/12/2020-5-12/</url>
+    <content><![CDATA[<p>昨天看雪的题太恶心了！实在是做不动了！我是废物！😡 呜呜呜 😭 今天学习angr！奥里给😀</p>
+<h2 id="angr">angr</h2>
+<p>步入正题！科二师傅给我发了挺多的资料，我准备今天都学一下</p>
+<script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
             if (!el.dataset.src) { return; }
