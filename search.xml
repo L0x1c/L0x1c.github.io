@@ -1,6 +1,391 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>5.15日笔记 (week 4)</title>
+    <url>/2020/05/15/2020-5-15/</url>
+    <content><![CDATA[<h2 id="步入正题！">步入正题！</h2>
+<p>开始好好闭关学习了- -，奥里给🤶</p>
+<h2 id="小黄书更新">小黄书更新</h2>
+<p>关系运算和条件跳转的对应</p>
+<table>
+<thead>
+<tr>
+<th>指令助记符</th>
+<th>检查标记位</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JZ</td>
+<td>ZF == 1</td>
+<td>等于0则跳转</td>
+</tr>
+<tr>
+<td>JE</td>
+<td>ZF == 1</td>
+<td>相等则跳转</td>
+</tr>
+<tr>
+<td>JNZ</td>
+<td>ZF == 0</td>
+<td>不等于0则跳转</td>
+</tr>
+<tr>
+<td>JNE</td>
+<td>ZF == 0</td>
+<td>不相等则跳转</td>
+</tr>
+<tr>
+<td>JS</td>
+<td>SF == 1</td>
+<td>符号为负则跳转</td>
+</tr>
+<tr>
+<td>JNS</td>
+<td>SF == 0</td>
+<td>符号为正则跳转</td>
+</tr>
+<tr>
+<td>JP/JPE</td>
+<td>PF == 1</td>
+<td>"1"的个数为偶数则跳转</td>
+</tr>
+<tr>
+<td>JNP/JPO</td>
+<td>PF == 0</td>
+<td>"1"的个数为奇数则跳转</td>
+</tr>
+<tr>
+<td>JO</td>
+<td>OF == 1</td>
+<td>溢出则跳转</td>
+</tr>
+<tr>
+<td>JNO</td>
+<td>OF == 0</td>
+<td>无溢出则跳转</td>
+</tr>
+<tr>
+<td>JC</td>
+<td>CF == 1</td>
+<td>进位则跳转</td>
+</tr>
+<tr>
+<td>JB</td>
+<td>CF == 1</td>
+<td>小于则跳转</td>
+</tr>
+<tr>
+<td>JNAE</td>
+<td>CF == 1</td>
+<td>不大于等于则跳转</td>
+</tr>
+<tr>
+<td>JNC</td>
+<td>CF == 0</td>
+<td>无进位则跳转</td>
+</tr>
+<tr>
+<td>JNB</td>
+<td>CF == 0</td>
+<td>不小于则跳转</td>
+</tr>
+<tr>
+<td>JAE</td>
+<td>CF == 0</td>
+<td>大于则跳转</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>个人笔记</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>网鼎杯CTF——白虎组 (week 4)</title>
+    <url>/2020/05/15/2020-5-14/</url>
+    <content><![CDATA[<p>大概去做了做白虎组的题目，来放松一下心情</p>
+<h2 id="HERO">HERO</h2>
+<p>打开后发现是一个小游戏的功能</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-14/image-20200515120135897.png"  alt="image-20200515120135897"></p>
+<p>我们用ida反编译一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-14/image-20200515120218922.png"  alt="image-20200515120218922"></p>
+<p>可以直接看到向应的逻辑</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-14/image-20200515120237768.png"  alt="image-20200515120237768"></p>
+<p>我们直接改一下这个就可以啦！行动😡</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-14/image-20200515120557577.png"  alt="image-20200515120557577"></p>
+<p>这边F9即可</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-14/image-20200515120630032.png"  alt="image-20200515120630032"></p>
+<h2 id="幸运数字">幸运数字</h2>
+<p>用ida打开</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-14/image-20200515123915504.png"  alt="image-20200515123915504"></p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-14/image-20200515124322019.png"  alt="image-20200515124322019"></p>
+<p>这里就是我们熟知的rsa</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-14/image-20200515124342021.png"  alt="image-20200515124342021"></p>
+<p>这边分析分析应该就会知道是我们常见的rabin算法</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-14/image-20200515124649843.png"  alt="image-20200515124649843"></p>
+<p>所以说只有一个解可以满足答案</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">import gmpy2</span><br><span class="line">cipher = 0x37CFC2B07BF92321BFCEAF6330C667D217BB881B0911A8810D28D9986CA52E2F</span><br><span class="line">p = 170141183460469231731687303715884105757</span><br><span class="line">q = 170141183460469231731687303715884106001</span><br><span class="line">n = p*q</span><br><span class="line">e = 65537</span><br><span class="line">d =gmpy2.invert(e,(p-1)*(q-1))</span><br><span class="line">x=pow(cipher,d,n)</span><br><span class="line">print hex(x)</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># coding=utf-8</span><br><span class="line">import gmpy2</span><br><span class="line">import hashlib</span><br><span class="line">#rsa 0x2a40d7c86b81a63c850a531695b78ca4efc6e3e9d1ad0e83c6e88bfa16694dcb</span><br><span class="line"></span><br><span class="line">p = 170141183460469231731687303715884106303</span><br><span class="line">q = 170141183460469231731687303715884106207</span><br><span class="line">n = p*q</span><br><span class="line">a = 0x2a40d7c86b81a63c850a531695b78ca4efc6e3e9d1ad0e83c6e88bfa16694dcb</span><br><span class="line">a1 = pow(a,(p+1)/4,p)</span><br><span class="line">a2 = pow(a,(q+1)/4,q)</span><br><span class="line">x = gmpy2.invert(p,q)</span><br><span class="line">y = gmpy2.invert(q,p)</span><br><span class="line">z = (y*q*a1+x*p*a2)%n</span><br><span class="line">k = (y*q*a1-x*p*a2)%n</span><br><span class="line"></span><br><span class="line">print hex(-k%n)  #0x41a8107e277c79b0a355d90d5bf08751531a645e6740f8b45f7fc27dc4</span><br><span class="line">print hex(z%n)   #0x3a81660803114d3f8cb533dfb575a5da60c22d9ba76b5a73ffadd04d4bc1f39d</span><br><span class="line">print hex(-y%n)  #0x4000000000000000000000000000020ed6aaaaaaaaaaaaaaaaaaaaaaaaaeddd2</span><br><span class="line">print hex(x%n)  #0x56aaaaaaaaaaaaaaaaaaaaaaaaaaabef</span><br><span class="line"></span><br><span class="line">i = 0x41a8107e277c79b0a355d90d5bf08751531a645e6740f8b45f7fc27dc4</span><br><span class="line">v = i * 8</span><br><span class="line">v = v + 1</span><br><span class="line">sq = gmpy2.iroot(v, 2)</span><br><span class="line">ceshi1 = sq[0] - 1</span><br><span class="line">#16eb1ac49484183cbba17a5451ee90</span><br><span class="line">num = gmpy2.c_div(0x16eb1ac49484183cbba17a5451ee90, 2)</span><br><span class="line">print hex(num)</span><br><span class="line">XH = 1</span><br><span class="line">while(1) :</span><br><span class="line">    XH = XH + 1</span><br><span class="line">    num1 = num</span><br><span class="line">    num1 = num1 * XH</span><br><span class="line">    num1 = num1 / (XH - 1)</span><br><span class="line">    print gmpy2.iroot(num1, 2)[0]</span><br><span class="line">    x = "flag{"+str(gmpy2.iroot(num1, 2)[0]) + "}"</span><br><span class="line">    sha256 = hashlib.sha256()</span><br><span class="line">    x = sha256.update(x.encode('utf-8'))</span><br><span class="line">    k = sha256.hexdigest()</span><br><span class="line">    if k == '0a4b7f6c8baf4b16465975218d547f820a3802972b1512e8e6f704893cdccb2e':</span><br><span class="line">        print (x)</span><br><span class="line">        break</span><br></pre></td></tr></tbody></table></figure>
+<p>这里运用了一个数学的通项公式an = n^2那个</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-14/image-20200515131727382.png"  alt="image-20200515131727382"></p>
+<h2 id="PY">PY</h2>
+<p>拿到文件，大概可以知道这是个PYC的东西，需要解包</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-14/image-20200515132148401.png"  alt="image-20200515132148401"></p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-14/image-20200515132203357.png"  alt="image-20200515132203357"></p>
+<p>我们拿去补一下头部依旧是struct的12字节</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-14/image-20200515132346281.png"  alt="image-20200515132346281"></p>
+<p>拿去网上编译</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#!/usr/bin/env python</span><br><span class="line"># encoding: utf-8</span><br><span class="line"># 如果觉得不错，可以推荐给你的朋友！http://tool.lu/pyc</span><br><span class="line">import rsa</span><br><span class="line">import base64</span><br><span class="line">key1 = rsa.PrivateKey.load_pkcs1(base64.b64decode('LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcVFJQkFBS0NBUUVBcVJUZ0xQU3BuT0ZDQnJvNHR1K1FBWXFhTjI2Uk42TzY1bjBjUURGRy9vQ1NJSU00ClNBeEVWaytiZHpSN2FucVNtZ1l5MEhRWGhDZTM2U2VGZTF0ejlrd0taL3UzRUpvYzVBSzR1NXZ4UW5QOWY1cTYKYVFsbVAvVjJJTXB5NFFRNlBjbUVoNEtkNm81ZWRJUlB2SHd6V0dWS09OQ3BpL0taQ082V0tWYkpXcWh3WGpEQgpsSDFNVURzZ1gyVUM4b3Bodnk5dXIyek9kTlBocElJZHdIc1o5b0ZaWWtaMUx5Q0lRRXRZRmlKam1GUzJFQ1RVCkNvcU9acnQxaU5jNXVhZnFvZlB4eHlPb2wwYVVoVGhiaHE4cEpXL3FPSFdYd0xJbXdtNk96YXFVeks4NEYyY3UKYWRiRE5zeVNvaElHaHYzd0lBVThNSlFnOEthd1Z3ZHBzRWhlSXdJREFRQUJBb0lCQURBazdwUStjbEZtWHF1Vgp1UEoyRWxZdUJpMkVnVHNMbHZ0c1ltL3cyQnM5dHQ0bEh4QjgxYlNSNUYyMEJ2UlJ4STZ3OXlVZCtWZzdDd1lMCnA5bHhOL3JJdWluVHBkUEhYalNhaGNsOTVOdWNOWEZ4T0dVU05SZy9KNHk4dUt0VHpkV3NITjJORnJRa0o4Y2IKcWF5czNOM3RzWTJ0OUtrUndjbUJGUHNJalNNQzB5UkpQVEE4cmNqOFkranV3SHZjbUJPNHVFWXZXeXh0VHR2UQova0RQelBqdTBuakhkR055RytkSDdkeHVEV2Jxb3VZQnRMdzllZGxXdmIydTJ5YnZzTXl0NWZTOWF1a01NUjNoCnBhaDRMcU1LbC9ETTU3cE44Vms0ZTU3WE1zZUJLWm1hcEptcVNnSGdjajRPNWE2R1RvelN1TEVoTmVGY0l2Tm8KWFczTEFHRUNnWWtBc0J0WDNVcFQ3aUcveE5BZDdSWER2MENOY1k1QnNZOGY4NHQ3dGx0U2pjSWdBKy9nUjFMZQpzb2gxY1RRd1RadUYyRTJXL1hHU3orQmJDTVVySHNGWmh1bXV6aTBkbElNV3ZhU0dvSlV1OGpNODBlUjRiVTRyCmdYQnlLZVZqelkzNVlLejQ5TEVBcFRQcTZRYTVQbzhRYkF6czhuVjZtNXhOQkNPc0pQQ29zMGtCclFQaGo5M0cKOFFKNUFQWEpva0UrMmY3NXZlazZNMDdsaGlEUXR6LzRPYWRaZ1MvUVF0eWRLUmg2V3VEeGp3MytXeXc5ZjNUcAp5OXc0RmtLRzhqNVRpd1RzRmdzem94TGo5TmpSUWpqb3cyVFJGLzk3b2NxMGNwY1orMUtsZTI1cEJ3bk9yRDJBCkVpMUVkMGVEV3dJR2gzaFhGRmlRSzhTOG5remZkNGFMa1ZxK1V3S0JpRXRMSllIamFZY0N2dTd5M0JpbG1ZK0gKbGZIYkZKTkowaXRhazRZZi9XZkdlOUd6R1h6bEhYblBoZ2JrZlZKeEVBU3ZCOE5NYjZ5WkM5THdHY09JZnpLRApiczJQMUhuT29rWnF0WFNxMCt1UnBJdEkxNFJFUzYySDJnZTNuN2dlMzJSS0VCYnVKb3g3YWhBL1k2d3ZscUhiCjFPTEUvNnJRWk0xRVF6RjRBMmpENmdlREJVbHhWTUVDZVFDQjcyUmRoYktNL3M0TSsvMmYyZXI4Y2hwT01SV1oKaU5Hb3l6cHRrby9sSnRuZ1RSTkpYSXdxYVNCMldCcXpndHNSdEhGZnpaNlNyWlJCdTd5Y0FmS3dwSCtUd2tsNQpoS2hoSWFTNG1vaHhwUVNkL21td1JzbTN2NUNDdXEvaFNtNmNXYTdFOVZxc25heGQzV21tQ2VqTnp0MUxQWUZNCkxZMENnWWdKUHhpVTVraGs5cHB6TVAwdWU0clA0Z2YvTENldEdmQjlXMkIyQU03eW9VM2VsMWlCSEJqOEZ3UFQKQUhKUWtCeTNYZEh3SUpGTUV1RUZSSFFzcUFkSTlYVDBzL2V0QTg1Y3grQjhjUmt3bnFHakFseW1PdmJNOVNrMgptMnRwRi8rYm56ZVhNdFA3c0ZoR3NHOXJ5SEZ6UFNLY3NDSDhXWWx0Y1pTSlNDZHRTK21qblAwelArSjMKLS0tLS1FTkQgUlNBIFBSSVZBVEUgS0VZLS0tLS0K'))</span><br><span class="line">key2 = rsa.PublicKey.load_pkcs1(base64.b64decode('LS0tLS1CRUdJTiBSU0EgUFVCTElDIEtFWS0tLS0tCk1JSUJDZ0tDQVFFQXFSVGdMUFNwbk9GQ0JybzR0dStRQVlxYU4yNlJONk82NW4wY1FERkcvb0NTSUlNNFNBeEUKVmsrYmR6UjdhbnFTbWdZeTBIUVhoQ2UzNlNlRmUxdHo5a3dLWi91M0VKb2M1QUs0dTV2eFFuUDlmNXE2YVFsbQpQL1YySU1weTRRUTZQY21FaDRLZDZvNWVkSVJQdkh3eldHVktPTkNwaS9LWkNPNldLVmJKV3Fod1hqREJsSDFNClVEc2dYMlVDOG9waHZ5OXVyMnpPZE5QaHBJSWR3SHNaOW9GWllrWjFMeUNJUUV0WUZpSmptRlMyRUNUVUNvcU8KWnJ0MWlOYzV1YWZxb2ZQeHh5T29sMGFVaFRoYmhxOHBKVy9xT0hXWHdMSW13bTZPemFxVXpLODRGMmN1YWRiRApOc3lTb2hJR2h2M3dJQVU4TUpRZzhLYXdWd2Rwc0VoZUl3SURBUUFCCi0tLS0tRU5EIFJTQSBQVUJMSUMgS0VZLS0tLS0K'))</span><br><span class="line"></span><br><span class="line">def encrypt1(message):</span><br><span class="line">    crypto_text = rsa.encrypt(message.encode(), key2)</span><br><span class="line">    return crypto_text</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def decrypt1(message):</span><br><span class="line">    message_str = rsa.decrypt(message, key1).decode()</span><br><span class="line">    return message_str</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def encrypt2(tips, key):</span><br><span class="line">    ltips = len(tips)</span><br><span class="line">    lkey = len(key)</span><br><span class="line">    secret = []</span><br><span class="line">    num = 0</span><br><span class="line">    for each in tips:</span><br><span class="line">        if num &gt;= lkey:</span><br><span class="line">            num = num % lkey</span><br><span class="line">        secret.append(chr(ord(each) ^ ord(key[num])))</span><br><span class="line">        num += 1</span><br><span class="line">    </span><br><span class="line">    return base64.b64encode(''.join(secret).encode()).decode()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def decrypt2(secret, key):</span><br><span class="line">    tips = base64.b64decode(secret.encode()).decode()</span><br><span class="line">    ltips = len(tips)</span><br><span class="line">    lkey = len(key)</span><br><span class="line">    secret = []</span><br><span class="line">    num = 0</span><br><span class="line">    for each in tips:</span><br><span class="line">        if num &gt;= lkey:</span><br><span class="line">            num = num % lkey</span><br><span class="line">        secret.append(chr(ord(each) ^ ord(key[num])))</span><br><span class="line">        num += 1</span><br><span class="line">    </span><br><span class="line">    return ''.join(secret)</span><br><span class="line"></span><br><span class="line">flag = 'IAMrG1EOPkM5NRI1cChQDxEcGDZMURptPzgHJHUiN0ASDgUYUB4LGQMUGAtLCQcJJywcFmddNno/PBtQbiMWNxsGLiFuLwpiFlkyP084Ng0lKj8GUBMXcwEXPTJrRDMdNwMiHVkCBFklHgIAWQwgCz8YQhp6E1xUHgUELxMtSh0xXzxBEisbUyYGOx1DBBZWPg1CXFkvJEcxO0ADeBwzChIOQkdwXQRpQCJHCQsaFE4CIjMDcwswTBw4BS9mLVMLLDs8HVgeQkscGBEBFSpQFQQgPTVRAUpvHyAiV1oPE0kyADpDbF8AbyErBjNkPh9PHiY7O1ZaGBADMB0PEVwdCxI+MCcXARZiPhwfH1IfKitGOF42FV8FTxwqPzBPAVUUOAEKAHEEP2QZGjQVV1oIS0QBJgBDLx1jEAsWKGk5Nw03MVgmWSE4Qy5LEghoHDY+OQ9dXE44Th0='</span><br><span class="line">key = 'this is key'</span><br><span class="line"></span><br><span class="line">try:</span><br><span class="line">    result = input('please input key: ')</span><br><span class="line">    if result == decrypt2('AAAAAAAAAAAfFwwRSAIWWQ==', key):</span><br><span class="line">        print(decrypt1(base64.b64decode(decrypt2(flag, result))))</span><br><span class="line">    elif result == key:</span><br><span class="line">        print('flag{0e26d898-b454-43de-9c87-eb3d122186bc}')</span><br><span class="line">    else:</span><br><span class="line">        print('key is error.')</span><br><span class="line">except Exception:</span><br><span class="line">    None</span><br><span class="line">    e = None</span><br><span class="line">    None</span><br><span class="line">    </span><br><span class="line">    try:</span><br><span class="line">        pass</span><br><span class="line">    finally:</span><br><span class="line">        e = None</span><br><span class="line">        del e</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import rsa</span><br><span class="line">import base64</span><br><span class="line">key1 = rsa.PrivateKey.load_pkcs1(base64.b64decode('LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcVFJQkFBS0NBUUVBcVJUZ0xQU3BuT0ZDQnJvNHR1K1FBWXFhTjI2Uk42TzY1bjBjUURGRy9vQ1NJSU00ClNBeEVWaytiZHpSN2FucVNtZ1l5MEhRWGhDZTM2U2VGZTF0ejlrd0taL3UzRUpvYzVBSzR1NXZ4UW5QOWY1cTYKYVFsbVAvVjJJTXB5NFFRNlBjbUVoNEtkNm81ZWRJUlB2SHd6V0dWS09OQ3BpL0taQ082V0tWYkpXcWh3WGpEQgpsSDFNVURzZ1gyVUM4b3Bodnk5dXIyek9kTlBocElJZHdIc1o5b0ZaWWtaMUx5Q0lRRXRZRmlKam1GUzJFQ1RVCkNvcU9acnQxaU5jNXVhZnFvZlB4eHlPb2wwYVVoVGhiaHE4cEpXL3FPSFdYd0xJbXdtNk96YXFVeks4NEYyY3UKYWRiRE5zeVNvaElHaHYzd0lBVThNSlFnOEthd1Z3ZHBzRWhlSXdJREFRQUJBb0lCQURBazdwUStjbEZtWHF1Vgp1UEoyRWxZdUJpMkVnVHNMbHZ0c1ltL3cyQnM5dHQ0bEh4QjgxYlNSNUYyMEJ2UlJ4STZ3OXlVZCtWZzdDd1lMCnA5bHhOL3JJdWluVHBkUEhYalNhaGNsOTVOdWNOWEZ4T0dVU05SZy9KNHk4dUt0VHpkV3NITjJORnJRa0o4Y2IKcWF5czNOM3RzWTJ0OUtrUndjbUJGUHNJalNNQzB5UkpQVEE4cmNqOFkranV3SHZjbUJPNHVFWXZXeXh0VHR2UQova0RQelBqdTBuakhkR055RytkSDdkeHVEV2Jxb3VZQnRMdzllZGxXdmIydTJ5YnZzTXl0NWZTOWF1a01NUjNoCnBhaDRMcU1LbC9ETTU3cE44Vms0ZTU3WE1zZUJLWm1hcEptcVNnSGdjajRPNWE2R1RvelN1TEVoTmVGY0l2Tm8KWFczTEFHRUNnWWtBc0J0WDNVcFQ3aUcveE5BZDdSWER2MENOY1k1QnNZOGY4NHQ3dGx0U2pjSWdBKy9nUjFMZQpzb2gxY1RRd1RadUYyRTJXL1hHU3orQmJDTVVySHNGWmh1bXV6aTBkbElNV3ZhU0dvSlV1OGpNODBlUjRiVTRyCmdYQnlLZVZqelkzNVlLejQ5TEVBcFRQcTZRYTVQbzhRYkF6czhuVjZtNXhOQkNPc0pQQ29zMGtCclFQaGo5M0cKOFFKNUFQWEpva0UrMmY3NXZlazZNMDdsaGlEUXR6LzRPYWRaZ1MvUVF0eWRLUmg2V3VEeGp3MytXeXc5ZjNUcAp5OXc0RmtLRzhqNVRpd1RzRmdzem94TGo5TmpSUWpqb3cyVFJGLzk3b2NxMGNwY1orMUtsZTI1cEJ3bk9yRDJBCkVpMUVkMGVEV3dJR2gzaFhGRmlRSzhTOG5remZkNGFMa1ZxK1V3S0JpRXRMSllIamFZY0N2dTd5M0JpbG1ZK0gKbGZIYkZKTkowaXRhazRZZi9XZkdlOUd6R1h6bEhYblBoZ2JrZlZKeEVBU3ZCOE5NYjZ5WkM5THdHY09JZnpLRApiczJQMUhuT29rWnF0WFNxMCt1UnBJdEkxNFJFUzYySDJnZTNuN2dlMzJSS0VCYnVKb3g3YWhBL1k2d3ZscUhiCjFPTEUvNnJRWk0xRVF6RjRBMmpENmdlREJVbHhWTUVDZVFDQjcyUmRoYktNL3M0TSsvMmYyZXI4Y2hwT01SV1oKaU5Hb3l6cHRrby9sSnRuZ1RSTkpYSXdxYVNCMldCcXpndHNSdEhGZnpaNlNyWlJCdTd5Y0FmS3dwSCtUd2tsNQpoS2hoSWFTNG1vaHhwUVNkL21td1JzbTN2NUNDdXEvaFNtNmNXYTdFOVZxc25heGQzV21tQ2VqTnp0MUxQWUZNCkxZMENnWWdKUHhpVTVraGs5cHB6TVAwdWU0clA0Z2YvTENldEdmQjlXMkIyQU03eW9VM2VsMWlCSEJqOEZ3UFQKQUhKUWtCeTNYZEh3SUpGTUV1RUZSSFFzcUFkSTlYVDBzL2V0QTg1Y3grQjhjUmt3bnFHakFseW1PdmJNOVNrMgptMnRwRi8rYm56ZVhNdFA3c0ZoR3NHOXJ5SEZ6UFNLY3NDSDhXWWx0Y1pTSlNDZHRTK21qblAwelArSjMKLS0tLS1FTkQgUlNBIFBSSVZBVEUgS0VZLS0tLS0K'))</span><br><span class="line">key2 = rsa.PublicKey.load_pkcs1(base64.b64decode('LS0tLS1CRUdJTiBSU0EgUFVCTElDIEtFWS0tLS0tCk1JSUJDZ0tDQVFFQXFSVGdMUFNwbk9GQ0JybzR0dStRQVlxYU4yNlJONk82NW4wY1FERkcvb0NTSUlNNFNBeEUKVmsrYmR6UjdhbnFTbWdZeTBIUVhoQ2UzNlNlRmUxdHo5a3dLWi91M0VKb2M1QUs0dTV2eFFuUDlmNXE2YVFsbQpQL1YySU1weTRRUTZQY21FaDRLZDZvNWVkSVJQdkh3eldHVktPTkNwaS9LWkNPNldLVmJKV3Fod1hqREJsSDFNClVEc2dYMlVDOG9waHZ5OXVyMnpPZE5QaHBJSWR3SHNaOW9GWllrWjFMeUNJUUV0WUZpSmptRlMyRUNUVUNvcU8KWnJ0MWlOYzV1YWZxb2ZQeHh5T29sMGFVaFRoYmhxOHBKVy9xT0hXWHdMSW13bTZPemFxVXpLODRGMmN1YWRiRApOc3lTb2hJR2h2M3dJQVU4TUpRZzhLYXdWd2Rwc0VoZUl3SURBUUFCCi0tLS0tRU5EIFJTQSBQVUJMSUMgS0VZLS0tLS0K'))</span><br><span class="line"></span><br><span class="line">def encrypt1(message):</span><br><span class="line">    crypto_text = rsa.encrypt(message.encode(), key2)</span><br><span class="line">    return crypto_text</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def decrypt1(message):</span><br><span class="line">    message_str = rsa.decrypt(message, key1).decode()</span><br><span class="line">    return message_str</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def encrypt2(tips, key):</span><br><span class="line">    ltips = len(tips)</span><br><span class="line">    lkey = len(key)</span><br><span class="line">    secret = []</span><br><span class="line">    num = 0</span><br><span class="line">    for each in tips:</span><br><span class="line">        if num &gt;= lkey:</span><br><span class="line">            num = num % lkey</span><br><span class="line">        secret.append(chr(ord(each) ^ ord(key[num])))</span><br><span class="line">        num += 1</span><br><span class="line">    </span><br><span class="line">    return base64.b64encode(''.join(secret).encode()).decode()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def decrypt2(secret, key):</span><br><span class="line">    tips = base64.b64decode(secret.encode()).decode()</span><br><span class="line">    ltips = len(tips)</span><br><span class="line">    lkey = len(key)</span><br><span class="line">    secret = []</span><br><span class="line">    num = 0</span><br><span class="line">    for each in tips:</span><br><span class="line">        if num &gt;= lkey:</span><br><span class="line">            num = num % lkey</span><br><span class="line">        secret.append(chr(ord(each) ^ ord(key[num])))</span><br><span class="line">        num += 1</span><br><span class="line">    </span><br><span class="line">    return ''.join(secret)</span><br><span class="line"></span><br><span class="line">flag = 'IAMrG1EOPkM5NRI1cChQDxEcGDZMURptPzgHJHUiN0ASDgUYUB4LGQMUGAtLCQcJJywcFmddNno/PBtQbiMWNxsGLiFuLwpiFlkyP084Ng0lKj8GUBMXcwEXPTJrRDMdNwMiHVkCBFklHgIAWQwgCz8YQhp6E1xUHgUELxMtSh0xXzxBEisbUyYGOx1DBBZWPg1CXFkvJEcxO0ADeBwzChIOQkdwXQRpQCJHCQsaFE4CIjMDcwswTBw4BS9mLVMLLDs8HVgeQkscGBEBFSpQFQQgPTVRAUpvHyAiV1oPE0kyADpDbF8AbyErBjNkPh9PHiY7O1ZaGBADMB0PEVwdCxI+MCcXARZiPhwfH1IfKitGOF42FV8FTxwqPzBPAVUUOAEKAHEEP2QZGjQVV1oIS0QBJgBDLx1jEAsWKGk5Nw03MVgmWSE4Qy5LEghoHDY+OQ9dXE44Th0='</span><br><span class="line">key = 'this is key'</span><br><span class="line"></span><br><span class="line">try:</span><br><span class="line">    result = input('please input key: ')</span><br><span class="line">    if result == decrypt2('AAAAAAAAAAAfFwwRSAIWWQ==', key):</span><br><span class="line">        print(decrypt1(base64.b64decode(decrypt2(flag, result))))</span><br><span class="line">    elif result == key:</span><br><span class="line">        print('flag{0e26d898-b454-43de-9c87-eb3d122186bc}')</span><br><span class="line">    else:</span><br><span class="line">        print('key is error.')</span><br><span class="line">except Exception:</span><br><span class="line">    None</span><br><span class="line">    e = None</span><br><span class="line">    None</span><br><span class="line">    </span><br><span class="line">    try:</span><br><span class="line">        pass</span><br><span class="line">    finally:</span><br><span class="line">        e = None</span><br><span class="line">        del e</span><br></pre></td></tr></tbody></table></figure>
+<p>可以看到逻辑</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-14/image-20200515132554479.png"  alt="image-20200515132554479"></p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>个人笔记</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>5.13日笔记 (week 4)</title>
+    <url>/2020/05/13/2020-5-13/</url>
+    <content><![CDATA[<h2 id="步入主题">步入主题</h2>
+<p>接着昨天来吧，心态不好的昨天度过了后，今天继续更新吧！昨天大概说到了溢出的地方</p>
+<h2 id="小黄书更新">小黄书更新</h2>
+<ul>
+<li>
+<p>进位</p>
+<p>无符号超出存储范围叫做进位，因为没有符号位，不会破坏数据，而多出的1位数据在进位标志为CF保存，数据产生了进位，只是进位后的1位数据1不在自身的存储空间，而在标志的CF位的位置，通过观察CF位来判断无符号的进位情况</p>
+</li>
+<li>
+<p>溢出</p>
+<p>有符号数超过存储的范围叫做溢出，因为数据进位，从而破坏了有符号的最高位——符号位，只有有符号数才有符号位，针对有符号数，可以查看溢出标志位OF，从而检查数据是否溢出</p>
+</li>
+</ul>
+<h3 id="自增和自减">自增和自减</h3>
+<p>vc6.0 使用 ++ – 来实现自增自减的操作，一般形式分为两种，一种为自增运算符在语句块之后，另一种是自增运算符在语句块之前，如果在之前，先执行自增自减，在执行语句块，如果在之后，先执行语句块在自增自减，直接看汇编代码吧！</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//自增自减代码</span><br><span class="line">//C++源码说明:除法运算</span><br><span class="line">//变量定义并出初始化</span><br><span class="line">int nvarOne = argc;</span><br><span class="line">int nvarTwo = argc;</span><br><span class="line">//变量后缀自增参与表达式运算</span><br><span class="line">nvarTwo = 5 + (nvarOne++);</span><br><span class="line">//变量前缀自增参与表达式运算</span><br><span class="line">nvarTwo = 5 + (++nvarOne);</span><br><span class="line">//变量后缀自减参与表达式运算</span><br><span class="line">nvarone = 5 + (nvarTwo--);</span><br><span class="line">//变量前缀自减参与表达式运算</span><br><span class="line">nvarone = 5 + (--nvarTwo);</span><br><span class="line"></span><br><span class="line">//c++源码对应汇编</span><br><span class="line">//变量对应初始化</span><br><span class="line"></span><br><span class="line">//后缀自增运算</span><br><span class="line">nvarTwo = 5 + (nvarTwo++);</span><br><span class="line">//取出变量nvarOne，保存在edx中</span><br><span class="line">0040BA34	mov	edx,dword ptr [ebp-4]</span><br><span class="line">//讲edx执行加等于5</span><br><span class="line">0040BA37	add	edx,5</span><br><span class="line">//讲edx赋值给变量nvarTwo，可以看到没有对变量nvarOne执行自增操作</span><br><span class="line">0040BA3A	mov	dword ptr [ebp-8],edx</span><br><span class="line">//再次取出变量nvarOne数据存入eax中</span><br><span class="line">0040BA3D	mov	eax,dword ptr [ebp-4]</span><br><span class="line">//执行eax加等于1</span><br><span class="line">0040BA40	add	eax,1</span><br><span class="line">将eax赋值给变量nvarOne,等同于对变量nvarOne执行自增1操作</span><br><span class="line">0040BA43	mov	dword ptr [ebp-4],ecx</span><br><span class="line"></span><br><span class="line">//c++源码对比，前缀自增运算</span><br><span class="line">nVarTwo = 5 + (++nvarOne);</span><br><span class="line">//取出变量nvarOne数据放入ecx中</span><br><span class="line">0040BA46	mov	ecx,dword ptr [ebp-4]</span><br><span class="line">//对ecx执行加等于1的操作</span><br><span class="line">0040BA49	add	ecx,1</span><br><span class="line">//将ecx赋值给变量nvarOne，完成自增1操作</span><br><span class="line">0040BA4C	mov	dword ptr [ebp-4],ecx</span><br><span class="line">//取出变量nvarOne放到edx中</span><br><span class="line">0040BA4F	mov	edx,dword ptr [ebp-4]</span><br><span class="line">//对edx执行加等于5</span><br><span class="line">0040BA52	add	edx,5</span><br><span class="line">//将结果edx赋值给变量nvarTwo</span><br><span class="line">0040BA55	mov	dword ptr [ebp-8],edx</span><br><span class="line">//自增和自减差不多相同，add替换成sub就可</span><br></pre></td></tr></tbody></table></figure>
+<p>上面的汇编可以看出来，他们会把操作分离，nVarTwo = 5 + (nVarOne++) 会分解 nVarTwo = 5 + nVarOne，以及nVarOne +=1，同理，++在前的时候，两个算术表达式替换位置即可</p>
+<h3 id="关系运算和逻辑运算">关系运算和逻辑运算</h3>
+<p>关系运算用于判断两者之间的关系，大部分什么我就不说了，这里我只能说与非门牛逼，万能运算</p>
+<ul>
+<li>或运算：比较运算符 || 有一个值为真，就是真，如果是假，则返回假</li>
+<li>与运算：比较运算符&amp;&amp; 如果有一个为假就是假，都为真就是真</li>
+<li>非运算：改变运算符！真就是假，假就是真</li>
+</ul>
+<h3 id="关系运算和条件跳转的对应">关系运算和条件跳转的对应</h3>
+<table>
+<thead>
+<tr>
+<th>指令助记符</th>
+<th>检查标记位</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JZ</td>
+<td>ZF == 1</td>
+<td>等于0则跳转</td>
+</tr>
+<tr>
+<td>JE</td>
+<td>ZF == 1</td>
+<td>相等则跳转</td>
+</tr>
+<tr>
+<td>JNZ</td>
+<td>ZF == 0</td>
+<td>不等于0则跳转</td>
+</tr>
+<tr>
+<td>JNE</td>
+<td>ZF == 0</td>
+<td>不相等则跳转</td>
+</tr>
+<tr>
+<td>JS</td>
+<td>SF == 1</td>
+<td>符号为负则跳转</td>
+</tr>
+<tr>
+<td>JNS</td>
+<td>SF == 0</td>
+<td>符号为正则跳转</td>
+</tr>
+<tr>
+<td>JP/JPE</td>
+<td>PF == 1</td>
+<td>"1"的个数为偶数则跳转</td>
+</tr>
+<tr>
+<td>JNP/JPO</td>
+<td>PF == 0</td>
+<td>"1"的个数为奇数则跳转</td>
+</tr>
+<tr>
+<td>JO</td>
+<td>OF == 1</td>
+<td>溢出则跳转</td>
+</tr>
+<tr>
+<td>JNO</td>
+<td>OF == 0</td>
+<td>无溢出则跳转</td>
+</tr>
+<tr>
+<td>JC</td>
+<td>CF == 1</td>
+<td>进位则跳转</td>
+</tr>
+<tr>
+<td>JB</td>
+<td>CF == 1</td>
+<td>小于则跳转</td>
+</tr>
+<tr>
+<td>JNAE</td>
+<td>CF == 1</td>
+<td>不大于等于则跳转</td>
+</tr>
+<tr>
+<td>JNC</td>
+<td>CF == 0</td>
+<td>无进位则跳转</td>
+</tr>
+<tr>
+<td>JNB</td>
+<td>CF == 0</td>
+<td>不小于则跳转</td>
+</tr>
+<tr>
+<td>JAE</td>
+<td>CF == 0</td>
+<td>大于则跳转</td>
+</tr>
+</tbody>
+</table>
+<p>好的 吃饭喝酒去了- -！鸽了！😂</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>个人笔记</category>
+      </categories>
+  </entry>
+  <entry>
     <title>5.12日笔记 (week 4)</title>
     <url>/2020/05/12/2020-5-12/</url>
     <content><![CDATA[<p>昨天看雪的题太恶心了！实在是做不动了！我是废物！😡 呜呜呜 😭 今天学习angr！奥里给😀</p>
@@ -180,7 +565,7 @@
       </categories>
   </entry>
   <entry>
-    <title>网鼎杯CTF (week 3)</title>
+    <title>网鼎杯CTF——青龙组 (week 3)</title>
     <url>/2020/05/10/2020-5-10/</url>
     <content><![CDATA[<h2 id="网鼎杯">网鼎杯</h2>
 <h3 id="bang">bang</h3>
