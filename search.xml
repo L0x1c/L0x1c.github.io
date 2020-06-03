@@ -1,163 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>5.15日笔记 (week 4)</title>
-    <url>/2020/05/15/2020-5-15/</url>
-    <content><![CDATA[<h2 id="步入正题！">步入正题！</h2>
-<p>开始好好闭关学习了- -，奥里给🤶</p>
-<h2 id="小黄书更新">小黄书更新</h2>
-<p>关系运算和条件跳转的对应</p>
-<table>
-<thead>
-<tr>
-<th>指令助记符</th>
-<th>检查标记位</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>JZ</td>
-<td>ZF == 1</td>
-<td>等于0则跳转</td>
-</tr>
-<tr>
-<td>JE</td>
-<td>ZF == 1</td>
-<td>相等则跳转</td>
-</tr>
-<tr>
-<td>JNZ</td>
-<td>ZF == 0</td>
-<td>不等于0则跳转</td>
-</tr>
-<tr>
-<td>JNE</td>
-<td>ZF == 0</td>
-<td>不相等则跳转</td>
-</tr>
-<tr>
-<td>JS</td>
-<td>SF == 1</td>
-<td>符号为负则跳转</td>
-</tr>
-<tr>
-<td>JNS</td>
-<td>SF == 0</td>
-<td>符号为正则跳转</td>
-</tr>
-<tr>
-<td>JP/JPE</td>
-<td>PF == 1</td>
-<td>"1"的个数为偶数则跳转</td>
-</tr>
-<tr>
-<td>JNP/JPO</td>
-<td>PF == 0</td>
-<td>"1"的个数为奇数则跳转</td>
-</tr>
-<tr>
-<td>JO</td>
-<td>OF == 1</td>
-<td>溢出则跳转</td>
-</tr>
-<tr>
-<td>JNO</td>
-<td>OF == 0</td>
-<td>无溢出则跳转</td>
-</tr>
-<tr>
-<td>JC</td>
-<td>CF == 1</td>
-<td>进位则跳转</td>
-</tr>
-<tr>
-<td>JB</td>
-<td>CF == 1</td>
-<td>小于则跳转</td>
-</tr>
-<tr>
-<td>JNAE</td>
-<td>CF == 1</td>
-<td>不大于等于则跳转</td>
-</tr>
-<tr>
-<td>JNC</td>
-<td>CF == 0</td>
-<td>无进位则跳转</td>
-</tr>
-<tr>
-<td>JNB</td>
-<td>CF == 0</td>
-<td>不小于则跳转</td>
-</tr>
-<tr>
-<td>JAE</td>
-<td>CF == 0</td>
-<td>大于则跳转</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
+    <title>RCTF WP (week 7)</title>
+    <url>/2020/06/03/2020-6-03/</url>
+    <content><![CDATA[<h2 id="6-3日更新">6.3日更新</h2>
+<p>5.30号到6.1号都进行了RCTF的比赛，逆向小分队，一共做出5道，差一道题ak，W&amp;M排行第4</p>
+<h3 id="cipher">cipher</h3>
+<p>拿到程序后用 ghrdia 反编译一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03/image-20200603085224992.png"  alt="image-20200603085224992"></p>
+<p>看到了随机数的位置，srand那么后面一定就有地方rand取出来，这里对另一个文件的时间戳进行的取的随机数，进行后，进行cipher，我们跟进去看一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03/image-20200603085431792.png"  alt="image-20200603085431792"></p>
+<p>我们看到puParm2这个变量，进行随机数的一个取char类型，也就是1Byte的数据量，那么mips64架构这里是大端序，c语言是小端序，那么假设一个是 0x11 0x22 一个char key[16] ，那么就应该是0x1122000000000000，然后写脚本，这里祥哥帮了帮忙</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;stdlib.h&gt;</span><br><span class="line">#include&lt;time.h&gt;</span><br><span class="line"></span><br><span class="line">#define ull unsigned long long</span><br><span class="line"></span><br><span class="line">ull ror(ull a, int b) {</span><br><span class="line">    return (a &gt;&gt; b) + (a &lt;&lt; (0x40 - b));</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">ull rol(ull a, int b) {</span><br><span class="line">    return (a &lt;&lt; b) + (a &gt;&gt; (0x40 - b));</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">void encrypt(ull * output, ull * input, ull * key) {</span><br><span class="line">    ull s1, s2, s3, s4;</span><br><span class="line"></span><br><span class="line">    s1 = key[1];</span><br><span class="line">    s2 = key[0];</span><br><span class="line"></span><br><span class="line">    s4 = input[0];</span><br><span class="line">    s3 = input[1];</span><br><span class="line"></span><br><span class="line">    s3 = ror(s3, 8) + s4 ^ s2;</span><br><span class="line">    s4 = rol(s4, 3) ^ s3;</span><br><span class="line"></span><br><span class="line">    for (int i = 0; i &lt; 0x1f; i++) {</span><br><span class="line">        s1 = ror(s1, 8) + s2 ^ (ull)i;</span><br><span class="line">        s2 = rol(s2, 3) ^ s1;</span><br><span class="line">        s3 = ror(s3, 8) + s4 ^ s2;</span><br><span class="line">        s4 = rol(s4, 3) ^ s3;</span><br><span class="line">    }</span><br><span class="line">    output[0] = s4;</span><br><span class="line">    output[1] = s3;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">void decrypt(ull * msg, ull * cipher, ull * key) {</span><br><span class="line">    ull s1, s2, s3, s4;</span><br><span class="line"></span><br><span class="line">    s4 = cipher[0];</span><br><span class="line">    s3 = cipher[1];</span><br><span class="line"></span><br><span class="line">    s1 = key[1];</span><br><span class="line">    s2 = key[0];</span><br><span class="line"></span><br><span class="line">    for (int i = 0; i &lt; 0x1f; i++) {</span><br><span class="line">        s1 = ror(s1, 8) + s2 ^ (ull)i;</span><br><span class="line">        s2 = rol(s2, 3) ^ s1;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    for (int i = 0x1f-1; i &gt;=0; i--) {</span><br><span class="line">        s4 = ror(s4 ^ s3, 3);</span><br><span class="line">        s3 = rol((s3 ^ s2) - s4, 8);</span><br><span class="line">        s2 = ror(s2 ^ s1, 3);</span><br><span class="line">        s1 = rol((s1 ^ (ull)i) - s2, 8);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    s4 = ror(s4 ^ s3, 3);</span><br><span class="line">    s3 = rol( (s3 ^ s2) - s4, 8);</span><br><span class="line">    msg[0] = s4;</span><br><span class="line">    msg[1] = s3;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">void test() {</span><br><span class="line"></span><br><span class="line">    ull input[2] = {</span><br><span class="line">        11238374476513621386LLu,</span><br><span class="line">        11791438470581322078LLu</span><br><span class="line">    };</span><br><span class="line"></span><br><span class="line">    ull key[2] = {</span><br><span class="line">        18046502099429878359LLu,</span><br><span class="line">        11630413863397426168LLu</span><br><span class="line">    };</span><br><span class="line"></span><br><span class="line">    ull output[2] = {0};</span><br><span class="line">    ull decrypted[2] = {0};</span><br><span class="line"></span><br><span class="line">    encrypt(output, input, key);</span><br><span class="line"></span><br><span class="line">    printf("%llu\n%llu\n", output[0], output[1]);</span><br><span class="line">    // 5456981390149708428 10686201289862117679</span><br><span class="line"></span><br><span class="line">    decrypt(decrypted, output, key);</span><br><span class="line">    printf("%llu\n%llu\n", decrypted[0], decrypted[1]);</span><br><span class="line">    // 11238374476513621386 11791438470581322078</span><br><span class="line">} // ok</span><br><span class="line"></span><br><span class="line">int main() {</span><br><span class="line"></span><br><span class="line">    ull msg[2] = {0};</span><br><span class="line">    ull key[2] = {0};</span><br><span class="line"></span><br><span class="line">    ull cipher[3][2] = {</span><br><span class="line">        {</span><br><span class="line">            0x2a00f82be11d77c1LLu,</span><br><span class="line">            0xc3b171fc23d591f4LLu,</span><br><span class="line">        },</span><br><span class="line">        {</span><br><span class="line">            0x30f11e8bc2885957LLu,</span><br><span class="line">            0xd594ab77422feb75LLu,</span><br><span class="line">        },</span><br><span class="line">        {</span><br><span class="line">            0xe15d76f0466e98b9LLu,</span><br><span class="line">            0xb651fdb55d7736f2LLu,</span><br><span class="line">        }</span><br><span class="line">    };</span><br><span class="line"></span><br><span class="line">    for (int k = 0; k &lt; 3; k++) {</span><br><span class="line">        for (ull key1 = 0; key1 &lt;= 0xff; key1++)</span><br><span class="line">            for (ull key2 = 0; key2 &lt;= 0xff; key2++) {</span><br><span class="line">                key[0] = ( key1 &lt;&lt; 56)  + ( key2 &lt;&lt; 48 );</span><br><span class="line">                key[1] = 0LLu;  // 这里可能也应该调成大端序</span><br><span class="line">                decrypt(msg, cipher[k], key);</span><br><span class="line">                unsigned char * m = (unsigned char *) msg;</span><br><span class="line">                int i;</span><br><span class="line">                for (i = 0; i &lt; 0x10; i++) {</span><br><span class="line">                    if (m[i] &lt; 0x20 || m[i] &gt;= 0x80)  // 非可见字符</span><br><span class="line">                        break;</span><br><span class="line">                }</span><br><span class="line">                if (i == 0x10) {</span><br><span class="line">                    printf("%llx\n%llx\n", msg[0], msg[1]);</span><br><span class="line">                }</span><br><span class="line">            }</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>在最后一次的把 m[i] &lt; 0x20取消就好，因为有不可见的字符</p>
+<h3 id="go-flag">go-flag</h3>
+<p>恢复一下符号表</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03/image-20200603090203444.png"  alt="image-20200603090203444"></p>
+<p>接受字符串</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03/image-20200603090300288.png"  alt="image-20200603090300288"></p>
+<p>send 和 recv 这两个函数是想对应的，客户程序一般用send函数向服务器发送请求，而服务器则通常用send函数来向客户程序发送应答，不论是客户还是服务器应用程序都用recv函数从TCP连接的另一端接收数据</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03/image-20200603090917079.png"  alt="image-20200603090917079"></p>
+<p>看一下调用的chanrecv1</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03/image-20200603091039196.png"  alt="image-20200603091039196"></p>
+<p>下断可以看到一个flag，按顺序搜集这些 main_main_func 的 flag，拼接起来即可</p>
+<h3 id="play-the-game">play_the_game</h3>
+<p>是个五子棋的游戏，我刚开始用的改之理</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03/image-20200603091156257.png"  alt="image-20200603091156257"></p>
+<p>换 jadx 看了下发现关键点</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03/image-20200603091217611.png"  alt="image-20200603091217611"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03/image-20200603091229243.png"  alt="image-20200603091229243"></p>
+<p>去解一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03/image-20200603091559888.png"  alt="image-20200603091559888"></p>
+<p>得到我们需要赢电脑99次，我们就可以得到flag</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03/image-20200603092018685.png"  alt="image-20200603092018685"></p>
+<p>调用99次就可以</p>
+<h3 id="rust-flag">rust-flag</h3>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03/image-20200603092132613.png"  alt="image-20200603092132613"></p>
+<p>主要是一个异或：A^B^我们输入的数据</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">data1 = [0x6b,0x56,0x76,0xb2,0xee,0x03,0xb1,0xe3,0x62,0x5c,0xe6,0x91,0x1d,0x93,0x27, 0xfc ,0x8d,0xf8,0x53,0x64]</span><br><span class="line">data2 = [0x39,0x15,0x22,0xf4,0x95,0x70,0xe5,0x91,0x07,0x3d,0x8b,0xce,0x78,0xc2,0x52 ,0x9d, 0xe1,0x8b,0x2e,0x6e]</span><br><span class="line"></span><br><span class="line">for i in range(len(data1)):</span><br><span class="line">    print(chr(data1[i]^data2[i]),end = '')</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="My-Switch-game">My Switch game</h3>
+<p>打开压缩包，有一个 nro 文件和一份 log，下载一份 loader Switch64.dll，把 nro 丢给 IDA。稍微分析一下，可以知道 sub_C20 会初始化部分游戏参数，比如蛇和果实的位置。sub_10D0 则是关键函数，会根据当前蛇的前进方向和吃到的果实数，生成下一位 flag 以及下一颗果实的位置（初始函数解密一位、前 4 个以及第 31 个果实 xor 0x44，解密出"RCTF{}"）。部分伪代码如下：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"> v9 = direct + 4 * index - 1;</span><br><span class="line">  qword_B8F98 = v9;</span><br><span class="line">  srand(v9);</span><br><span class="line">  qword_B8FA0 = sub_63AD0(0LL);</span><br><span class="line">  v10 = rand();</span><br><span class="line">  food_x = v10 - 77 * ((unsigned __int64)(0x3531DEC1LL * v10 &gt;&gt; 36) - (v10 &gt;&gt; 31));// v10%77</span><br><span class="line">  v11 = rand();</span><br><span class="line">  v12 = v11;</span><br><span class="line">  v13 = index;</span><br><span class="line">  v14 = off_B0D98;</span><br><span class="line">  v15 = index + 1;</span><br><span class="line">  v16 = (unsigned __int64)(0x63E7063FLL * v11 &gt;&gt; 36) - (v11 &gt;&gt; 31);</span><br><span class="line">  v17 = off_B0D98;</span><br><span class="line">  *((_BYTE *)flag + index) = tmp;</span><br><span class="line">  food_y = v12 - 41 * v16;                      // v12%41</span><br><span class="line">  index = v13 + 1;</span><br><span class="line">  v18 = len((unsigned __int64)v17) - 1;</span><br><span class="line">  if ( v15 &lt; v18 )</span><br><span class="line">  {</span><br><span class="line">    v19 = (unsigned __int8)v14[v15];</span><br><span class="line">LABEL_28:</span><br><span class="line">    result = v19 ^ 0x44u;</span><br><span class="line">    tmp = result;</span><br><span class="line">    return result;</span><br><span class="line">  }</span><br><span class="line">  if ( v15 == 0x1F )</span><br><span class="line">  {</span><br><span class="line">    v19 = (unsigned __int8)v14[v18];</span><br><span class="line">    goto LABEL_28;</span><br><span class="line">  }</span><br><span class="line">  if ( v15 == 0x20 )</span><br><span class="line">  {</span><br><span class="line">    result = 1LL;</span><br><span class="line">    byte_B8C04 = 1;</span><br><span class="line">  }</span><br><span class="line">  else</span><br><span class="line">  {</span><br><span class="line">    v20 = rand();</span><br><span class="line">    v21 = len((unsigned __int64)&amp;algn_B8B9C[4]);</span><br><span class="line">    result = (unsigned __int8)algn_B8B9C[v20 - v20 / v21 * v21 + 4];// strtable[v20%v21+4]</span><br><span class="line">    tmp = result;</span><br><span class="line">  }</span><br><span class="line">  return result;</span><br></pre></td></tr></tbody></table></figure>
+<p>可以直接抠 rand 的代码用，设置好 seed 就行。问题在于吃到果实的时候蛇的前进方向。代码里没分析出其他信息，猜测是在 log.log 里面。在题目描述里的 github，找到了一个脚本可以解析一部分日志数据。<a href="https://github.com/mart1nro/joycontrol/blob/master/scripts/parse_capture.pyInputReport" target="_blank" rel="noopener">https://github.com/mart1nro/joycontrol/blob/master/scripts/parse_capture.pyInputReport</a> 和 OutputReport 的解析可以看这个https://github.com/dekuNukem/Nintendo_Switch_Reverse_Engineering/blob/master/bluetooth_hid_notes.md简单解析了一下，发现 InputReport ID 大部分为 0x30，也就是包含了按键信息</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03/image-20200603092339418.png"  alt="image-20200603092339418"></p>
+<p>OutputReport ID 大部分为 0x10，也就是 Rumble data</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03/image-20200603092358844.png"  alt="image-20200603092358844"></p>
+<p>推测是吃到果实后，游戏会让手柄振动，那么 Rumble data 应该会大不相同。结合这几点，写个脚本解析 log，主要是解析出方向键数据以及 Rumble data，并且过滤一下没用的 Rumble data（图片中的"0001404000014040"出现得最多）。代码如下：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">import struct</span><br><span class="line">import binascii</span><br><span class="line">f = open('log.log', 'rb+')</span><br><span class="line">s=f.read()</span><br><span class="line">f.close()</span><br><span class="line"></span><br><span class="line">i = 0</span><br><span class="line">t = []</span><br><span class="line"></span><br><span class="line">while i &lt; len(s):</span><br><span class="line">    [time,l] = struct.unpack_from("di", s, i)</span><br><span class="line">    i+=12</span><br><span class="line">    dat = s[i:i+l]</span><br><span class="line">    if ord(dat[0]) == 0xa1 and ord(dat[1]) == 0x30 and len(dat) &gt; 5:</span><br><span class="line">        t.append(dat[1:])</span><br><span class="line">    elif ord(dat[0])==0xa2 and ord(dat[1]) == 0x10:</span><br><span class="line">        t.append(dat)</span><br><span class="line">    i+=l</span><br><span class="line"></span><br><span class="line">d = ''</span><br><span class="line"></span><br><span class="line">dir = []</span><br><span class="line">for i in t:</span><br><span class="line">    if ord(i[0])==0xa2:</span><br><span class="line">        if i[3:11].encode('hex').upper() not in '0001404000014040':</span><br><span class="line">            d+= '\nRumble :'+i[3:11].encode('hex').upper()+'\n'</span><br><span class="line">        continue</span><br><span class="line">    state = ord(i[5]) &amp; 0xf</span><br><span class="line">    left = int(bool(state &amp; (1&lt;&lt;3)))</span><br><span class="line">    right = int(bool(state &amp; (1&lt;&lt;2)))</span><br><span class="line">    down = int(bool(state &amp; (1&lt;&lt;0)))</span><br><span class="line">    up = int(bool(state &amp; (1&lt;&lt;1)))</span><br><span class="line">    if left + right + up + down &gt; 1:</span><br><span class="line">        if state == dir[-1]:</span><br><span class="line">            d+=d[-1]</span><br><span class="line">            continue</span><br><span class="line">        else:</span><br><span class="line">            state ^= dir[-1]</span><br><span class="line">            left = int(bool(state &amp; (1&lt;&lt;3)))</span><br><span class="line">            right = int(bool(state &amp; (1&lt;&lt;2)))</span><br><span class="line">            down = int(bool(state &amp; (1&lt;&lt;0)))</span><br><span class="line">            up = int(bool(state &amp; (1&lt;&lt;1)))</span><br><span class="line">    if left:</span><br><span class="line">        d+='L'</span><br><span class="line">    elif right:</span><br><span class="line">        d+='R'</span><br><span class="line">    elif down:</span><br><span class="line">        d+='D'</span><br><span class="line">    elif up:</span><br><span class="line">        d+='U'</span><br><span class="line">    dir.append(state)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(d)</span><br></pre></td></tr></tbody></table></figure>
+<p>运行后，删除掉没有方向数据的 Rumble data 就可以分析了，这里取两条最开始的数据</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">DDDDDDDDDDDDLLLLLLLLL</span><br><span class="line">Rumble :04B4014E04B4014E</span><br><span class="line">UUUUUUUUUUUUUUULLLLLLLLLLLLDDDDDDDDDDDLLLLLLLLLLLLLUUUUUUUUUUUULLLLLLLLLLLUUUUUU</span><br><span class="line">Rumble :04B4014E04B4014E</span><br></pre></td></tr></tbody></table></figure>
+<p>在 Rumble data 上面的最后一个方向数据，就是吃到果实的时候蛇的方向了。第一条是 L，第二条是 U，以此类推。拿到所有方向数据后，写个脚本直接输出 flag</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">import ctypes</span><br><span class="line">seed = 0</span><br><span class="line">DIR_LEFT = 1</span><br><span class="line">DIR_RIGHT = 2</span><br><span class="line">DIR_UP = 3</span><br><span class="line">DIR_DOWN = 4</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def crand():</span><br><span class="line">    global seed</span><br><span class="line">    cseed = ctypes.c_longlong(seed)</span><br><span class="line">    cseed.value = 0x5851F42D4C957F2D * cseed.value + 1</span><br><span class="line">    seed = cseed.value</span><br><span class="line">    return (cseed.value &gt;&gt; 32) &amp; 0x7FFFFFFF</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">strtable = '0123456789abcdefghijklmnopqrstuvwxyz_'</span><br><span class="line">out = ''</span><br><span class="line">dirc = [DIR_LEFT, DIR_UP, DIR_UP, DIR_LEFT, DIR_LEFT, DIR_LEFT, DIR_LEFT, DIR_RIGHT, DIR_LEFT, DIR_RIGHT, DIR_LEFT, DIR_LEFT,</span><br><span class="line">        DIR_LEFT, DIR_LEFT, DIR_UP, DIR_LEFT, DIR_RIGHT, DIR_LEFT,</span><br><span class="line">        DIR_RIGHT, DIR_LEFT, DIR_DOWN, DIR_LEFT, DIR_RIGHT, DIR_LEFT, DIR_UP,</span><br><span class="line">        DIR_LEFT, DIR_RIGHT, DIR_LEFT, DIR_RIGHT, DIR_UP, DIR_RIGHT</span><br><span class="line">        ]</span><br><span class="line">seed = 1</span><br><span class="line">index = 0</span><br><span class="line">food_x = crand() % 77</span><br><span class="line">food_y = crand() % 41</span><br><span class="line">print 'first food:', food_x, food_y</span><br><span class="line">for i in range(len(dirc)):</span><br><span class="line">    seed = dirc[i] + 4 * index - 1</span><br><span class="line">    index += 1</span><br><span class="line">    food_x = crand() % 77</span><br><span class="line">    food_y = crand() % 41</span><br><span class="line">    print 'next food:', food_x, food_y</span><br><span class="line">    out += strtable[crand() % 37]</span><br><span class="line">print 'RCTF{' + out[4:-1] + '}'</span><br></pre></td></tr></tbody></table></figure>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>GKCTF (week 6)</title>
+    <url>/2020/05/26/2020-5-26/</url>
+    <content><![CDATA[<p>之前奶奶生病，大概照顾了一周，来到青岛这边后，开始更新一下博客，周末有时间就没赶上GKCTF，凌晨正好有时间，都做一下，争取都ak一下！😘</p>
+<h2 id="Check-1n">Check_1n</h2>
+<p>打开后</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/26/2020-5-26/image-20200526022217284.png"  alt="image-20200526022217284"></p>
+<p>发现是一个字符搞的一个计算机，直接ida看一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/26/2020-5-26/image-20200526022334570.png"  alt="image-20200526022334570"></p>
+<p>看到了关键的地方，拿去base64一下：</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/26/2020-5-26/image-20200526023200161.png"  alt="image-20200526023200161"></p>
+<p>发现这个flag并不是正确的，在看了看，发现了关键的地方</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/26/2020-5-26/image-20200526023236391.png"  alt="image-20200526023236391"></p>
+<p><img src="/" class="lazyload" data-src="/2020/05/26/2020-5-26/image-20200526023426729.png"  alt="image-20200526023426729"></p>
+<p>这里直接base58</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/26/2020-5-26/image-20200526023312990.png"  alt="image-20200526023312990"></p>
+<h2 id="BabyDriver">BabyDriver</h2>
+<p>拿到后，看到是一个.sys的文件，一个驱动文件，想了一下好像还要双机调试，直接学驱动的时候 用windbg，于是乎我先放进ida看看</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/26/2020-5-26/image-20200526023909366.png"  alt="image-20200526023909366"></p>
+<p>看到这里，猜测百分之99，都是个迷宫题</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/26/2020-5-26/image-20200526023932114.png"  alt="image-20200526023932114"></p>
+<p>果断，整理一下</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">o.*..*......*..*</span><br><span class="line">*.**...**.*.*.**</span><br><span class="line">*.****.**.*.*.**</span><br><span class="line">*...**....*.*.**</span><br><span class="line">***..***.**.*..*</span><br><span class="line">*.**.***.**.**.*</span><br><span class="line">*.**.******.**.*</span><br><span class="line">*.**....***.**.*</span><br><span class="line">*.*****.***....*</span><br><span class="line">*...***.********</span><br><span class="line">**..***......#**</span><br><span class="line">**.*************</span><br><span class="line">****************</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/05/26/2020-5-26/image-20200526025231590.png"  alt="image-20200526025231590"></p>
+<p>23  37  36  38 对应了 ：I K J L 那么上下左右大概知道了 上 I 左 J  右 L  下 K</p>
+<p>flag{LKKKLLKLKKKLLLKKKLLLLLL} 去md5一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/26/2020-5-26/image-20200526025539568.png"  alt="image-20200526025539568"></p>
+<p>flag{403950a6f64f7fc4b655dea696997851}</p>
+<h2 id="Chelly’s-identity">Chelly’s identity</h2>
+<p>emmm，题目说你有听说过chelly吗？我去百度了一下chelly</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/26/2020-5-26/image-20200526030119579.png"  alt="image-20200526030119579"></p>
+<p>好的 不知道是啥东西！还是ida吧</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/26/2020-5-26/image-20200526030238818.png"  alt="image-20200526030238818"></p>
+<p>c++写的继续分析了</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/26/2020-5-26/image-20200526030640423.png"  alt="image-20200526030640423"></p>
+<p>长度16</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/26/2020-5-26/image-20200526030823868.png"  alt="image-20200526030823868"></p>
+<p>这里应该是加密函数</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/26/2020-5-26/image-20200526143010519.png"  alt="image-20200526143010519"></p>
+<p>进去看了一下这里应该是一个判断质数的东西，从2 - 128 进行删选</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/26/2020-5-26/image-20200526144809336.png"  alt="image-20200526144809336"></p>
+<p>上面的一系列算法满足的是斐波那契数</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//前两个数为1，1。先定义前两个变量a，b。第三个数为前两两个数之和，定义第三个变量c，c=a+b；现在有三个数，为了避免冗余，把第二个数的值赋给a，第三个数的值赋给b，c=a+b得到第四个数，以此类推…</span><br><span class="line">#define _CRT_SECURE_NO_WARNINGS</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">int main()</span><br><span class="line">{</span><br><span class="line"> int n = 0;</span><br><span class="line"> int a = 1;</span><br><span class="line"> int b = 1;</span><br><span class="line"> int c = 0;</span><br><span class="line"> int i = 0;</span><br><span class="line"> scanf("%d", &amp;n);</span><br><span class="line"> printf("%5d %5d ", a, b);</span><br><span class="line"> for (i = 0; i &lt; n - 2;i++)</span><br><span class="line"> {</span><br><span class="line">   c = a + b;</span><br><span class="line">   a = b;</span><br><span class="line">   b = c;</span><br><span class="line">   printf("%5d ", c);</span><br><span class="line"> }</span><br><span class="line"> printf("\n");</span><br><span class="line"> system("pause");</span><br><span class="line"> return 0;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>看了一下，差不多，是一样的，那么思路就是，我们输入了16个数后，经过斐波那契数的原则假设得到x，我们输入的数是y，进行一个 y^x 与我们之后的check进行比较，大概就是这样，比较的数据就是</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">v6 = 438;</span><br><span class="line">  v7 = 1176;</span><br><span class="line">  v8 = 1089;</span><br><span class="line">  v9 = 377;</span><br><span class="line">  v10 = 377;</span><br><span class="line">  v11 = 1600;</span><br><span class="line">  v12 = 924;</span><br><span class="line">  v13 = 377;</span><br><span class="line">  v14 = 1610;</span><br><span class="line">  v15 = 924;</span><br><span class="line">  v16 = 637;</span><br><span class="line">  v17 = 639;</span><br><span class="line">  v18 = 376;</span><br><span class="line">  v19 = 566;</span><br><span class="line">  v20 = 836;</span><br><span class="line">  v21 = 830;</span><br></pre></td></tr></tbody></table></figure>
+<p>可以进行一个爆破</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">x = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103,107,109,113,127 ]</span><br><span class="line">y = [438,1176,1089,377,377,1600,924,377,1610,924,637,639,376,566,836,830 ]</span><br><span class="line">flag = ''</span><br><span class="line">for i in y:</span><br><span class="line">    for j in range(128):</span><br><span class="line">        z = 0</span><br><span class="line">        k = 0</span><br><span class="line">        while x[k] &lt; j:</span><br><span class="line">            z = x[k] + z</span><br><span class="line">            k = k + 1</span><br><span class="line">        a = j ^ z</span><br><span class="line">        if a == i:</span><br><span class="line">            flag += chr(j)</span><br><span class="line">            print(flag)</span><br><span class="line">//Che11y_1s_EG0IST</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="EzMachine">EzMachine</h2>
+<p>看一下源码吧VM的题</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line">// flag: GWHT{Y0u_hav3_r3v3rs3_1t!}</span><br><span class="line">char *vm_stack;</span><br><span class="line">int len = 0;</span><br><span class="line">char enc[] = {0x69, 0x45, 0x2a, 0x37, 0x9, 0x17, 0x6dc5, 0x5b0b, 0x705c, 0x72, 0x33, 0x76, 0x33, 0x21, 0x74, 0x31, 0x5f, 0x33, 0x73, 0x72};</span><br><span class="line">char enc_flag[] = {0x46, 0x7a, 0x7b, 0x61, 0x4d, 0x7b, 0x61, 0x4d, 0x7c, 0x7d, 0x66, 0x4d, 0x74, 0x7e, 0x73, 0x75, 0x4d, 0x20, 0x21, 0x21};</span><br><span class="line">enum opcodes</span><br><span class="line">{</span><br><span class="line">	MOV = 0xf1,</span><br><span class="line">	XOR = 0xf2,</span><br><span class="line">	RET = 0xf4,</span><br><span class="line">	READ = 0xf5,</span><br><span class="line">	ADD = 0xf6,</span><br><span class="line">	MUL = 0xf7,</span><br><span class="line">	EXCH = 0xf8,</span><br><span class="line">};</span><br><span class="line">unsigned char vm_code[] = {</span><br><span class="line">	0xf5,</span><br><span class="line">    0xf1,0xe1,0x0,0x00,0x00,0x00,0xf2,0xf1,0xe4,0x20,0x00,0x00,0x00,</span><br><span class="line">    0xf1,0xe1,0x1,0x00,0x00,0x00,0xf2,0xf1,0xe4,0x21,0x00,0x00,0x00,</span><br><span class="line">    0xf1,0xe1,0x2,0x00,0x00,0x00,0xf2,0xf1,0xe4,0x22,0x00,0x00,0x00,</span><br><span class="line">    0xf1,0xe1,0x3,0x00,0x00,0x00,0xf2,0xf1,0xe4,0x23,0x00,0x00,0x00,</span><br><span class="line">    0xf1,0xe1,0x4,0x00,0x00,0x00,0xf2,0xf1,0xe4,0x24,0x00,0x00,0x00,</span><br><span class="line">    0xf1,0xe1,0x5,0x00,0x00,0x00,0xf2,0xf1,0xe4,0x25,0x00,0x00,0x00,</span><br><span class="line">    0xf1,0xe1,0x6,0x00,0x00,0x00,0xf2,0xf1,0xe4,0x26,0x00,0x00,0x00,</span><br><span class="line">    0xf1,0xe1,0x7,0x00,0x00,0x00,0xf2,0xf1,0xe4,0x27,0x00,0x00,0x00,</span><br><span class="line">    0xf1,0xe1,0x8,0x00,0x00,0x00,0xf2,0xf1,0xe4,0x28,0x00,0x00,0x00,</span><br><span class="line">    0xf1,0xe1,0x9,0x00,0x00,0x00,0xf2,0xf1,0xe4,0x29,0x00,0x00,0x00,</span><br><span class="line">    0xf1,0xe1,0xa,0x00,0x00,0x00,0xf2,0xf1,0xe4,0x2a,0x00,0x00,0x00,</span><br><span class="line">    0xf1,0xe1,0xb,0x00,0x00,0x00,0xf2,0xf1,0xe4,0x2b,0x00,0x00,0x00,</span><br><span class="line">    0xf1,0xe1,0xc,0x00,0x00,0x00,0xf2,0xf1,0xe4,0x2c,0x00,0x00,0x00,</span><br><span class="line">    0xf1,0xe1,0xd,0x00,0x00,0x00,0xf2,0xf1,0xe4,0x2d,0x00,0x00,0x00,</span><br><span class="line">    0xf1,0xe1,0xe,0x00,0x00,0x00,0xf2,0xf1,0xe4,0x2e,0x00,0x00,0x00,</span><br><span class="line">    0xf1,0xe1,0xf,0x00,0x00,0x00,0xf2,0xf1,0xe4,0x2f,0x00,0x00,0x00,</span><br><span class="line">    0xf1,0xe1,0x10,0x00,0x00,0x00,0xf2,0xf1,0xe4,0x30,0x00,0x00,0x00,</span><br><span class="line">    0xf1,0xe1,0x11,0x00,0x00,0x00,0xf2,0xf1,0xe4,0x31,0x00,0x00,0x00,</span><br><span class="line">    0xf1,0xe1,0x12,0x00,0x00,0x00,0xf2,0xf1,0xe4,0x32,0x00,0x00,0x00,</span><br><span class="line">    0xf1,0xe1,0x13,0x00,0x00,0x00,0xf2,0xf1,0xe4,0x33,0x00,0x00,0x00,</span><br><span class="line">    0xf4</span><br><span class="line">};</span><br><span class="line">enum regist</span><br><span class="line">{</span><br><span class="line">	R1 = 0xe1,</span><br><span class="line">	R2 = 0xe2,</span><br><span class="line">	R3 = 0xe3,</span><br><span class="line">	R4 = 0xe5,</span><br><span class="line">};</span><br><span class="line"></span><br><span class="line">typedef struct </span><br><span class="line">{</span><br><span class="line">	unsigned char opcode;</span><br><span class="line">	void (*handle)(void *);</span><br><span class="line">}vm_opcode;</span><br><span class="line"></span><br><span class="line">typedef struct</span><br><span class="line">{</span><br><span class="line">	int r1;</span><br><span class="line">	int r2;</span><br><span class="line">	int r3;</span><br><span class="line">	int r4;</span><br><span class="line">	unsigned char *eip;</span><br><span class="line">	vm_opcode op_list[7];</span><br><span class="line">}vm_cpu;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">unsigned char true_vm_code[] = {</span><br><span class="line">	0xf5,//read(0,buf,0x20)</span><br><span class="line">	0xf1,0xe1,0x0,0x0,0x0,0x0,//r1 = flag[0]</span><br><span class="line">	0xf1,0xe2,0x1,0x0,0x0,0x0,//r2 = flag[1]</span><br><span class="line">	0xf2,//r1 = 0x12^r1^r2</span><br><span class="line">	0xf1,0xe4,0x0,0x0,0x0,0x0,//stack[0] = r1</span><br><span class="line">	</span><br><span class="line">	0xf1,0xe1,0x1,0x0,0x0,0x0,//r1 = flag[1]</span><br><span class="line">	0xf1,0xe2,0x2,0x0,0x0,0x0,//r2 = flag[2]</span><br><span class="line">	0xf2,//r1 = 0x12^r1^r2</span><br><span class="line">	0xf1,0xe4,0x1,0x0,0x0,0x0,//stack[1] = r1</span><br><span class="line">	</span><br><span class="line">	0xf1,0xe1,0x2,0x0,0x0,0x0,//r1 = flag[2]</span><br><span class="line">	0xf1,0xe2,0x3,0x0,0x0,0x0,//r2 = flag[3]</span><br><span class="line">	0xf2,//r1 = 0x12^r1^r2</span><br><span class="line">	0xf1,0xe4,0x2,0x0,0x0,0x0,//stack[2] = r1</span><br><span class="line"></span><br><span class="line">	0xf1,0xe1,0x3,0x0,0x0,0x0,//r1 = flag[3]</span><br><span class="line">	0xf1,0xe2,0x4,0x0,0x0,0x0,//r2 = flag[4]</span><br><span class="line">	0xf2,//r1 = 0x12^r1^r2</span><br><span class="line">	0xf1,0xe4,0x3,0x0,0x0,0x0,//stack[3] = r1</span><br><span class="line"></span><br><span class="line">	0xf1,0xe1,0x4,0x0,0x0,0x0,//r1 = flag[4]</span><br><span class="line">	0xf1,0xe2,0x5,0x0,0x0,0x0,//r2 = flag[5]</span><br><span class="line">	0xf2,//r1 = 0x12^r1^r2</span><br><span class="line">	0xf1,0xe4,0x4,0x0,0x0,0x0,//stack[4] = r1</span><br><span class="line"></span><br><span class="line">	0xf1,0xe1,0x5,0x0,0x0,0x0,//r1 = flag[5]</span><br><span class="line">	0xf1,0xe2,0x6,0x0,0x0,0x0,//r2 = flag[6]</span><br><span class="line">	0xf2,//r1 = 0x12^r1^r2</span><br><span class="line">	0xf1,0xe4,0x5,0x0,0x0,0x0,//stack[5] = r1</span><br><span class="line"></span><br><span class="line">	0xf1,0xe1,0x6,0x0,0x0,0x0,//r1 = flag[6]</span><br><span class="line">	0xf1,0xe2,0x7,0x0,0x0,0x0,//r2 = flag[7]</span><br><span class="line">	0xf1,0xe3,0x8,0x0,0x0,0x0,//r3 = flag[8]</span><br><span class="line">	0xf1,0xe5,0xC,0x0,0x0,0x0,//r4 = flag[12]</span><br><span class="line">	0xf6, //r1 = (3*r1+2*r2+r3)</span><br><span class="line">	0xf7, //r1 = r1*r4</span><br><span class="line">	0xf1,0xe4,0x6,0x0,0x0,0x0,//stack[6] = r1</span><br><span class="line"></span><br><span class="line">	0xf1,0xe1,0x7,0x0,0x0,0x0,//r1 = flag[7]</span><br><span class="line">	0xf1,0xe2,0x8,0x0,0x0,0x0,//r2 = flag[8]</span><br><span class="line">	0xf1,0xe3,0x9,0x0,0x0,0x0,//r3 = flag[9]</span><br><span class="line">	0xf1,0xe5,0xC,0x0,0x0,0x0,//r4 = flag[12]</span><br><span class="line">	0xf6, //r1 = (3*r1+2*r2+r3)</span><br><span class="line">	0xf7, //r1 = r1*r4</span><br><span class="line">	0xf1,0xe4,0x7,0x0,0x0,0x0,//stack[7] = r1</span><br><span class="line"></span><br><span class="line">	0xf1,0xe1,0x8,0x0,0x0,0x0,//r1 = flag[8]</span><br><span class="line">	0xf1,0xe2,0x9,0x0,0x0,0x0,//r2 = flag[9]</span><br><span class="line">	0xf1,0xe3,0xA,0x0,0x0,0x0,//r3 = flag[10]</span><br><span class="line">	0xf1,0xe5,0xC,0x0,0x0,0x0,//r4 = flag[12]</span><br><span class="line">	0xf6, //r1 = (3*r1+2*r2+r3)</span><br><span class="line">	0xf7, //r1 = r1*r4</span><br><span class="line">	0xf1,0xe4,0x8,0x0,0x0,0x0,//stack[8] = r1</span><br><span class="line"></span><br><span class="line">	0xf1,0xe1,0xD,0x0,0x0,0x0,//r1 = flag[13]</span><br><span class="line">	0xf1,0xe2,0x13,0x0,0x0,0x0,//r2 = flag[19]</span><br><span class="line">	0xf8,//r1 = r2,r2 = r1</span><br><span class="line">	0xf1,0xe4,0xD,0x0,0x0,0x0,//stack[13] = r1</span><br><span class="line">	0xf1,0xe7,0x13,0x0,0x0,0x0,//stack[19] = r2</span><br><span class="line"></span><br><span class="line">	0xf1,0xe1,0xE,0x0,0x0,0x0,//r1 = flag[14]</span><br><span class="line">	0xf1,0xe2,0x12,0x0,0x0,0x0,//r2 = flag[18]</span><br><span class="line">	0xf8,//r1 = r2,r2 = r1</span><br><span class="line">	0xf1,0xe4,0xE,0x0,0x0,0x0,//stack[14] = r1</span><br><span class="line">	0xf1,0xe7,0x12,0x0,0x0,0x0,//stack[18] = r2</span><br><span class="line"></span><br><span class="line">	0xf1,0xe1,0xF,0x0,0x0,0x0,//r1 = flag[15]</span><br><span class="line">	0xf1,0xe2,0x11,0x0,0x0,0x0,//r2 = flag[17]</span><br><span class="line">	0xf8,//r1 = r2,r2 = r1</span><br><span class="line">	0xf1,0xe4,0xF,0x0,0x0,0x0,//stack[15] = r1</span><br><span class="line">	0xf1,0xe7,0x11,0x0,0x0,0x0,//stack[17] = r2</span><br><span class="line">	0xf4//ret</span><br><span class="line">};</span><br><span class="line"></span><br><span class="line">void mov(vm_cpu *cpu);</span><br><span class="line">void add(vm_cpu *cpu);</span><br><span class="line">void xor(vm_cpu *cpu);</span><br><span class="line">void read_(vm_cpu *cpu);</span><br><span class="line">void ret(vm_cpu *cpu);</span><br><span class="line">void mul(vm_cpu *cpu);</span><br><span class="line">void exch(vm_cpu *cpu);</span><br><span class="line"></span><br><span class="line">void exch(vm_cpu *cpu)</span><br><span class="line">{</span><br><span class="line">	int temp1;</span><br><span class="line">	temp1 = cpu-&gt;r1;</span><br><span class="line">	cpu-&gt;r1 = cpu-&gt;r2;</span><br><span class="line">	cpu-&gt;r2 = temp1; </span><br><span class="line">	cpu-&gt;eip += 1;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">void ret(vm_cpu *cpu)</span><br><span class="line">{</span><br><span class="line">	cpu-&gt;eip += 1;</span><br><span class="line">	return 0;</span><br><span class="line">}</span><br><span class="line">void add(vm_cpu *cpu)</span><br><span class="line">{</span><br><span class="line">	cpu-&gt;r1 = 3*(cpu-&gt;r1) + 2*(cpu-&gt;r2) + cpu-&gt;r3;</span><br><span class="line">	cpu-&gt;eip += 1;</span><br><span class="line">}</span><br><span class="line">void mul(vm_cpu *cpu)</span><br><span class="line">{</span><br><span class="line">	cpu-&gt;r1 = cpu-&gt;r1*cpu-&gt;r4;</span><br><span class="line">	cpu-&gt;eip += 1;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">void xor(vm_cpu *cpu)</span><br><span class="line">{</span><br><span class="line">	int temp;</span><br><span class="line">	temp = cpu-&gt;r1^cpu-&gt;r2;</span><br><span class="line">	cpu-&gt;r1 = temp;</span><br><span class="line">	cpu-&gt;eip += 1;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">void read_(vm_cpu *cpu)</span><br><span class="line">{</span><br><span class="line">	char *dest = vm_stack;</span><br><span class="line">	read(0,dest,0x20);</span><br><span class="line">	len = strlen(dest);</span><br><span class="line">	if(len!=21)</span><br><span class="line">	{</span><br><span class="line">		puts("WRONG!");</span><br><span class="line">		exit(0);</span><br><span class="line">	}</span><br><span class="line">	cpu-&gt;eip += 1;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">void mov(vm_cpu *cpu)</span><br><span class="line">{</span><br><span class="line">	 //mov指令的参数都隐藏在字节码中，指令表示后的一个字节是寄存器标识，第二到第五是要mov的数据在vm_stack上的偏移</span><br><span class="line">	unsigned char *res = cpu-&gt;eip + 1;</span><br><span class="line">	int *offset = (int *)(cpu-&gt;eip + 2);</span><br><span class="line">	char *dest = 0;</span><br><span class="line">	dest = vm_stack;</span><br><span class="line">	switch(*res){</span><br><span class="line">		</span><br><span class="line">		case 0xe1:</span><br><span class="line">			cpu-&gt;r1 = *(dest + *offset);</span><br><span class="line">			break;</span><br><span class="line">		case 0xe2:</span><br><span class="line">			cpu-&gt;r2 = *(dest + *offset);</span><br><span class="line">			break;</span><br><span class="line">		case 0xe3:</span><br><span class="line">			cpu-&gt;r3 = *(dest + *offset);</span><br><span class="line">			break;</span><br><span class="line">		case 0xe5:</span><br><span class="line">			cpu-&gt;r4 = *(dest + *offset);</span><br><span class="line">			break;</span><br><span class="line">		case 0xe4:</span><br><span class="line">			{</span><br><span class="line">				int x;</span><br><span class="line">				x = cpu-&gt;r1;</span><br><span class="line">				*(dest + *offset) = x;</span><br><span class="line">				break;</span><br><span class="line">    		}</span><br><span class="line">    	case 0xe7:</span><br><span class="line">			{</span><br><span class="line">				int y;</span><br><span class="line">				y = cpu-&gt;r2;</span><br><span class="line">				*(dest + *offset) = y;</span><br><span class="line">				break;</span><br><span class="line">    		}</span><br><span class="line"></span><br><span class="line">	}</span><br><span class="line">	cpu-&gt;eip += 6;//control by ourselves</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">void vm_init(vm_cpu *cpu)</span><br><span class="line">{</span><br><span class="line">	cpu-&gt;r1 = 0;</span><br><span class="line">	cpu-&gt;r2 = 0x12;</span><br><span class="line">	cpu-&gt;r3 = 0;</span><br><span class="line">	cpu-&gt;r4 = 0;</span><br><span class="line">	cpu-&gt;eip = (unsigned char *)vm_code;</span><br><span class="line">	cpu-&gt;op_list[0].opcode = 0xf1;</span><br><span class="line">	cpu-&gt;op_list[0].handle = (void (*)(void *))mov;</span><br><span class="line"></span><br><span class="line">	cpu-&gt;op_list[1].opcode = 0xf2;</span><br><span class="line">	cpu-&gt;op_list[1].handle = (void (*)(void *))xor;</span><br><span class="line"></span><br><span class="line">	cpu-&gt;op_list[2].opcode = 0xf5;</span><br><span class="line">	cpu-&gt;op_list[2].handle = (void (*)(void *))read_;</span><br><span class="line"></span><br><span class="line">	cpu-&gt;op_list[3].opcode = 0xf4;</span><br><span class="line">	cpu-&gt;op_list[3].handle = (void (*)(void *))ret;</span><br><span class="line"></span><br><span class="line">	cpu-&gt;op_list[4].opcode = 0xf7;</span><br><span class="line">	cpu-&gt;op_list[4].handle = (void (*)(void *))mul;</span><br><span class="line"></span><br><span class="line">	cpu-&gt;op_list[5].opcode = 0xf8;</span><br><span class="line">	cpu-&gt;op_list[5].handle = (void (*)(void *))exch;</span><br><span class="line"></span><br><span class="line">	cpu-&gt;op_list[6].opcode = 0xf6;</span><br><span class="line">	cpu-&gt;op_list[6].handle = (void (*)(void *))add;</span><br><span class="line"></span><br><span class="line">	vm_stack = malloc(0x512);</span><br><span class="line">	memset(vm_stack,0,0x512);</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">void vm_start(vm_cpu *cpu)</span><br><span class="line">{</span><br><span class="line">	cpu-&gt;eip = (unsigned char*)vm_code;</span><br><span class="line">	while (*cpu-&gt;eip!=RET)</span><br><span class="line">	{</span><br><span class="line">		vm_dispatcher(cpu);</span><br><span class="line">	}</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">void vm_dispatcher(vm_cpu *cpu)</span><br><span class="line">{</span><br><span class="line">	int i = 0;</span><br><span class="line">	while (1)</span><br><span class="line">	{</span><br><span class="line">		if(*cpu-&gt;eip == cpu-&gt;op_list[i].opcode)</span><br><span class="line">		{</span><br><span class="line">			cpu-&gt;op_list[i].handle(cpu);</span><br><span class="line">			break;</span><br><span class="line">		}</span><br><span class="line">		else</span><br><span class="line">		{</span><br><span class="line">			i += 1;</span><br><span class="line">		}</span><br><span class="line">	}	</span><br><span class="line">}</span><br><span class="line">void check2()</span><br><span class="line">{</span><br><span class="line">	int i;</span><br><span class="line">	char *target = vm_stack;</span><br><span class="line">	for(i = 0; i &lt; len - 1; i++)</span><br><span class="line">	{ </span><br><span class="line">		if((char)target[i] != enc[i])</span><br><span class="line">		{</span><br><span class="line">			exit(0);</span><br><span class="line">		}</span><br><span class="line">	}</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">void check()</span><br><span class="line">{</span><br><span class="line">	int i;</span><br><span class="line">	char *target = vm_stack;</span><br><span class="line">	for(i = 0; i &lt; len - 1; i++)</span><br><span class="line">	{ </span><br><span class="line">		if((char)target[i+0x20] != enc_flag[i])</span><br><span class="line">		{</span><br><span class="line">			puts("WRONG!");</span><br><span class="line">			exit(0);</span><br><span class="line">		}</span><br><span class="line">	}</span><br><span class="line">	puts("Congratulation?");</span><br><span class="line">	puts("tips: input is the start");</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">int main(int argc, char const *argv[])</span><br><span class="line">{</span><br><span class="line">	vm_cpu *cpu = {0};</span><br><span class="line">	puts("Please input something:");</span><br><span class="line">	vm_init(&amp;cpu);</span><br><span class="line">	vm_start(&amp;cpu);</span><br><span class="line">	check();</span><br><span class="line">	puts("And the flag is GWHT{true flag}");</span><br><span class="line">	exit(0);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -179,6 +145,99 @@
       </script>]]></content>
       <categories>
         <category>个人笔记</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>网鼎杯CTF——朱雀组 (week 4)</title>
+    <url>/2020/05/17/2020-5-16/</url>
+    <content><![CDATA[<h2 id="What">What</h2>
+<p>用ida打开，大概看到的是一个go的逆向</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/17/2020-5-16/image-20200517095007722.png"  alt="image-20200517095007722"></p>
+<p>看到是个置换表的base64，找一下明文</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/17/2020-5-16/image-20200517095031094.png"  alt="image-20200517095031094"></p>
+<p>直接写一下脚本</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#!/usr/bin/python</span><br><span class="line">import base64</span><br><span class="line">base_now="XYZFGHI2+/Jhi345jklmEnopuvwqrABCDKL6789abMNWcdefgstOPQRSTUVxyz01"</span><br><span class="line">base_init="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="</span><br><span class="line"></span><br><span class="line">clear="nRKKAHzMrQzaqQzKpPHClX=="</span><br><span class="line">c=""</span><br><span class="line">for i in range(len(clear)):</span><br><span class="line">    b=base_now.find(clear[i])</span><br><span class="line">    c+=base_init[b]</span><br><span class="line">c=base64.b64decode(c)</span><br><span class="line">print c</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/05/17/2020-5-16/image-20200517095129379.png"  alt="image-20200517095129379"></p>
+<h2 id="tree">tree</h2>
+<p>一个数据结构的算法，类似与哈夫曼树的算法直接写exp了：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">tree = {</span><br><span class="line">    'y':'0000',</span><br><span class="line">    'b':'00010',</span><br><span class="line">    'q':'00011',</span><br><span class="line">    'g':'0010',</span><br><span class="line">    'f':'0011',</span><br><span class="line">    'j':'010',</span><br><span class="line">    'w':'01100',</span><br><span class="line">    'p':'01101',</span><br><span class="line">    'x':'011100',</span><br><span class="line">    'd':'0111010',</span><br><span class="line">    'i':'0111011',</span><br><span class="line">    'k':'01111',</span><br><span class="line">    's':'100',</span><br><span class="line">    'z':'1010',</span><br><span class="line">    'n':'1011',</span><br><span class="line">    'c':'11000',</span><br><span class="line">    't':'110010',</span><br><span class="line">    'e':'110011',</span><br><span class="line">    'h':'1101',</span><br><span class="line">    'o':'11100',</span><br><span class="line">    'l':'1110100',</span><br><span class="line">    'u':'11101010',</span><br><span class="line">    'r':'111010110',</span><br><span class="line">    'a':'111111111',</span><br><span class="line">    'm':'111011',</span><br><span class="line">    'v':'1111'</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">a = 'zvzjyvosgnzkbjjjypjbjdvmsjjyvsjx'</span><br><span class="line">flag=""</span><br><span class="line"></span><br><span class="line">for i in a:</span><br><span class="line">    flag += tree[i]</span><br><span class="line">print (hex(int(flag,2)))</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/05/17/2020-5-16/image-20200521110705695.png"  alt="image-20200521110705695"></p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>个人笔记</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>DEF CON Quals (week 4)</title>
+    <url>/2020/05/15/2020-5-15/</url>
+    <content><![CDATA[<h2 id="DEF-CON-Quals">DEF CON Quals</h2>
+<p>比赛网址：<a href="https://scoreboard.oooverflow.io" target="_blank" rel="noopener">https://scoreboard.oooverflow.io</a></p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-15/image-20200517004518883.png"  alt="image-20200517004518883"></p>
+<p>纪念一下这个魔性的画面</p>
+<h2 id="fountain-ooo-reliving">fountain-ooo-reliving</h2>
+<p>题目描述：</p>
+<p>We have found the fountain OOO RElive. By discovering its secrets, you will restart the game of life with a chance to do it all over again. This challenge is in memory of John Conway (26 December 1937 – 11 April 2020).</p>
+<p>Files:</p>
+<ul>
+<li><a href="https://s3.us-east-2.amazonaws.com/oooverflow-challs/b6abfff7ba2939b42644341f2ad307c3900382773999c67c7f8f5a67ae6179ad/fountain-ooo-relive" target="_blank" rel="noopener">fountain-ooo-relive</a></li>
+<li>ee9ac9cde6915708df0ba814f07bdadcf009bb7dabdb2374d220bec4c8d26f22</li>
+</ul>
+<p>大概信息知道一个纪念的是John Conway，我们将要去开始生命游戏完成这个挑战，去网上看看资料嘛！</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-15/image-20200517010617059.png"  alt="image-20200517010617059"></p>
+<p>去看看生命游戏的资料</p>
+<p>B站资料: <a href="https://www.bilibili.com/video/av2282543/" target="_blank" rel="noopener">https://www.bilibili.com/video/av2282543/</a></p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-15/image-20200517012556473.png"  alt="image-20200517012556473"></p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-15/image-20200517012700277.png"  alt="image-20200517012700277"></p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-15/image-20200517005721485.png"  alt="image-20200517005721485"></p>
+<p>大概看到了ON的位置</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-15/image-20200518174209877.png"  alt="image-20200518174209877"></p>
+<p>这里的位置也和别的地方不一样，那么我认为这里是一个开始的开关</p>
+<p>资料上说只要我们开始运行的时候，这个标志就会取消</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-15/image-20200518175130854.png"  alt="image-20200518175130854"></p>
+<p>我开始运行了，好像移动了 - - 等了很久</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-15/image-20200518181426133.png"  alt="image-20200518181426133"></p>
+<p>生命游戏，+号是加速，-号是减速</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/15/2020-5-15/image-20200518181913240.png"  alt="image-20200518181913240"></p>
+<p>我看着复现了阿鹏哥的博客：<a href="https://apeng.fun/2020/05/18/2020defcon-quals/#more" target="_blank" rel="noopener">https://apeng.fun/2020/05/18/2020defcon-quals/#more</a></p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>CTF</category>
       </categories>
   </entry>
   <entry>
@@ -468,7 +527,7 @@
       </categories>
   </entry>
   <entry>
-    <title>5.11日笔记 (week 4)</title>
+    <title>看雪CTF — 白云苍狗 (week 4)</title>
     <url>/2020/05/11/2020-5-11/</url>
     <content><![CDATA[<p>👴好像上周没干啥，复现了点东西，查到自己有点知识点不好的地方，一个是angr，一个是vm，还有一个动态规划，这周主要是进行他们几个加强训练，因为RCTF有一个VM和动态规划，所以说我就不格外找题了，以题代练了，angr我看科二师傅给我的md学习，动态规划的话，我准备去看视频，看paper有点看不懂！</p>
 <h2 id="步入正题">步入正题</h2>
@@ -540,7 +599,10 @@
 </table>
 <p><code>A ^ B = S</code>   <code>A &amp; B =C</code></p>
 <p><img src="/" class="lazyload" data-src="/2020/05/11/2020-5-11/image-20200512122822801.png"  alt="image-20200512122822801"></p>
-<p>U1S1今天啥也没看，被与非门整蒙了，休息！明天起来再看 呜呜呜！</p>
+<p>判断加法，就能大概就能猜到是乘法，刚开始那么就是个平方的东西</p>
+<p>mod 4321040810422309623323，继续分析就是大概总结出来就是 x^27 = 556372 mod n</p>
+<p>那么使用欧拉定理：(x^27)^y = x = 556372^y (mod m) 得到 4A3A9740B735704562</p>
+<p><img src="/" class="lazyload" data-src="/2020/05/11/2020-5-11/image-20200518173858335.png"  alt="image-20200518173858335"></p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -964,7 +1026,7 @@
       </categories>
   </entry>
   <entry>
-    <title>4.30日笔记 (week 2)</title>
+    <title>看雪CTF — 寻踪觅源 (week 2)</title>
     <url>/2020/04/30/2020-4-30/</url>
     <content><![CDATA[<h2 id="4-30日更新">4.30日更新</h2>
 <p>😀起来后，对作业没咋学，有点难受，今天把任务完成！奥里给✍</p>
