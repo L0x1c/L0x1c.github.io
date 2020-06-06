@@ -1,6 +1,219 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>6.5日更新 (week 7)</title>
+    <url>/2020/06/04/2020-6-04/</url>
+    <content><![CDATA[<p>准备在医院看的一点书的内容进行一下整理，进行小黄书更新，能今天修改了学习计划，觉得先把CTF wiki都去看一下，这样入门比较快一点，然后每天还是之后开始学习正向，然后再学逆向</p>
+<h2 id="小黄书更新">小黄书更新</h2>
+<h3 id="表达式短路">表达式短路</h3>
+<p>表达式短路时通过逻辑与运算和逻辑或运算使语句根据条件在执行的时候发生中断，看一下汇编代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码说明：递归函数，用于计算整数累计，nNumber为累加值</span><br><span class="line">int Accumulation(int nNumber){</span><br><span class="line">//当nNumber等于0时，逻辑与运算符左边的值为假，不会执行右边的语句</span><br><span class="line">//形成表达式短路，从而找到递归出口</span><br><span class="line">nNumber &amp;&amp; (nNumber += Accumulation(nNumber - 1));</span><br><span class="line">return nNumber</span><br><span class="line">}</span><br><span class="line">//对应汇编</span><br><span class="line">int Accumulation(int nNumber){</span><br><span class="line">nNumber &amp;&amp; (nNumber += Accumulation(nNumber - 1));</span><br><span class="line">//这里为短路模式汇编代码，比较变量nNumber是否等于0</span><br><span class="line">0040BAA8	cmp	dword ptr [ebp+8],0</span><br><span class="line">//通过JE跳转，检查ZF标记位等于1跳转</span><br><span class="line">0040BAAC	je	Accumulation+35h (0040bac5)</span><br><span class="line">//跳转失败，进入递归调用</span><br><span class="line">0040BAAE	mov	eax,dword ptr [ebp+8]</span><br><span class="line">//对变量nNumber减1后，结果作为参数压栈</span><br><span class="line">0040BAB1	sub	eax,1</span><br><span class="line">0040BAB4	push eax</span><br><span class="line">//继续调用自己，形成递归</span><br><span class="line">0040BAB5	call @ILT+30(Accumulation) (00401023)</span><br><span class="line">0040BABA	add esp,4</span><br><span class="line">0040BABD	mov ecx,dword ptr [ebp+8]</span><br><span class="line">0040BAC0	add ecx,eax</span><br><span class="line">0040BAC2	mov dword ptr [ebp+8],ecx</span><br><span class="line">//返回变量nNumber</span><br><span class="line">return nNumber</span><br><span class="line">0040BAC5	mov eax,dword ptr [ebp+8]</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>测试一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/04/2020-6-04/image-20200605085223132.png"  alt="image-20200605085223132"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/04/2020-6-04/image-20200605085446570.png"  alt="image-20200605085446570"></p>
+<p>所以通过递归函数Accumulation进行了整数的累加和计算，之后用&amp;&amp;的原则，左边如果为0就输出出去，用这个原则来决定跳转的过程，逻辑运算 || 与 &amp;&amp; 有些不同</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//c++源码说明，和上面的类似</span><br><span class="line">int Accumulation (int nNumber){</span><br><span class="line">//当nNumber等于0时，逻辑或运算符的左边如果为真就不执行右边的语句</span><br><span class="line">//形成表达式短路，从而找到递归的出口</span><br><span class="line">(nNumber == 0) || (nNumber += Accumulation(nNumber - 1));</span><br><span class="line">return nNumber;</span><br><span class="line">}</span><br><span class="line">//C++源码与对应汇编代码</span><br><span class="line">int Accumulation(int nNumber){</span><br><span class="line">(nNumber == 0) || (nNumber += Accumulation(nNumber - 1));</span><br><span class="line">00401618	cmp	dword ptr [ebp+8],0</span><br><span class="line">0040161C	je Acumulation+35h (00401635)</span><br><span class="line">0040161E	mov	eax,dword ptr [ebp+8]</span><br><span class="line">00401621	sub	eax,1</span><br><span class="line">00401624	push eax</span><br><span class="line">00401625	call @ILT+30(Accumulation) (00401023)</span><br><span class="line">0040162A	add	esp,4</span><br><span class="line">0040162D	mov ecx,dword ptr [ebp+8]</span><br><span class="line">00401630	add	ecx,eax</span><br><span class="line">00401632	mov	dword ptr [ebp+8],ecx</span><br><span class="line">return nNumber</span><br><span class="line">00401635	mov eax,dword ptr [ebp+8]</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="条件表达式">条件表达式</h3>
+<p>条件表达式就是我们说的三目运算，也就是 表达式1 ？表达式2 ：表达式3</p>
+<p>表达式2 ，3为常量的时候，条件表达式可以被优化，而表达式2或者表达式3中的一个为变量的时候，条件表达式不可以被优化，会转换成分支结构，而表达式1为一个常量值，编译器会在编译期间得到答案，就不会有条件表达式存在</p>
+<ul>
+<li>表达式1为简单比较，而表达式2，3的差值等于1</li>
+<li>表达式1为简单比较，而表达式2，3的差值大于1</li>
+<li>表达式1为复杂比较，而表达式2，3的差值大于1</li>
+<li>表达式2，3有一个为变量，于是没有优化</li>
+</ul>
+<p><strong>转换方案1</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//c++源码说明，条件表达式</span><br><span class="line">int Condition(int argc , int n){</span><br><span class="line">//比较参数argc是否等于5，真值返回5，假值返回6</span><br><span class="line">return argc == 5 ? 5 : 6;</span><br><span class="line">}</span><br><span class="line">//汇编比较</span><br><span class="line">//清空eax</span><br><span class="line">00401678	xor eax,eax</span><br><span class="line">0040167A	cmp	dword ptr [ebp+8],5</span><br><span class="line">//setne检查ZF标记位，当ZF==1，则赋值al为0，反之则赋值al为1</span><br><span class="line">0040167E	setne al</span><br><span class="line">//若argc等于5则al==0，反之al==1，执行这句后，eax正好为5/6</span><br><span class="line">00401681	add	eax,5</span><br></pre></td></tr></tbody></table></figure>
+<p>测试的时候</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/04/2020-6-04/image-20200605104331427.png"  alt="image-20200605104331427"></p>
+<p>大概读了一下，这个用了两个mov进行付给eax，之后跳转到各自的位置上，进行一个赋值的</p>
+<p><strong>转换方案2</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//c++源码说明，条件表达式</span><br><span class="line">int Condition(int argc , int n){</span><br><span class="line">//比较参数argc是否等于5，真值返回5，假值返回6</span><br><span class="line">return argc == 5 ? 4 : 10;</span><br><span class="line">}</span><br><span class="line">//汇编比较</span><br><span class="line">return argc == 5 ? 4 : 10;</span><br><span class="line">00401678	mov	eax,dword ptr [ebp+8]</span><br><span class="line">0040167B	sub	eax,5</span><br><span class="line">0040167E	neg	eax</span><br><span class="line">00401680	sbb	eax,eax</span><br><span class="line">//eax的取值只可能为0或者0xFFFFFFFF</span><br><span class="line">00401682	and	eax,6</span><br><span class="line">00401685	add	eax,4</span><br></pre></td></tr></tbody></table></figure>
+<p>对于argc == 5这种等职的比较，VC++会使用减法和求补运算来判断是否为真值，如果我们的argc不为5，那么执行sub指令后的eax就不为0，neg的指令，会将eax的符号位发生改变，也就是求补的运算，如果eax为0，也就是argc为5的话，那么0进行补+1，也是0，那么CF=0，我们现在假设CF=1的情况，那么执行sbb eax,eax 等同于了 eax-eax-CF 那么eax会变成0xFFFFFFFF，另一个情况就是0，使用eax与6进行与运算，如果eax数值为0xFFFFFFFF那么 想与就是6，相加4就是10，如果是0的情况那么直接就是0+4 = 4</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">总结：</span><br><span class="line">sub reg,A</span><br><span class="line">neg	reg</span><br><span class="line">sbb reg,reg</span><br><span class="line">and reg,B</span><br><span class="line">add reg,C</span><br><span class="line">//reg == A ? C : B</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>转换方案3</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码说明，条件表达式</span><br><span class="line">int Condition(int argc,int n){</span><br><span class="line">	return argc &lt; = 8 ? 4 ：10；</span><br><span class="line">}</span><br><span class="line">//汇编代码</span><br><span class="line">return argc &lt; = 8 ? 4 ：10；</span><br><span class="line">//清空eax,与方案1类似</span><br><span class="line">00401678	xor	eax,eax</span><br><span class="line">0040167A	cmp	dword ptr [ebp+8],8</span><br><span class="line">//根据变量与8进行比较的结果，使用setg指令，当标记位SF=OF且ZF=0赋值al为1</span><br><span class="line">符号标志位SF（Sign Flag），符号标志SF用来反映运算结果的符号位，他与运算结果的最高位相同</span><br><span class="line">溢出标志位OF（Overflow Flag）：比如有一个杯子，放水放满了再放就出去了，叫溢出，但是怎么区别看起来都是最高位的问题</span><br><span class="line">零标志位ZF（Zero Flag），零标志ZF用来反映运算结果是否为0，如果运算结果为0，则值为1，否则值为0，在判断运算结果是否为0时，可以用此标志位</span><br><span class="line">//用于检查变量数据是否大于8，大于则赋值1，小于就赋值0</span><br><span class="line">0040167E	setg al</span><br><span class="line">//此时al中只能为0或1，执行自减的操作，eax中为0xFFFFFFFF或0</span><br><span class="line">00401681	dec eax</span><br><span class="line">//使用al和0xFA做与运算，eax中是0xFFFFFFFA或者0</span><br><span class="line">//2-3=0xFFFFFFFA</span><br><span class="line">00401682	and	al,0FAh</span><br><span class="line">//由于eax只能有两个结果0xFFFFFFFA(-6)或0，加0x0A后结果比然为4，10</span><br><span class="line">00401684	add	eax，0Ah</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>无忧化使用分支结果</strong></p>
+<p>如果表达式2或者表达式3中的值为未知数时候，就无法使用之前的方案去优化，编译器会那招正常的语句流程进行比较和判断，选择对应的表达式</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码说明：条件表达式</span><br><span class="line">int Condition(int argc,int n){</span><br><span class="line">	return argc ? 8 : n;</span><br><span class="line">}</span><br><span class="line">//汇编代码</span><br><span class="line">return argc ? 8 : n;</span><br><span class="line">//比较变量argc</span><br><span class="line">00401448	cmp	dword ptr [ebp+8],0</span><br><span class="line">//使用JE跳转，检查变量argc是否等于0，跳转的地址为0x00401457位置</span><br><span class="line">004014CC	je Condition+27 (00401457)</span><br><span class="line">//跳转失败说明操作数1为真，将表达式1的值(立即数8)存入局部变量ebp-4中</span><br><span class="line">0040144E	mov dword ptr [ebp-4],8</span><br><span class="line">//跳转到返回值赋值处</span><br><span class="line">00401455	jmp Condition+2Dh (00145d)</span><br><span class="line">//参数2的数据存入eax中</span><br><span class="line">00401457	mov	eax，dword ptr [ebp+0Ch]</span><br><span class="line">0040145A	mov dword ptr [ebp-4],eax</span><br><span class="line">0040145D	mov	eax,dword ptr [ebp-4]</span><br><span class="line">//恢复现场</span><br><span class="line">00401466	ret</span><br></pre></td></tr></tbody></table></figure>
+<p>如果经过O2选项优化的Release版中，这些代码都会被编译为分支结构</p>
+<h3 id="位运算">位运算</h3>
+<p><code>&lt;&lt;</code>：左移运算，做高位左移到CF位置，最低位补0</p>
+<p><code>&gt;&gt;</code>：右移运算，最高位不变，最低位右移到CF中</p>
+<p><code>|</code>：位或运算，两个数的相同位上，只要有一个为1，则结果为1</p>
+<p><code>&amp;</code>：位与运算，在两个数的相同位上，只要同时为1时，结果才为1</p>
+<p><code>^</code>：异或运算，在两个数的相同位上，当两个值相同时为0，不同时为1</p>
+<p><code>~</code>：取反运算，将操作数每一位上的1变0，0变1</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码对应汇编，位运算(有符号数)</span><br><span class="line">//左移运算3次</span><br><span class="line">argc = argc &lt;&lt; 3;</span><br><span class="line">00401498	mov	eax,dword ptr [ebp+8]</span><br><span class="line">//左移运算对应汇编指令SHL</span><br><span class="line">0040149B	shl	eax,3</span><br><span class="line">0040149E	mov	dword ptr [ebp+8],eax</span><br><span class="line">//C++源码对比，右移运算5</span><br><span class="line">argc = argc &gt;&gt; 5;</span><br><span class="line">004014A1	mov	ecx,dword ptr [ebp+8]</span><br><span class="line">//右移运算对应汇编指令SAR</span><br><span class="line">004014A4	sar	ecx,5</span><br><span class="line">004014A7	mov	dword ptr [ebp+8],ecx</span><br><span class="line">//C++源码对比，位或运算，变量argc低16位不变，高16位设置为1</span><br><span class="line">argc = argc | 0xFFFF0000</span><br><span class="line">004014AA	mov edx,dword ptr [ebp+8]</span><br><span class="line">//位或运算对应汇编指令OR</span><br><span class="line">004014AD	or	edx,0FFFF0000h</span><br><span class="line">004014B3	mov	dword ptr [ebp+8],edx</span><br><span class="line">//C++源码对比，将变量argc低16位清0，高位不变</span><br><span class="line">argc = argc &amp; 0xFFFF0000</span><br><span class="line">//位与运算对应汇编指令AND</span><br><span class="line">004014B9	and eax，0xFFFFh</span><br><span class="line">004014BE	mov	dword ptr [ebp+8],eax</span><br><span class="line">//C++源码对比，对变量argc做异或运算</span><br><span class="line">argc = argc ^ 0xFFFF0000</span><br><span class="line">004014C1	mov	ecx,dword ptr [ebp+8]</span><br><span class="line">//异或运算对应汇编指令XOR</span><br><span class="line">004014C4	xor ecx,0FFFF0000h</span><br><span class="line">004014CA	mov	dword ptr [ebp+8],ecx</span><br><span class="line">//C++源码对比，将argc按位取反</span><br><span class="line">argc = ~argc;</span><br><span class="line">004014CD	mov	edx,dword ptr [ebp+8]</span><br><span class="line">//取反运算对应汇编指令NOT</span><br><span class="line">004014D0	not	edx</span><br><span class="line">004014D2	mov	dword ptr [ebp+8],edx</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码说明：无符号数位移</span><br><span class="line">int BitOperation(int argc){</span><br><span class="line">	unsigned int nVar = argc;</span><br><span class="line">	nVar &lt;&lt;= 3;</span><br><span class="line">	nVar &gt;&gt;= 5;</span><br><span class="line">}</span><br><span class="line">//C++源码对应汇编代码讲解</span><br><span class="line">unsigned int nVar = argc;</span><br><span class="line">004016C8	mov	eax,dword ptr [ebp+8]</span><br><span class="line">004016CB	mov	dword ptr [ebp-4],eax</span><br><span class="line">//C++源码对比，对变量nVar左移3位</span><br><span class="line">nVar &lt;&lt;= 3;</span><br><span class="line">004016CE	mov	ecx,dword ptr [ebp-4]</span><br><span class="line">//和有符号数左移一样</span><br><span class="line">004016D1	shl	ecx,3</span><br><span class="line">004016D4	mov	dword ptr [ebp-4],ecx</span><br><span class="line">//C++源码对比，对变量nVar右移5位</span><br><span class="line">004016D7	mov	edx,dword ptr [ebp-4]</span><br><span class="line">//使用shr进行右移位，最高位补0，最低位进CF</span><br><span class="line">004016DA	shr edx,5</span><br><span class="line">004016DD	mov dword ptr [ebp-4],edx</span><br></pre></td></tr></tbody></table></figure>
+<p>左移的时候，有符号数和无符号数(unsigned)的移位操作是一样的，都不需要考虑符号位，但是右移的时候，有符号进行的是sar，无符号进行的是shr，所以无符号的时候不需要符号位，直接使用shr将最高位补0即可</p>
+<h3 id="编译器使用的优化技巧">编译器使用的优化技巧</h3>
+<p>讨论一下基于Pentiun微处理器的优化技术</p>
+<h4 id="代码优化一般有四个方向：">代码优化一般有四个方向：</h4>
+<ul>
+<li>执行速度优化</li>
+<li>内存存储空间优化</li>
+<li>磁盘存储空间优化</li>
+<li>编译时间优化</li>
+</ul>
+<p><strong>常量折叠</strong></p>
+<p>x = 1 + 2</p>
+<p>1和2都是常量，结果可以直接知道，那么就是3，所以没有必要产生add的指令，直接生成x = 3即可</p>
+<p><strong>常量传播</strong></p>
+<p>如果上面的代码接着下面有一个 y = x + 3，由于上面最后生成了x = 3，那么结果还是可以遇见的，所以直接生成 y = 6即可</p>
+<p><strong>减少变量</strong></p>
+<p>假设一个 <code>x = i*2 y = j*2 if(x&gt;y){}</code>这里的x和y比较等价于i和j的比较，所以如果后面没有引用x，y，那么就会直接去掉x，y，生成 <code>if(i&gt;j)</code>，那么假设 <code>x = i*2 y = i*2</code>所以 <code>i*2 </code>叫做公共表达式，可以归并为一个，<code>x = i*2 y = x</code></p>
+<p><strong>复写传播</strong></p>
+<p>类似于常量传播，但是目标变成了变量</p>
+<p><code>x = a;  ......  y = x+c ;</code></p>
+<p>如果中间的代码中没有修改变量x，那么可以直接用变量a代替x</p>
+<p><code>y = a + c</code></p>
+<p>减去不可以达分支(剪支优化)</p>
+<p><code>if ( 1 &gt; 2 ) </code>如果代码用换不可能被执行，那么整个if代码块就会有不存在的理由</p>
+<p>等等的方案</p>
+<h4 id="目标代码生成阶段的优化方案">目标代码生成阶段的优化方案</h4>
+<ul>
+<li>流水线优化</li>
+<li>分支优化</li>
+<li>高速缓存 ( cache ) 优化</li>
+</ul>
+<h3 id="流水线优化规则">流水线优化规则</h3>
+<h4 id="指令工作流程">指令工作流程</h4>
+<ol>
+<li>取指令：CPU从高速缓存或内存中取机器码</li>
+<li>指令译码：分析指令的长度，功能和寻址方式</li>
+<li>按寻址方式确定操作数：指令的操作数可以是寄存器，内存单元或者立即数，如果操作数在内存单元里，这一步就要计算出有效地址</li>
+<li>取操作数：按操作数存放的位置获得数值，并存放在临时寄存器中</li>
+<li>执行指令：由控制单元或者计算单元执行指令规则的操作</li>
+<li>存放计算结果</li>
+</ol>
+<p>假设</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">执行指令： add	eax,dword ptr ds:[ebx+40DA44]</span><br><span class="line">对应的机器代码： 0383	44DA4000</span><br></pre></td></tr></tbody></table></figure>
+<p>Intel处理器位小端序排列，数据的高位对应内存的高地址，低位对应内存的低地址</p>
+<p>步骤：取指令，得到第一个十六进制字节：0x03，并且eip+1，译码知道这个指令是加法，但是信息不够，于是乎将0x03放入处理器的指令队列缓存中，取指令得到第二个十六进制字节：0x83，机器码放入处理器的指令队列缓存中，eip+1，译码后知道这个寄存器相对寻址方法的加法，而且参与寻址的寄存器是ebx，存放的目标是eax，后面还有4字节的偏移，指令长度确定后，机器码放入处理器的指令队列，取地址，得到第三个十六进制字节：0x44，这是指令中包含的4字节地址偏移量信息的第一个字节，放入内部暂存区，ebx保存在ALU，准备计算有效的地址，eip+1，之后依次开始取指令0xDA  0x40  0x00 放入寄存器，eip依次+1，这时候eax的值传给ALU，调度MMU，得到内存单元，传送到ALU，计算结果，最后将计算结果存回eax中</p>
+<h4 id="流水线">流水线</h4>
+<p>由于每条指令的工作流程都是由取指令，译码，执行，回写的步骤组成，所以很多处理器设计了多流程的结构，A流水线处理过程中，B流水线可以提前对下一条指令做处理</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">004010AA	mov	eax,92492493h</span><br><span class="line">004010AF	add	esp,8</span><br></pre></td></tr></tbody></table></figure>
+<p>我们的处理器会先读取004010AA处的二进制指令，之后开始进行译码等操作，这些工作的每一个步骤都是需要时间的，如果我们取指令，内存管理单元开始工作，其他的部件进行闲置等待，等拿到了指令才进行下一步的工作，于是我们为了提高效率，开始了流水线的这一个机制</p>
+<p>因为流水线的机制，我们在执行mov eax,92492493h过程中对第二条的地址进行读取以及译码，进行并行处理，那么我们提高了处理器的工作的效率</p>
+<p><strong>指令相关性</strong></p>
+<p>如果后一条指令的执行依赖前一条指令的硬件资源，那么这样的情况就是指令相关</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">add	edx,esi</span><br><span class="line">sar	edx,2</span><br></pre></td></tr></tbody></table></figure>
+<p>两条指令都需要访问并设置edx，所以只能执行完add edx，esi后才能执行 sar edx，2，这样的情况产生了寄存器的争用，影响了效率</p>
+<p><strong>地址相关性</strong></p>
+<p>这个和上一个指令相关差不多，这个等待的是内存地址的争用</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">add	[00401234],esi</span><br><span class="line">mov	eax,[00401234]</span><br></pre></td></tr></tbody></table></figure>
+<p>由于第一条指令访问的是0x401234地址，那么只能第一条指令操作完后再去执行第二条语句，会影响效率，VC++的O2的release选项生成的代码会考虑流水线执行的工作方式</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">0040101F	push eax</span><br><span class="line">00401020	push offset aNvarone2D ; "nVarOne / 2 = %d"</span><br><span class="line">00401025	call _printf</span><br><span class="line">0040102A	mov	eax,92492493h</span><br><span class="line">0040102F	add	esp,8</span><br><span class="line">00401032	imul esi</span><br><span class="line">00401034	add edx,esi</span><br><span class="line">00401036	sar edx,2</span><br><span class="line">00401039	mov eax,edx</span><br><span class="line">0040103B	shr eax,1Fh</span><br><span class="line">0040103E	add	edx,eax</span><br></pre></td></tr></tbody></table></figure>
+<p>明天继续看！为了爱与和平！睡觉！😴</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>个人笔记</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>家用路由器0day挖掘笔记 (week 7)</title>
+    <url>/2020/06/03/2020-6-03-1/</url>
+    <content><![CDATA[<p>由于最近有比赛，以及安排实习的问题，中转加上培训，就很长时间没更新，大概有半个月了吧，开始更新笔记，主要开始的是自己的iot的知识点，晚上回家总结小黄书的知识点，周末大概刷题，大概是这样的一个安排</p>
+<h2 id="路由器漏洞的分类">路由器漏洞的分类</h2>
+<p>书上写到，高达60%的网民使用默认密码登录路由器的管理后台，大约36%的网民使用弱密码，并且有WiFI连接密码也是弱密码，这些的密码都容易被破解，自己以前用kali也玩过这个东西，就把链接的数据包进行截取后，然后进行一个字典的爆破，如果是弱密码，直接就跑出来了，那么如果我们的路由器被黑了，我们就可以用上网的数据包进行窃取信息等方面，所以看了这本家用路由器的0day分析</p>
+<p>家用路由器主要四个方面：密码破解漏洞，web漏洞，后门漏洞，溢出漏洞</p>
+<h3 id="路由器密码破解漏洞">路由器密码破解漏洞</h3>
+<p>家用路由器具有无线功能，开启Wi-Fi功能后，我们的设备可以进行密码认证的方式连接上网，WiFi密码常见的加密认证方式3种，WPA，WPA2，WEP</p>
+<h4 id="WEP">WEP</h4>
+<p>WEP是一种老式的加密方式，在2003年时就被WPA加密所淘汰，由于其安全性能存在好几个弱点，很容易被专业人士攻破，不过，对于非专业人来说还是比较安全的。其次由于WEP采用的是IEEE 802.11技术，而现在无线路由设备基本都是使用的IEEE 802.11n技术，因此，当使用WEP加密时会影响无线网络设备的传输速率，如果是以前的老式设备只支持IEEE 802.11的话，那么无论使用哪种加密都可以兼容，对无线传输速率没有什么影响</p>
+<h4 id="WPA-WPA2"><strong>WPA/WPA2</strong></h4>
+<p>WPA/WPA2是一种最安全的加密类型，不过由于此加密类型需要安装Radius服务器，因此，一般普通用户都用不到，只有企业用户为了无线加密更安全才会使用此种加密方式，在设备连接无线WIFI时需要Radius服务器认证，而且还需要输入Radius密码</p>
+<h4 id="WPA-PSK-WPA2-PSK"><strong>WPA-PSK/WPA2-PSK</strong></h4>
+<p>WPA-PSK/WPA2-PSK是我们现在经常设置的加密类型，这种加密类型安全性能高，而且设置也相当简单，不过需要注意的是它有AES和TKIP两种加密算法</p>
+<p><strong>TKIP</strong>：Temporal Key Integrity Protocol（临时密钥完整性协议），这是一种旧的加密标准</p>
+<p><strong>AES</strong>：Advanced Encryption Standard（高级加密标准），安全性比 TKIP 好，推荐使用</p>
+<p>一般我们设置Wi-Fi密码设置了很复杂的一个组合，但是还会出现问题，那么我们现在的路由器就引入了WPS的新的技术，WPS后面路由器会有这个按钮，叫做一键加密键，用户只需要按下这个按钮或者是输入PIN码，进行一点操作就可以完成无线加密设置，同时在客户端和路由器之间建立一个安全的连接</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03-1/image-20200603111251680.png"  alt="image-20200603111251680"></p>
+<p>PIN码一共是8位，当前是没有修改之前的99101602，PIN码的最后一个位是校验位，所以说不必破解直接计算，所以我们一般来说破解前面的7位即可，7位的码进行尝试爆破需要很久，所以说我们当第一次PIN认证链接失败后，路由器会向客户端发回一个EAP-NACK信息，通过信息，攻击者确定PIN的前半部分或者后半部分的是否正确，换句话说，攻击者只需要从7位的PIN码种找出一个4位的PIN码和一个3位的PIN码就可以，所以那么破解的变化就是 10^4+10^3 变化，所以说攻击者只需要试验11000次，就可以破解了，那么攻击者可以通过PIN码获取无线路由器当前使用的Wi-Fi密码，只要PIN码没有改变，那么即使修改了Wi-Fi的密码，攻击者也会通过PIN码获取新的密码，所以说，无线路由器的WPS功能既增加了被攻击者蹭网的可能性，以及被攻击的风险，所以谨慎使用WPS的功能</p>
+<h3 id="路由器web漏洞">路由器web漏洞</h3>
+<p>路由器一般带有web服务，可以通过web界面进行管理和配置，也就是主页那种形式</p>
+<p>正常web的一些攻击手段就可以针对于路由器的攻击中，我们会经常通过CSRF攻击从而认证绕过漏洞，弱密码或者默认路由器管理密码登录，使攻击者可以像正常用户一样访问和修改路由器的任何设置，所以说攻击者根本不需要知道Wi-Fi密码就可以控制路由器，获取权限，进行钓鱼，从而设计到的网络安全问题</p>
+<h3 id="路由器后门漏洞">路由器后门漏洞</h3>
+<p>一般来说，开发软件的程序员为了日后调试和检测方便，在软件中设置的一个超级管理权限，一般这个情况下，这个超级管理员权限不容易被发现，所以说一旦会发现，那么就意味可以直接对路由器进行远程控制</p>
+<h3 id="路由器溢出漏洞">路由器溢出漏洞</h3>
+<p>缓冲区溢出是一种高级的攻击手段，也是常见的危险漏洞，存在各种操作系统和应用软件中，所以说缓冲区溢出的利用攻击，经常表现为程序运行失败，系统假死，重新启动等等，那么黑客可以进行非授权指令，进而取得系统特权没从而进行非法的操作</p>
+<h2 id="路由器系统的基础知识和工具">路由器系统的基础知识和工具</h2>
+<p>路由器大多数是基于Linux系统的，因此了解Linux的基本知识和基本命令的使用是进行路由器漏洞研究的基础</p>
+<p>假设，我们漏洞成功得到一台路由器的权限之后，那么路由器会返回一个shell，拥有最高权限的话，就可以通过它来对路由器进行管理，关闭防火墙，修改DNS，重启路由器等等</p>
+<h3 id="MIPS-Linux">MIPS Linux</h3>
+<p>MIPS属于RISCT恤，应用于小型设备的处理器架构，游戏机，路游戏，激光打印机等等，那么MIOS指令架构的Linux系统叫做MIPS Linux，路由器的根文件系统与Linux系统基本一致，通常由 usr sys proc lib etc bin var tmp sbin mnt include home 以及dev目录，其中bin sbin及目录下的bin sbin都是用于存放路由器中应用程序的目录，而lib目录及usr目录下的lib是用于存放程序运行时需要的动态库文件的目录</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03-1/image-20200603154526157.png"  alt="image-20200603154526157"></p>
+<p>这个就是路由器上固件的位置，拿了下来</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03-1/image-20200603154554302.png"  alt="image-20200603154554302"></p>
+<p>提取出来的是bin文件，我们进行binwalk一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03-1/image-20200603154701651.png"  alt="image-20200603154701651"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03-1/image-20200603154714624.png"  alt="image-20200603154714624"></p>
+<p>lib目录，usr目录下的lib</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03-1/image-20200603154831657.png"  alt="image-20200603154831657"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03-1/image-20200603154847676.png"  alt="image-20200603154847676"></p>
+<p>重要的目录就是etc目录，该目录用于存放路由器的配置文件，在路由器系统中主要用来存放程序自启动配置文件，脚本文件以及各种服务程序的配置文件</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03-1/image-20200603155024954.png"  alt="image-20200603155024954"></p>
+<h3 id="BusyBox命令">BusyBox命令</h3>
+<p>先安装一下gcc的环境，文章：<a href="https://blog.csdn.net/wxh0000mm/article/details/84956366" target="_blank" rel="noopener">https://blog.csdn.net/wxh0000mm/article/details/84956366</a></p>
+<p>busybox安装后，busybox --help 查看当前路由器的busybox支持命令</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/03/2020-6-03-1/image-20200603170155225.png"  alt="image-20200603170155225"></p>
+<p>一些比较简单的指令大概说一下</p>
+<p>ls：显示目录及文件信息</p>
+<p>cd：改变当前工作目录</p>
+<p>cat：在表追你输出设备上显示或链接指定文件</p>
+<p>rm：删除指定文件</p>
+<p>mkdir：早当前目录下创建新的子目录</p>
+<p>cp：复制   mv：移动   du：查看文件的大小</p>
+<p>grep：对目标文件内容进行查找</p>
+<p>ps：显示当前进程状态</p>
+<p>kill：终止进程</p>
+<p>kilall：根据进程名终止进程运行</p>
+<p>ifconifg：查看和设置网卡信息</p>
+<p>uname：显示操作系统发行版本号 ( - r )</p>
+<p>这里大概介绍了一些文件编辑工具，自己应该大部分会选择vim编辑，很顺手，GCC编译，<code>gcc -o hello hello.c</code></p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>个人笔记</category>
+      </categories>
+  </entry>
+  <entry>
     <title>RCTF WP (week 7)</title>
     <url>/2020/06/03/2020-6-03/</url>
     <content><![CDATA[<h2 id="6-3日更新">6.3日更新</h2>
