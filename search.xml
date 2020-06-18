@@ -1,6 +1,370 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>2020-6-17</title>
+    <url>/2020/06/17/2020-6-17/</url>
+    <content><![CDATA[<p>title: 帮别人看的一个python字节码<br>
+categories: 个人笔记<br>
+tages:</p>
+<ul>
+<li>RE</li>
+</ul>
+<hr>
+<p>拿到题目后可以看到是一个python字节码的问题</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"> 4           0 LOAD_GLOBAL              0 (raw_input)</span><br><span class="line">             3 LOAD_CONST               1 ('plz input your flag:')</span><br><span class="line">             6 CALL_FUNCTION            1</span><br><span class="line">             9 STORE_FAST               0 (a)</span><br><span class="line"></span><br><span class="line"> 5          12 LOAD_CONST               2 (0)</span><br><span class="line">            15 BUILD_LIST               1</span><br><span class="line">            18 LOAD_GLOBAL              1 (len)</span><br><span class="line">            21 LOAD_FAST                0 (a)</span><br><span class="line">            24 CALL_FUNCTION            1</span><br><span class="line">            27 BINARY_MULTIPLY     </span><br><span class="line">            28 STORE_FAST               1 (b)</span><br><span class="line"></span><br><span class="line"> 6          31 LOAD_CONST               3 (68)</span><br><span class="line">            34 LOAD_CONST               4 (5)</span><br><span class="line">            37 LOAD_CONST               5 (164)</span><br><span class="line">            40 LOAD_CONST               6 (100)</span><br><span class="line">            43 LOAD_CONST               7 (231)</span><br><span class="line">            46 LOAD_CONST               8 (228)</span><br><span class="line">            49 LOAD_CONST               9 (175)</span><br><span class="line">            52 LOAD_CONST              10 (36)</span><br><span class="line">            55 LOAD_CONST              11 (142)</span><br><span class="line">            58 LOAD_CONST               9 (175)</span><br><span class="line">            61 LOAD_CONST              12 (78)</span><br><span class="line">            64 LOAD_CONST              13 (206)</span><br><span class="line">            67 LOAD_CONST              14 (4)</span><br><span class="line">            70 LOAD_CONST              15 (45)</span><br><span class="line">            73 LOAD_CONST              11 (142)</span><br><span class="line">            76 LOAD_CONST              16 (174)</span><br><span class="line">            79 LOAD_CONST              17 (238)</span><br><span class="line">            82 LOAD_CONST               5 (164)</span><br><span class="line">            85 LOAD_CONST              15 (45)</span><br><span class="line">            88 LOAD_CONST              18 (14)</span><br><span class="line">            91 LOAD_CONST               9 (175)</span><br><span class="line">            94 LOAD_CONST              19 (46)</span><br><span class="line">            97 LOAD_CONST              17 (238)</span><br><span class="line">           100 LOAD_CONST              15 (45)</span><br><span class="line">           103 LOAD_CONST               5 (164)</span><br><span class="line">           106 LOAD_CONST              16 (174)</span><br><span class="line">           109 LOAD_CONST              10 (36)</span><br><span class="line">           112 LOAD_CONST               9 (175)</span><br><span class="line">           115 LOAD_CONST              15 (45)</span><br><span class="line">           118 LOAD_CONST              20 (196)</span><br><span class="line">           121 LOAD_CONST              20 (196)</span><br><span class="line">           124 LOAD_CONST              12 (78)</span><br><span class="line">           127 LOAD_CONST               9 (175)</span><br><span class="line">           130 LOAD_CONST              10 (36)</span><br><span class="line">           133 LOAD_CONST              19 (46)</span><br><span class="line">           136 LOAD_CONST              17 (238)</span><br><span class="line">           139 LOAD_CONST              20 (196)</span><br><span class="line">           142 LOAD_CONST              13 (206)</span><br><span class="line">           145 LOAD_CONST              12 (78)</span><br><span class="line">           148 LOAD_CONST              12 (78)</span><br><span class="line">           151 LOAD_CONST               3 (68)</span><br><span class="line">           154 LOAD_CONST              21 (39)</span><br><span class="line">           157 BUILD_LIST              42</span><br><span class="line">           160 STORE_FAST               2 (c)</span><br><span class="line"></span><br><span class="line"> 7         163 LOAD_GLOBAL              1 (len)</span><br><span class="line">           166 LOAD_FAST                0 (a)</span><br><span class="line">           169 CALL_FUNCTION            1</span><br><span class="line">           172 LOAD_CONST              22 (42)</span><br><span class="line">           175 COMPARE_OP               3 (!=)</span><br><span class="line">           178 POP_JUMP_IF_FALSE      190</span><br><span class="line"></span><br><span class="line"> 8         181 LOAD_CONST              23 ('wrong length')</span><br><span class="line">           184 PRINT_ITEM          </span><br><span class="line">           185 PRINT_NEWLINE       </span><br><span class="line"></span><br><span class="line"> 9         186 LOAD_CONST               2 (0)</span><br><span class="line">           189 RETURN_VALUE        </span><br><span class="line"></span><br><span class="line">10     &gt;&gt;  190 SETUP_LOOP             117 (to 310)</span><br><span class="line">           193 LOAD_GLOBAL              2 (range)</span><br><span class="line">           196 LOAD_GLOBAL              1 (len)</span><br><span class="line">           199 LOAD_FAST                0 (a)</span><br><span class="line">           202 CALL_FUNCTION            1</span><br><span class="line">           205 CALL_FUNCTION            1</span><br><span class="line">           208 GET_ITER            </span><br><span class="line">       &gt;&gt;  209 FOR_ITER                97 (to 309)</span><br><span class="line">           212 STORE_FAST               3 (i)</span><br><span class="line"></span><br><span class="line">11         215 LOAD_GLOBAL              3 (ord)</span><br><span class="line">           218 LOAD_FAST                0 (a)</span><br><span class="line">           221 LOAD_FAST                3 (i)</span><br><span class="line">           224 BINARY_SUBSCR       </span><br><span class="line">           225 CALL_FUNCTION            1</span><br><span class="line">           228 LOAD_CONST              24 (3)</span><br><span class="line">           231 BINARY_RSHIFT       </span><br><span class="line">           232 LOAD_GLOBAL              3 (ord)</span><br><span class="line">           235 LOAD_FAST                0 (a)</span><br><span class="line">           238 LOAD_FAST                3 (i)</span><br><span class="line">           241 BINARY_SUBSCR       </span><br><span class="line">           242 CALL_FUNCTION            1</span><br><span class="line">           245 LOAD_CONST               4 (5)</span><br><span class="line">           248 BINARY_LSHIFT       </span><br><span class="line">           249 BINARY_XOR          </span><br><span class="line">           250 LOAD_CONST              25 (255)</span><br><span class="line">           253 BINARY_AND          </span><br><span class="line">           254 LOAD_FAST                1 (b)</span><br><span class="line">           257 LOAD_FAST                3 (i)</span><br><span class="line">           260 STORE_SUBSCR        </span><br><span class="line"></span><br><span class="line">12         261 LOAD_FAST                1 (b)</span><br><span class="line">           264 LOAD_FAST                3 (i)</span><br><span class="line">           267 DUP_TOPX                 2</span><br><span class="line">           270 BINARY_SUBSCR       </span><br><span class="line">           271 LOAD_CONST              26 (136)</span><br><span class="line">           274 INPLACE_XOR         </span><br><span class="line">           275 ROT_THREE           </span><br><span class="line">           276 STORE_SUBSCR        </span><br><span class="line"></span><br><span class="line">13         277 LOAD_FAST                1 (b)</span><br><span class="line">           280 LOAD_FAST                3 (i)</span><br><span class="line">           283 BINARY_SUBSCR       </span><br><span class="line">           284 LOAD_FAST                2 (c)</span><br><span class="line">           287 LOAD_FAST                3 (i)</span><br><span class="line">           290 BINARY_SUBSCR       </span><br><span class="line">           291 COMPARE_OP               3 (!=)</span><br><span class="line">           294 POP_JUMP_IF_FALSE      209</span><br><span class="line"></span><br><span class="line">14         297 LOAD_CONST              27 ('wrong')</span><br><span class="line">           300 PRINT_ITEM          </span><br><span class="line">           301 PRINT_NEWLINE       </span><br><span class="line"></span><br><span class="line">15         302 LOAD_CONST               2 (0)</span><br><span class="line">           305 RETURN_VALUE        </span><br><span class="line">           306 JUMP_ABSOLUTE          209</span><br><span class="line">       &gt;&gt;  309 POP_BLOCK           </span><br><span class="line"></span><br><span class="line">16     &gt;&gt;  310 LOAD_CONST              28 ('win')</span><br><span class="line">           313 PRINT_ITEM          </span><br><span class="line">           314 PRINT_NEWLINE       </span><br><span class="line">           315 LOAD_CONST               0 (None)</span><br><span class="line">           318 RETURN_VALUE</span><br></pre></td></tr></tbody></table></figure>
+<p><code>LOAD_GLOBAL</code> ：全局变量</p>
+<p><code>LOAD_FAST</code>：局部变量</p>
+<p><code>LOAD_CONST</code>：常量</p>
+<p><code>CALL_FUNCTION</code>：调用函数，调用前将pyfuntionobject和实参压栈</p>
+<p><code>STORE_FAST</code>：局部变量</p>
+<p><code>BUILD_LIST</code>：从栈顶取count个元素，创建一个list对象压栈</p>
+<p><code>BINARY_MULTIPLY</code>：乘法</p>
+<p><code>COMPARE_OP</code>：对栈顶的两个元素做指定的比较操作，结果压栈</p>
+<p><code>POP_JUMP_IF_FALSE</code>：栈顶弹出，如果为false跳转</p>
+<p><code>PRINT_ITEM</code>：打印栈顶元素到标准输出</p>
+<p><code>PRINT_NEWLINE</code>：打印回车到标准输出</p>
+<p><code>BINARY_LSHIFT</code>：左移</p>
+<p><code>BINARY_RSHIFT</code>：右移</p>
+<p><code>BINARY_AND</code>：与</p>
+<p><code>BINARY_XOR</code>：异或</p>
+<p>开始翻译一下：</p>
+<p>首先我们可以看到数组</p>
+<p>c = [68, 5, 164, 100, 231, 228, 175, 36, 142, 175, 78, 206, 4, 45, 142, 174, 238, 164, 45, 14, 175, 46, 238, 45, 164, 174, 36, 175, 45, 196, 196, 78, 175, 36, 46, 238, 196, 206, 78, 78, 68, 39]</p>
+<p>下面判定了长度，如果我们的长度不等于42，那么就会输出wrong length，我们输入的数据进行循环 进行b[i] = ((b[i]&gt;&gt;3)^(b[i]&lt;&lt;5))&amp;0xff操作后 b[i]^0x88 等于我们的c的数组，如果相同就是win如果不同就是wrong</p>
+<p>所以反向进行解密就是我们 经过我们的数组，异或后经过b[i] = ((b[i]&lt;&lt;3)^(b[i]&gt;&gt;5))&amp;0xff即可</p>
+<p>exp：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># -*- coding: UTF-8 -*-</span><br><span class="line">def exp():</span><br><span class="line">    flag = ''</span><br><span class="line">    c = [68, 5, 164, 100, 231, 228, 175, 36, 142, 175, 78, 206, 4, 45, 142, 174, 238, 164, 45, 14, 175, 46, 238, 45, 164, 174, 36, 175, 45, 196, 196, 78, 175, 36, 46, 238, 196, 206, 78, 78, 68, 39]</span><br><span class="line">    b = [0] * len(c)</span><br><span class="line">    for i in range(len(c)):</span><br><span class="line">        b[i] = c[i]^0x88</span><br><span class="line">        b[i] = ((b[i]&lt;&lt;3)^(b[i]&gt;&gt;5))&amp;0xff</span><br><span class="line">        flag += chr(b[i])</span><br><span class="line">    print flag</span><br><span class="line">exp()</span><br><span class="line">#flag{c9e0962d-013a-4953-a1e9-bb69e53b266f}</span><br></pre></td></tr></tbody></table></figure>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+  </entry>
+  <entry>
+    <title>智能门锁分析</title>
+    <url>/2020/06/15/2020-6-15/</url>
+    <content><![CDATA[<p>首先拿到了一个智能门锁</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/15/2020-6-15/image-20200615095928063.png"  alt="image-20200615095928063"></p>
+<p>现在大部分的智能门锁都是蓝牙的协议</p>
+<p>BTLE 设备运行在2.4ghz. 分为40 个频道, 每个频道 2Mhz 带宽. 其中频道 37; 38; 39 为广播频道. 剩余的37个频道为数据频道</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/15/2020-6-15/image-20200615100058570.png"  alt="image-20200615100058570"></p>
+<p>BTLE 定义使用了3 种匹配模式. JustWorks; 6-digit PIN 和 Out of band. 其中JustWorks 默认使用000000作为PIN来完成匹配. 这样的设计给本身不带输入方式的设备提供了便利. 但同时让所有人都可以轻易以其匹配. 我们的目标智能锁使用的正是此方式.</p>
+<p>在匹配成功后, 我们便可以通过一个独特的UUID对 Characteristics 进行读写操作. 从而实现不同的功能, 比如开灯/关灯等. 在格式上UUID 又分为Bluetooth Special Interest Group (SIG) 规范的 16bit 公有UUID和 厂商自定义的 128 bit 私有UUID</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/15/2020-6-15/image-20200615100159871.png"  alt="image-20200615100159871"></p>
+<p>在与BTLE 交互的硬件方面可以说非常简单，因为我们大部分手机都有BTLE的功能所以推荐 LightBlue这个软件</p>
+<p>我们先去得到一下一些基本信息</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/15/2020-6-15/image-20200615100400694.png"  alt="image-20200615100400694"></p>
+<p>Blue FPL是我们的设备</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/15/2020-6-15/image-20200615100427020.png"  alt="image-20200615100427020"></p>
+<p>这里获取了我们的uuid等等的信息</p>
+<p>想用app看看都可以干什么，可惜看不到！二维码不知道在哪里，序列号也是</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/15/2020-6-15/image-20200615102637781.png"  alt="image-20200615102637781"></p>
+<p>那么！我去京东看了一下，大概是这些功能，我去拆一下，由于拆完是这样的！</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/15/2020-6-15/image-20200615111742426.png"  alt="image-20200615111742426"></p>
+<p>根本夹不了，直接在网上download一下oklok apk进行分析</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/15/2020-6-15/image-20200615113157249.png"  alt="image-20200615113157249"></p>
+<p>这里可以看到uuid的判定</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>个人笔记</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Rust-Xor 分析</title>
+    <url>/2020/06/09/2020-6-10/</url>
+    <content><![CDATA[<h2 id="bakdata">bakdata</h2>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200609235252781.png"  alt="image-20200609235252781"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610010459269.png"  alt="image-20200610010459269"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610010508579.png"  alt="image-20200610010508579"></p>
+<p>这里有返回的信息，进行yes/no的判定</p>
+<p>定位第一个位置下断点就是 call sub_55683666A770</p>
+<p>F7单步进去分析</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610011048733.png"  alt="image-20200610011048733"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610011150434.png"  alt="image-20200610011150434"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610011201050.png"  alt="image-20200610011201050"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610011322361.png"  alt="image-20200610011322361"></p>
+<p>输入密码位置，下断再进行调试</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610011448641.png"  alt="image-20200610011448641"></p>
+<p>输出字符 ：</p>
+<p>Welcome to full databse backup system!<br>
+Please input password:</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610011659302.png"  alt="image-20200610011659302"></p>
+<p>输入密码</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610095833331.png"  alt="image-20200610095833331"></p>
+<p>输入的长度</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610100634517.png"  alt="image-20200610100634517"></p>
+<p>对输入进行了base32加密</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610100835112.png"  alt="image-20200610100835112"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610101128114.png"  alt="image-20200610101128114"></p>
+<p>这个位置进行转换，进行一下猜测</p>
+<p>重新输入了aaaaaaaaaa，进行检测</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610111307371.png"  alt="image-20200610111307371"></p>
+<p>这个 00 - A  01 - B 02 - C，正好满足</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610111333963.png"  alt="image-20200610111333963"></p>
+<p>所以这个位置是base32加密</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610175521992.png"  alt="image-20200610175521992"></p>
+<p>偏移C01F位置就是异或的数据和偏移10F63进行异或</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610175641920.png"  alt="image-20200610175641920">‬</p>
+<p>也就是每一次的eax ^ [ebp+42h]</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">0x8 ^ 0x4</span><br><span class="line">0x57 ^ 0x5E</span><br><span class="line">0x5F ^ 0x4F</span><br><span class="line">0x63 ^ 0x75</span><br><span class="line">0x65 ^ 0x63</span><br><span class="line">0xF1 ^ 0xEB</span><br><span class="line">0x42 ^ 0x58</span><br><span class="line">0x63 ^ 0x7C</span><br><span class="line">0xF ^ 0x3</span><br><span class="line">0x39 ^ 0x20</span><br><span class="line">0x12 ^ 0x8</span><br><span class="line">0xAA ^ 0xBC</span><br><span class="line">0x22 ^ 0x3A</span><br><span class="line">0xB4 ^ 0xAF</span><br><span class="line">0x16 ^ 0x14</span><br><span class="line">0x7E ^ 0x61</span><br><span class="line">0xC0 ^ 0xCC</span><br><span class="line">0xD5 ^ 0xC4</span><br><span class="line">0xEB ^ 0xFB</span><br><span class="line">0x12 ^ 0x5</span><br><span class="line">0x58 ^ 0x50</span><br><span class="line">0xCD ^ 0xD5</span><br><span class="line">0x56 ^ 0x5D</span><br><span class="line">0xC7 ^ 0xC5</span><br><span class="line">0x1C ^ 0x10</span><br><span class="line">0x97 ^ 0x92</span><br><span class="line">0xE4 ^ 0xFD</span><br><span class="line">0x39 ^ 0x2F</span><br><span class="line">0xEC ^ 0xE6</span><br></pre></td></tr></tbody></table></figure>
+<p>挨次下断点选取即可 转换成了数字的模式，我们转化为字符：</p>
+<p><code>MJQWG227MZ2WY3C7MRQXIYLCMFZWK</code></p>
+<p>解密：</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610183704939.png"  alt="image-20200610183704939"></p>
+<p>flag : back_full_database</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>CTF-RE</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>C++反汇编与逆向分析技术揭秘</title>
+    <url>/2020/06/09/2020-6-09/</url>
+    <content><![CDATA[<h1>第五章-流程控制语句的识别</h1>
+<h2 id="5-4-Switch的真相">5.4 Switch的真相</h2>
+<p>小分支switch ( 分支数小于等于3 )</p>
+<p>总结：cmp - je - cmp - je - cmp - je …  end ( je到end/break )</p>
+<p>if … else if … 为 cmp - jne - 执行 - jmp</p>
+<p>if else 执行语句 接着 cmp jxx 位置，switch 小分支为 比较为一块，执行在另一块</p>
+<p>如果没有 break那么我们就把执行语句后的 jmp end 去掉一直往下走即可</p>
+<p>中等分支switch ( 分支数大于3 )</p>
+<p>case为顺序，或者case之前的差值小于等于6时候，会进行一个case语句表，进行对应，方式为变化为数组的形式，也就是case - 1 = A，A*4+表首地址地址，进行判定寻找</p>
+<h2 id="5-5-难以构成跳转表的switch">5.5 难以构成跳转表的switch</h2>
+<p>这里说明了两个情况，一个是小于等于256的情况，一个是大于256的情况</p>
+<p>小于255情况的时候，会生成两个表，一个是索引表，一个是地址表</p>
+<p>索引表，放置了是case一个字节的数据，进行的判定，把default 或者是 不存在的case在索引表变化成一样的数值，这样就可以直接跳转到指定位置，截取书上的图比较明了<img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200609212845509.png"  alt="image-20200609212845509"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200609212900843.png"  alt="image-20200609212900843"></p>
+<h2 id="5-6-判定树的高度">5.6 判定树的高度</h2>
+<p>这里为差值大于255时候，会把switch的方法变成二叉树判定树，取中间节点，进行左边以及右边case的比较</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200609213051222.png"  alt="image-20200609213051222"></p>
+<p>二叉判定树的左右树根据我们节点的多少可以转换成相对应的合适结构，比较左树 case数量小于3，那么我们就可以进行一个if else的一个方法结构，如果我们大于3有可能有是地址表，有可能是索引表+地址表，或者继续分树</p>
+<h2 id="5-7-do-while-for的比较">5.7 do/while/for的比较</h2>
+<p>do 情况 为 操作 - cmp - jxx（回滚）</p>
+<p>while 情况 为 cmp jxx 操作 jmp ( 回滚 )</p>
+<p>这里的while操作因为进行了两次跳转，可以优化成 if  do  while 操作 后续只进行一次jxx操作，比两次执行效率高</p>
+<p>for 情况 为 赋值 - jmp - cmp - jxx - 执行 - jmp - 执行2 - cmp - jxx - 执行</p>
+<h2 id="5-8-编译器对循环结构的优化">5.8 编译器对循环结构的优化</h2>
+<p>跟上面说的一样 while变换成 if do while</p>
+<p>for的优化 转化为 初始化 if do while 形式</p>
+<p>大部分都可以用do进行优化</p>
+<p>在循环体判断结构中，没有进行值改变的表达式可以外提到循环体，进行少次数运算</p>
+<p>循环强度降低优化，比如特定的乘法可以变成加法</p>
+<h1>第六章-函数的工作原理</h1>
+<h2 id="6-1-栈帧的形成和关闭">6.1 栈帧的形成和关闭</h2>
+<p>ebp栈底 esp栈顶，他们进行esp&lt;ebp时候形成栈帧，先进后出的原则，结束调用关闭栈帧，栈平衡</p>
+<p>这里有一个之前遗留的不太完全的知识点，就是</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200609230004452.png"  alt="image-20200609230004452"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200609230015052.png"  alt="image-20200609230015052"></p>
+<p><code>cmp ebp,esp</code>这里比较是根据了pop现场数据后，进行 add原来 sub的值，进行比较，在进行chkesp，之前我的版本应该是直接<code>mov ebp,esp</code>没有chk</p>
+<h2 id="6-2-各种调用方式的考察">6.2 各种调用方式的考察</h2>
+<p>cdecl：调用者 add esp,xxh</p>
+<p>stdcall 被调用者 ret xxh</p>
+<p>fastcall edx ecx传参 被调用者 ret xxh</p>
+<p>参数个数为0时候 cdecl 等同于 stdcall，c语言默认 cdecl，在优化版本进行复写传播时候 cdecl比较出众，因为外部 add esp,xxh 不用挨个进行ret xxh，只需记录 push即可</p>
+<h2 id="6-3-使用ebp或esp寻址">6.3 使用ebp或esp寻址</h2>
+<p>正常我们理解的是ebp进行寻址，ebp-4开始为局部变量 ebp+4 返回地址 ebp+8 参数 但是是在非O2的选项</p>
+<p>如果要提升优化，我们需要省一个寄存器ebp，我们通过esp进行寻址，节约资源</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200611224827025.png"  alt="image-20200611224827025"></p>
+<p>这里的esp+18h+var_5 也就是相当于了 原来的 esp+10+var_5，画一下图</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200611225628822.png"  alt="image-20200611225628822"></p>
+<p>正数标号法和负数标号法，上面画的图是我们的负数标记法，我们的正数标记法，我们就把正常的var的数值变成了正数，我们也是通过我们的push然后加上0x4，不同的就是其实位置不同，我们的正数标记法应该在我们的esp没有进行sub之前进行一个参与运算，而我们的负数标记法是根据了我们的一个sub esp，0x XXX 进行的，IDA一般会选择负数标记法</p>
+<h2 id="6-4-函数的参数">6.4 函数的参数</h2>
+<p>正常来说，我们的ebp+4是存放返回地址的，我们的ebp+8是存放的参数，在我们esp寻址的时候，假设我们call一下，我们call过去后，返回地址压入堆栈此时esp上升，那么我们如果不进行一个堆栈的提升，也就是调用函数中无，局部变量，那么当前的 esp + 0 这个0就是我们说的返回地址代表的var的数值，那么+4 就是返回地址，如果我们提升了里面有局部变量，那么我们的esp需要提升，那么也就是要返回到原来位置，所以esp + X - Y，那么我们的 X 就是esp提升的大小，-Y就是我们var</p>
+<p>在esp寻址的时候，Y是参数，-Y局部变量，0返回地址</p>
+<h2 id="6-5-函数的返回值">6.5 函数的返回值</h2>
+<p>正常我们都会看到一个指令 ret，ret就是将当前的地址pop eip的位置，因为call过去的时候，进行了esp-4的操作，所以ret pop出eip那么当前的esp进行+4</p>
+<p>解释一下为什么ebp+4是放返回地址的：因为我们正常的操作的时候，会有一个步骤就是push ebp，那么我们push ebp，当前的esp又加了4，进行一个 mov ebp ,esp 进行了一个 ebp = esp</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200612145608678.png"  alt="image-20200612145608678"></p>
+<p>所以 ebp + 4是返回地址，ebp + 8 是参数</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200612153911113.png"  alt="image-20200612153911113"></p>
+<p>当前函数代码进行了一个，push 1的操作在 ebp + 8 ，也就是我们的nNumber = ebp + 8 ，因为是int，所以&amp;nNumber - 1等同于 ebp + 8 - 4，也就是ebp + 4，那么 *(ebp + 4) = 返回地址 ，返回地址 = nAddr ，return nAddr 就是返回地址，一般又参数的返回都用eax进行保存，那么进行引用的时候，直接调用eax即可</p>
+<p>结构体的时候，假设里面的成员有两个，我们进行返回值的时候，要用到eax，edx两个寄存器进行返回到相应的局部变量的位置上</p>
+<h1>第七章-变量在内存中的位置和访问方式</h1>
+<h2 id="7-1-全局变量和局部变量的区别">7.1 全局变量和局部变量的区别</h2>
+<p>全局变量在数据区，生命周期和所在模块一致，我们使用立即数间接访问</p>
+<p>局部变量所在的地址为栈区，生命周期与所在的函数作用域一致，我们使用ebp或者esp间接进行访问</p>
+<h2 id="7-2-局部静态变量的工作方式">7.2 局部静态变量的工作方式</h2>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200613220108269.png"  alt="image-20200613220108269"></p>
+<p>进行测试了一个静态局部变量，static静态局部变量的时候只会进行一次操作，直接来看汇编</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200613220151501.png"  alt="image-20200613220151501"></p>
+<p>进行的操作就是，在内存中会有一个特定的位置进行储存一下校验的位置，这里也就是0x427e38，那么第一次我们的static 局部变量没有被赋值的时候，他的al是0，用来记录，才会直接后面的jne下面的位置ZF这里是1，所以第一次赋值了我们要输入的值，当二次，第三次的时候，al变成1，所以进行校验的时候，会告诉编译器，我们的值已经被赋值过了，直接jne跳转，于是就是图上的效果</p>
+<p>结论：static 静态局部变量只赋值一次，标记位只用了一位，说明一个字节有8位，一个字节可以判断8个静态局部变量</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200613224924282.png"  alt="image-20200613224924282"></p>
+<p>如果直接给常量，编译器不会进行校验等等，直接不判断了，因为会一直等于1，在固定的地址写了</p>
+<h2 id="7-3-堆变量">7.3 堆变量</h2>
+<p>这里运用的就是 malloc free / new delete</p>
+<p>new 这里也会运用到 malloc和_nh_malloc_dbg，他们执行返回的是申请堆空间的首地址</p>
+<p>这里书用了个例子挺好的，用了商铺的原理解释了malloc new等等，malloc是划分出使用，new是划分好直接调用，所以malloc需要强制转换，new不用</p>
+<p>申请堆空间使用的了_heap_alloc_dbg，里面使用了CrtMemBlockHeader，描述里面的成员，定义了两个重要的指针，pBlockHeaderPrev，pBlockHeaderNext，两个前后指针进行遍历，gap保存堆数据的数组</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200614001623870.png"  alt="image-20200614001623870"></p>
+<p>这里了解了一个知识点：0xcdcdcdcd，由Microsoft的C ++调试运行时库用来标记未初始化的堆内存</p>
+<p>所以说这里初始化了10个0xCD的内存，FDFDFDFD前后4个字节代表了往上越界和往下越界的检查标志，这里我大概查了一下，这里是微软定义的地方，如果说我们进行越界了，那么0xFD这里会有数据改变，进而前后定义0xFD来检查前后是否越界</p>
+<p>这里的 3A代表申请了多少次的堆空间，0xA这里代表了堆空间的大小 0x1F0E28位置说明了上一次堆空间首地址，下面的4个字节代表了下一次的，这里的0x1是堆使用的个数，这里对应了一个结构体CrtMemBlockheader</p>
+<p>这里的nNoMansLandSize 4 对应了后面的 gap[4] = { 0xFD,0xFD,0xFD,0xFD}，检查中如果gap中的值变化了，就会以Assert fail的方式报错</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#define nNoMansLandSize 4</span><br><span class="line"> </span><br><span class="line">typedef struct _CrtMemBlockHeader</span><br><span class="line">{</span><br><span class="line">        struct _CrtMemBlockHeader * pBlockHeaderNext;</span><br><span class="line">        struct _CrtMemBlockHeader * pBlockHeaderPrev;</span><br><span class="line">        char *                      szFileName; //存储的发起分配操作的那行代码所在的文件的路径和名称</span><br><span class="line">        int                         nLine; //行号</span><br><span class="line">#ifdef _WIN64</span><br><span class="line">        /* These items are reversed on Win64 to eliminate gaps in the struct</span><br><span class="line">         * and ensure that sizeof(struct)%16 == 0, so 16-byte alignment is</span><br><span class="line">         * maintained in the debug heap.</span><br><span class="line">         */</span><br><span class="line">        int                         nBlockUse;</span><br><span class="line">        size_t                      nDataSize;</span><br><span class="line">#else  /* _WIN64 */</span><br><span class="line">        size_t                      nDataSize;</span><br><span class="line">        int                         nBlockUse;</span><br><span class="line">#endif  /* _WIN64 */</span><br><span class="line">        long                        lRequest; //请求号</span><br><span class="line">        unsigned char               gap[nNoMansLandSize];</span><br><span class="line">        /* followed by:</span><br><span class="line">         *  unsigned char           data[nDataSize];</span><br><span class="line">         *  unsigned char           anotherGap[nNoMansLandSize];</span><br><span class="line">         */</span><br><span class="line">} _CrtMemBlockHeader;</span><br></pre></td></tr></tbody></table></figure>
+<p>如果我们的某个堆空间释放了，那么我们再申请的时候会检查这个被释放的堆空间是否可以满足用户的要求，如果满足就再次申请的堆空间地址就是我们刚释放的对空间地址，形成回收空间的再次利用</p>
+<h1>第八章-数组和指针的寻址</h1>
+<h2 id="8-1-数组在函数内">8.1 数组在函数内</h2>
+<p>数组在函数的局部变量中的形式是从低地址像高地址传送，正常的连续变量是从高地址向低地址传送，这里了解了一下，字符串数组</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200614132631494.png"  alt="image-20200614132631494"></p>
+<p>假设这个hello world 会把4*3=12字节的数据 分别给了 eax，ecx，edx进行存储，如果不是4的倍数</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200614132808612.png"  alt="image-20200614132808612"></p>
+<p>假设剩三个就会分配一下 word byte进行寄存器的传送赋值</p>
+<h2 id="8-2-数组作为参数">8.2 数组作为参数</h2>
+<p>数组作为参数的时候也是地址进行的传递</p>
+<p>这里很好的了解了一下 sizeof以及strlen的原理，sizeof是我们类型的大小长度，所以如果对指针或者形参保存的数组名使用sizeof的时候只能获得当前平台的指针长度，所以这里用strlen，这里的代码说的很明白直接截图了</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200614153244316.png"  alt="image-20200614153244316"></p>
+<p>这里的repne scasb代表的是repne会将ecx自动每次减1，如果我们的edi指向了末尾的0，那么我们就可以得到长度</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">ecx2 = ecx1 - (len + 1)</span><br><span class="line">ecx1 = -1</span><br><span class="line">ecx2 = -1 -(len + 1) = -(len + 2)</span><br><span class="line">not ecx2 + 1 = len + 2</span><br><span class="line">len = not ecx2 - 1</span><br></pre></td></tr></tbody></table></figure>
+<p>总结来说，sizeof是算术符，而strlen是函数，这里进行 -1 的操作是因为在进行汇编来看把最后一个ASCII码等于0的\0也算进了总的长度，所以他补码后需要进行+1的操作他有多算了一位就是+2，那么我们操作等同于了not - 1 等于了 neg后的  - 2</p>
+<p>strcpy的内联形式，我觉得书上给的源码对应挺不错的</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200615000813235.png"  alt="image-20200615000813235"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200615000820212.png"  alt="image-20200615000820212"></p>
+<p>大概就是一个 复制的一个过程，中间的 rep movsd 是ecx为次数，也就是 x / 4 = y ，那么想与是因为 除以4 mod = 3这个有限域所以与3</p>
+<h2 id="8-3-数组作为返回值">8.3 数组作为返回值</h2>
+<p>数组作为返回值的时候，因为esp要回到原来的位置，那么很有可能这数组里面的数据会被接下来的操作进行破坏，书上的图很简洁</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200615145145759.png"  alt="image-20200615145145759"></p>
+<p>进行这个操作的时候会破坏数组的0x12FF18和0x12FF1C的数据空间，对数组进行破坏</p>
+<p>避免这种方式：使用全局数组来进行这种方式，因为取的地址是固定的不在局部也不在参数位置，是在一个固定的地址中，不会被改变</p>
+<p>静态局部数组</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200615151859946.png"  alt="image-20200615151859946"></p>
+<p>测试了一下大概和静态局部变量差不多，无论局部静态数组有多少个元素也只检查一次，上次说的静态局部变量有两个就会检查两次等等的</p>
+<h2 id="8-4-下标寻址和指针寻址">8.4 下标寻址和指针寻址</h2>
+<p>数组下标寻址要比指针寻址的速度快一些，因为指针寻址的时候，进行了两次取地址的操作，但是指针比较灵活</p>
+<p>数组下标寻址公式：nvar + sizeof(类型)*数组下标</p>
+<p>整形常量寻址会直接计算好，整型变量寻址会根据公式来定，因为变量会暂时无法计算对应地址，表达式寻址，会先进行计算</p>
+<p>因为不会对数组的下标进行访问检查，所以很容易导致越界的问题，当小于0或者大于数组下标的时候，就会越界，如下</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200615171455494.png"  alt="image-20200615171455494"></p>
+<h2 id="8-5-多维数组">8.5 多维数组</h2>
+<p>多维数组的含义：在内存中都可以转换成一位数组的存储方式，只是我们用多维数组来看，自己本身比较好寻址</p>
+<p>这里面有几个公式，多维数组的：<code>数组首地址 + sizeof ( type [ j ] ) * 二维下标值 + sizeof ( type ) * 一维下标值</code></p>
+<p>这个只是我们所用到的debug版本中的，在release版本中进行了公式的优化：</p>
+<p>假设二维数组为 <code>type nArray[M][N]</code>  ：使用 i，j作为下标寻址</p>
+<p><code>nArray + i * sizeof( type [N] ) + j * sizeof ( type )</code></p>
+<p><code>nArray + i * N * sizeof( type ) + j * sizeof ( type )</code></p>
+<p><code>nArray + sizeof ( type ) * ( i * N + j )</code></p>
+<p>所以通过转换下标值可以直接变成 i * N + j进行一个转换，从而节省步骤</p>
+<p>三维数组可以这么理解：</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200616112722525.png"  alt="image-20200616112722525"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200616114448101.png"  alt="image-20200616114448101"></p>
+<p>搞明白了这里的24h 是我们的 <code>y*z*sizeof(type)</code> <code>3*3*4 =0x24</code>，所以最开始进行的是 x * 0x24 依次推导的话 这个里就是 <code>x*0x24+y*0xC+z*0x4</code>那么理解成自己的公式就是 二维数组：<code>x*y*sizeof(type)+y*sizeof(type)</code>这里说的明确一下就是 <code>0x24 = 0x3*0x3*0x4  0xC = 0x3 * 0x4 </code></p>
+<h2 id="8-6-存放指针类型数据的数组">8.6 存放指针类型数据的数组</h2>
+<p>我们的指针类型的数组，这里举个例子比较通俗易懂</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200616140410913.png"  alt="image-20200616140410913"></p>
+<p>这里代表了我们说的返回的应该是定义的指针数组，所以里面的每一个成员项是地址，地址里面存的是数据，所以输出的时候是取地址里面的数据，所以我们可以取出来是多少</p>
+<h2 id="8-7-指向数组的指针变量">8.7 指向数组的指针变量</h2>
+<p>这里引入一个公式：<code>指针变量地址数据 + = （sizeof (指针类型) * 数值)</code></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200616163849205.png"  alt="image-20200616163849205"></p>
+<p>这里是0x20书上是0x2C，不清楚书上为什么是0x2C有点蒙 = = 蒙了很久，先过我认为0x20是对的，最后一次ebp - 4 为 0 0 c c</p>
+<p>直接30+2 = 32 = 0x20</p>
+<h2 id="8-8-函数指针">8.8 函数指针</h2>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200616173353234.png"  alt="image-20200616173353234"></p>
+<p>函数指针的定义：</p>
+<p><code>返回值类型 ([调用约定，可选] * 函数指针变量名称) (参数信息)</code></p>
+<h1>第九章-结构体和类</h1>
+<h2 id="9-1-对象的内容布局">9.1 对象的内容布局</h2>
+<p>大概看了看C++的一个视频，大概了解了C++的一个 对象 类 属性 功能的问题，private为私有，public为公有，如果我们没有定义private，那么我们的第一个Class那边的默认为private</p>
+<p>这里有一个公式挺好的：<code>对象长度 = sizeof(数据成员1)+sizeof(数据成员2)+...+sizeof(数据成员n)</code></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200618095935478.png"  alt="image-20200618095935478"></p>
+<p>这里测试的number1对象就是8个字节</p>
+<p>上面的公式不适用于三种情况：</p>
+<ul>
+<li>空类：如果类的对象不占内存空间的话，那么会分配1字节的空间用于类的实例化，而不是0</li>
+<li>内存对齐：之前有写过纸质的笔记</li>
+<li>静态数据成员</li>
+</ul>
+<h2 id="9-2-this指针">9.2 this指针</h2>
+<p>举例：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">struct A{</span><br><span class="line">	int m_int;</span><br><span class="line">	float m_float;</span><br><span class="line">};</span><br><span class="line">struct A a;</span><br><span class="line">struct A *pa = &amp;a;</span><br><span class="line">printf("%p",&amp;pa-&gt;m_float);</span><br></pre></td></tr></tbody></table></figure>
+<p>假设我们的变量a的地址为0x12ff00，那么我们的m_float在结构体A中的偏移为0x4，所以&amp;pa - &gt; m_float = 0x12ff00 + 0x4，总结一下公式就是：<code>pa-&gt;m_float的地址 = 指针pa的地址 + m_float在A中的偏移</code></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200618103030462.png"  alt="image-20200618103030462"></p>
+<p>这里可以看到我们的this指针，保存着我们的调用对象的首地址，利用寄存器ecx来保存对象首地址，以寄存器传参方式传递到成员函数中，所以说我们的非静态成员函数都有一个隐藏参数，<strong>自身类型的指针</strong>，这就是this指针，默认调用约定叫thiscall，hhhh今天才很好的了解this和thiscall，thiscall是c++专有的方式，如果我们用了stdcall或者其他的，那么this指针不用ecx传递了</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200618104708343.png"  alt="image-20200618104708343"></p>
+<p>对象首地址保存在ecx中</p>
+<p>thicall格式总结：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">lea	ecx,[mem]</span><br><span class="line">call FUN_ADDRESS</span><br><span class="line">调用：</span><br><span class="line">mov	XXX,ecx</span><br><span class="line">mov [reg+i],XXX</span><br></pre></td></tr></tbody></table></figure>
+<p>_stdcall与__cdecl调用方式的成员函数：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">lea reg,[mem]</span><br><span class="line">push reg</span><br><span class="line">call FUN_ADDRESS</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="9-3-静态数据成员">9.3 静态数据成员</h2>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200618120720705.png"  alt="image-20200618120720705"></p>
+<p>静态数据成员这里理解起来和静态局部变量可以理解成一个东西，因为他是在程序被加载的时候，他就会存在，所以说，这个时候，类没有对应的实例对象</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200618121700829.png"  alt="image-20200618121700829"></p>
+<p>可以看到两者所属的内存地址空间不同，所以静态成员不参与长度的计算</p>
+<h2 id="9-4-对象作为函数参数">9.4 对象作为函数参数</h2>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>书籍笔记</category>
+      </categories>
+  </entry>
+  <entry>
     <title>6.7日更新 (week 7)</title>
     <url>/2020/06/07/2020-6-07/</url>
     <content><![CDATA[<h2 id="小黄书更新">小黄书更新</h2>
