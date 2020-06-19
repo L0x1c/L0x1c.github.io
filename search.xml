@@ -222,7 +222,1135 @@ Please input password:</p>
   <entry>
     <title>C++反汇编与逆向分析技术揭秘</title>
     <url>/2020/06/09/2020-6-09/</url>
-    <content><![CDATA[<h1>第五章-流程控制语句的识别</h1>
+    <content><![CDATA[<h1>第一章-熟悉工作环境和相关工具</h1>
+<h2 id="1-1-调试工具-Microsoft-Visual-C-6-0-和-OllyDBG">1.1 调试工具 Microsoft Visual C++6.0 和 OllyDBG</h2>
+<p><strong>OD基本使用</strong></p>
+<table>
+<thead>
+<tr>
+<th>快捷键</th>
+<th>功能说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F2</td>
+<td>断点</td>
+</tr>
+<tr>
+<td>F3</td>
+<td>加载一个可执行程序，进行分析</td>
+</tr>
+<tr>
+<td>F4</td>
+<td>程序执行到光标处</td>
+</tr>
+<tr>
+<td>F7</td>
+<td>单步步入</td>
+</tr>
+<tr>
+<td>F8</td>
+<td>单步步过</td>
+</tr>
+<tr>
+<td>F9</td>
+<td>直接运行程序，遇见断点处停止</td>
+</tr>
+<tr>
+<td>Ctrl+F2</td>
+<td>重新运行程序到起始位置</td>
+</tr>
+<tr>
+<td>Ctrl+F9</td>
+<td>执行函数到返回处，用于跳出函数实现</td>
+</tr>
+<tr>
+<td>Alt+F9</td>
+<td>执行到用户代码处，用于快速跳出系统函数</td>
+</tr>
+<tr>
+<td>Ctrl+G</td>
+<td>定位地址</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-2-反汇编静态分析工具-IDA">1.2 反汇编静态分析工具 IDA</h2>
+<p><strong>IDA基本使用</strong></p>
+<table>
+<thead>
+<tr>
+<th>快捷键</th>
+<th>功能说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Enter</td>
+<td>跟进函数实现</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>返回跟进位置</td>
+</tr>
+<tr>
+<td>A</td>
+<td>解释光标处的地址为一个字符串的首地址</td>
+</tr>
+<tr>
+<td>B</td>
+<td>十六进制转化为二进制</td>
+</tr>
+<tr>
+<td>C</td>
+<td>解释光标处地址为一条指令</td>
+</tr>
+<tr>
+<td>D</td>
+<td>解释该地址为数据</td>
+</tr>
+<tr>
+<td>G</td>
+<td>查找地址</td>
+</tr>
+<tr>
+<td>H</td>
+<td>十六进制转化成十进制</td>
+</tr>
+<tr>
+<td>K</td>
+<td>数据解释为栈变量</td>
+</tr>
+<tr>
+<td>：</td>
+<td>注释</td>
+</tr>
+<tr>
+<td>M</td>
+<td>解释为枚举成员</td>
+</tr>
+<tr>
+<td>N</td>
+<td>重命名</td>
+</tr>
+<tr>
+<td>O</td>
+<td>字符串标号</td>
+</tr>
+<tr>
+<td>T</td>
+<td>解释为结构体成员</td>
+</tr>
+<tr>
+<td>X</td>
+<td>转化视图为交叉参考模式</td>
+</tr>
+<tr>
+<td>Shift+F9</td>
+<td>添加结构体</td>
+</tr>
+</tbody>
+</table>
+<p>👴第一次看到这么多快捷键学到了</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200421013142819.png"  alt="image-20200421013142819"></p>
+<p>三个选项</p>
+<p>1.分析文件为一个PE格式的文件</p>
+<p>2.分析文件为一个DOS控制台下的一个文件</p>
+<p>3.分析文件为一个二进制的文件</p>
+<p><strong>sig：</strong></p>
+<p>我们一般IDA可以识别函数的MessageBoxA等等参数信息，是因为IDA通过SIG文件来识别的，所以在安装的时候我们会有相应的.sig在pc那个文件夹下面了，所以我们可以利用这个，来去识别第三方的库函数，简化分析</p>
+<p>SIG制作流程：</p>
+<p>创建模式文件  pcf.exe xxx.lib xxx.pat<br>
+创建签名文件  sigmake.exe xxx.pat xxx.sig</p>
+<p>直接举书上的例子好吧！</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void ShowSig(){</span><br><span class="line">	printf("showSig");</span><br><span class="line">}</span><br><span class="line">int main(int argc,char* argv[]){</span><br><span class="line">	ShowSig();</span><br><span class="line">	return 0;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200421015638523.png"  alt="image-20200421015638523"></p>
+<p>没有加载sig之前，那么我们制作一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200421020608733.png"  alt="image-20200421020608733"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200421020601223.png"  alt="image-20200421020601223"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200421020703962.png"  alt="image-20200421020703962"></p>
+<p>直接我们在ida中有</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200421020907638.png"  alt="image-20200421020907638"></p>
+<p>打开powershell，搞就完事，然后把生成的.sig丢到 sig文件下的pc文件夹即可</p>
+<h2 id="1-3-反汇编引擎的工作原理">1.3 反汇编引擎的工作原理</h2>
+<p>X86平台下使用的汇编指令对应的二进制机器码是Intel指令集——Opcode</p>
+<table>
+<thead>
+<tr>
+<th>Prefix</th>
+<th>code</th>
+<th>Mode R/M</th>
+<th>SIB            Displacement</th>
+<th>Immediate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>指令前缀</td>
+<td>指令操作码</td>
+<td>操作数类型</td>
+<td>辅助Mode R/M，计算地址偏移</td>
+<td>立即数</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Opcode</strong>这里书上没有给太多解释，我直接在CSDN找到了一篇文章，说的挺不错的，这里自己总结一下(网址：<a href="https://blog.csdn.net/kl195375/article/details/89788837" target="_blank" rel="noopener">https://blog.csdn.net/kl195375/article/details/89788837</a>)</p>
+<p>我们的计算机只认识0与1是没毛病的，但是我们写的源程序并不是0与1，那么计算机如何知道我们程序的含义？</p>
+<p>假设我们写一个汇编的<code>NOP</code>，我们在编译的时候，汇编语言会扫描整个源代码，所以我们知道计算机只认识0与1，那么源代码<code>NOP</code>无法运行，所以为了让计算机生成能运行的东西，我们要用<code>0x90</code>来代替</p>
+<p>这里的<code>0x90</code>是我们说的Opcode，而Nop是我们说的助记符(<code>menemonic</code>)</p>
+<p>可是一个Opcode对应一个menemonic吗</p>
+<table>
+<thead>
+<tr>
+<th>Opcode</th>
+<th>mnemonic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x90</td>
+<td>NOP</td>
+</tr>
+<tr>
+<td>0x90</td>
+<td>XCHG AX,AX</td>
+</tr>
+<tr>
+<td>0x90</td>
+<td>XCHG EAX,EAX</td>
+</tr>
+</tbody>
+</table>
+<p>那么一个mnemonic对应一个Opcode吗</p>
+<table>
+<thead>
+<tr>
+<th>menemonic</th>
+<th>Opcode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ADD EAX, 1</td>
+<td>0x83C001</td>
+</tr>
+<tr>
+<td>ADD EAX, 1</td>
+<td>0x0501000000</td>
+</tr>
+<tr>
+<td>ADD EAX, 1</td>
+<td>0x81C001000000</td>
+</tr>
+</tbody>
+</table>
+<p>所以：一个OpCode 不只对应一个menemonic ，一个menemonic不只对应一个OpCode</p>
+<p>上面说的那个Opcode的6个域排列顺序，是不可以改变的，一般来说最不可少的就是code这个域</p>
+<table>
+<thead>
+<tr>
+<th><strong>OpCode</strong></th>
+<th><strong>menemonic</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0xC3</td>
+<td>RETN</td>
+</tr>
+<tr>
+<td>0x2F</td>
+<td>DAS</td>
+</tr>
+<tr>
+<td>0x90</td>
+<td>NOP</td>
+</tr>
+<tr>
+<td>0xAC</td>
+<td>LODSB</td>
+</tr>
+</tbody>
+</table>
+<p>假设这几个Opcode都只用到了code这一项，那么我们拿出0xAC这个code，我们做个测试</p>
+<p>0xAC ------- 0xF3AC：<code>REP LODSB</code>，大概我们会猜到改变是因为F3的添加(Prefixes)的问题</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">AC</span><br><span class="line">--{code</span><br><span class="line">}</span><br><span class="line">F3 AC</span><br><span class="line">--{Prefix}{code</span><br><span class="line">}</span><br><span class="line">//F3为Prefix的域</span><br></pre></td></tr></tbody></table></figure>
+<p>这里说一下他们的顺序不可以变举个例子：</p>
+<table>
+<thead>
+<tr>
+<th><strong>OpCode</strong></th>
+<th><strong>menemonic</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4004</td>
+<td>INC EAX</td>
+</tr>
+<tr>
+<td>0440</td>
+<td>ADD AL, 40h</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>
+<p>Prefix：指令前缀，作为指令的补助</p>
+<ul>
+<li>重复指令：如REP，REPE</li>
+<li>跨段指令：如MOV DWORD PTR FS:[xxxxx],0</li>
+<li>将操作数从32位转为16位：如MOV AX,WORD PTR DS:[EAX]</li>
+<li>将地址从16位转为32位：如MOV EAX,DWORD PTR DS:[BX+SI]</li>
+</ul>
+</li>
+<li>
+<p>code：指令操作码，有时候还需要Mode R/M , SIB , Displacement帮助，才可以完善信息</p>
+</li>
+<li>
+<p>Mode R/M：操作数类型：用来辅助menemonic后的操作数类型，R寄存器，M内存单元，6 7位的4种可能，用来描述，0 1 2位是寄存器还是内存单元，以及3中寻址方式</p>
+<table>
+<thead>
+<tr>
+<th>7         6</th>
+<th>5         4        3</th>
+<th>2       1     0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>指定寄存器及寻址方式</td>
+<td>寄存器/Opcode</td>
+<td>寄存器/内存单元</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>SIB：辅助Mode R/M，计算地址偏移，SIB寻址方式就是基址+变址，<code>MOV EAX,DWORD PTR DS:[EBX+ECX*2]</code>其中ECX和</p>
+<p>2都是SIB来制定的，这里的指定乘数，只有4种可能：1 2 4 8</p>
+<table>
+<thead>
+<tr>
+<th>7         6</th>
+<th>5         4        3</th>
+<th>2       1     0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>指定乘数</td>
+<td>指定变址寄存器</td>
+<td>指定基质寄存器</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>Displacement：辅助Mode R/M，计算地址偏移，比如<code>MOV EAX,DWORD PTR DS:[EBX+ECX*2+3]</code>，其中+3是由Displacement决定的</p>
+</li>
+<li>
+<p>Immediate：立即数，用于解释语句中操作数为常量的情况</p>
+</li>
+</ul>
+<p><strong>反汇编引擎Proview源码片段</strong></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200421215049107.png"  alt="image-20200421215049107"></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//机器码解析函数</span><br><span class="line">/*</span><br><span class="line">DISASSEMBLY 结构说明</span><br><span class="line">typedef struct Decoded{</span><br><span class="line">	char Assembly[256];	//汇编指令信息</span><br><span class="line">	char Remarks[256];	//汇编指令说明信息</span><br><span class="line">	char Opcode[30];	//Opcode机器码信息</span><br><span class="line">	DWORD Address;	//当前指令地址</span><br><span class="line">	BYTE OpodeSize	//Opcode机器码长度</span><br><span class="line">	BYTE PrefixSize //指令前缀长度</span><br><span class="line">}DISASSEMBLY;</span><br><span class="line">*/</span><br><span class="line">void Decode(DISASSEMBLY *Disasm,char *Opcode,DWORD *Index){</span><br><span class="line">/*源码中函数说明信息，便令局部定义略*/</span><br><span class="line">//机器码格式分析略</span><br><span class="line">//判断是否符合Opcode机器码格式，Op为参数Opcode[0]项</span><br><span class="line">switch(Op){//分析Op对应机器码</span><br><span class="line">case 0x68:</span><br><span class="line">//0x68为PUSH后面的四个字节入栈的机器码  0x6A为PUSH后面的一个字节入栈的机器码</span><br><span class="line">//方式1：push 4字节内存地址信息</span><br><span class="line">//判断寄存器指令前缀</span><br><span class="line">if(RegPrefix == 0){</span><br><span class="line">	//PUSH指令后按4字节方式解释</span><br><span class="line">	//例子当前机器码为：6800304000</span><br><span class="line">	//由于在内存中为小尾方式排序，因此取出内容需要重新排列数据</span><br><span class="line">	//此函数对指令地址+1，偏移到00304000处，将其排序为00403000</span><br><span class="line">	//提取出的机器指令存放在dwOp中</span><br><span class="line">	//转换中的地址信息保存在dwMem中</span><br><span class="line">	SwapDword((BYTE *)(Opcode+i+1),&amp;dwOp,&amp;dwMem);</span><br><span class="line">	//将机器指令信息转换为汇编指令信息</span><br><span class="line">	wsprintf(menemonic,push %08X,dwMem);</span><br><span class="line">	//保存汇编指令语句到Disasm结构中，用于返回</span><br><span class="line">	lstrcat(Disasm-&gt;Assembly,menemonic);</span><br><span class="line">	//组装机器码信息，用空格将指令码与操作数分离</span><br><span class="line">	wsprintf(menemonic,68 %08X",dwOp);</span><br><span class="line">	//将机器码信息保存到Disasm结构中，用于返回</span><br><span class="line">	lstrcat(Disasm-&gt;Opcode,menemonic);</span><br><span class="line">	//设置指令要占用的内存空间</span><br><span class="line">	Disasm-&gt;OpcodeSize = 5;</span><br><span class="line">	//设置指令前缀长度</span><br><span class="line">	Disasm-&gt;PrefixSize = PrefixesSize;</span><br><span class="line">	//对当前分析指令地址下标加4字节偏移量</span><br><span class="line">	(*Index)+=4;</span><br><span class="line">}</span><br><span class="line">else{</span><br><span class="line">	//push指令后按2字节方式解释</span><br><span class="line">	//解析机器码，以上代码相同</span><br><span class="line">	SwapDword((BYTE *)(Opcode+i+1),&amp;wOp,&amp;wMem);</span><br><span class="line">	//按2字节解释操作数:"push %04X"</span><br><span class="line">	wsprintf(menemonic,push %04X,wMem);</span><br><span class="line">	lstrcat(Disasm-&gt;Assembly,menemonic);</span><br><span class="line">	//按2字节解释操作数:"push %04X"</span><br><span class="line">	wsprintf(menemonic,68 %04X",wOp);</span><br><span class="line">	lstrcat(Disasm-&gt;Opcode,menemonic);</span><br><span class="line">	//设置指令长度</span><br><span class="line">	Disasm-&gt;OpcodeSize = 3;</span><br><span class="line">	//设置指令前缀长度</span><br><span class="line">	Disasm-&gt;PrefixSize = PrefixesSize;</span><br><span class="line">	//对当前分析指令地址下标加2字节偏移量</span><br><span class="line">	(*Index)+=2;</span><br><span class="line">}</span><br><span class="line">}</span><br><span class="line">break;</span><br><span class="line">case 0x6A:</span><br><span class="line">//方式2：push指令的操作数是小于等于1字节的立即数</span><br><span class="line">{</span><br><span class="line">//有符号数判断，负数处理</span><br><span class="line">	if((BYTE)Opcode[i+1]&gt;=0x80){</span><br><span class="line">	//负数在内存中为补码，用0x100-补码得回源码(自己理解是因为0x100满足海哥说的那个圆而且是一字节)</span><br><span class="line">	//"push -%02X"中对原码加符号</span><br><span class="line">	wsprintf(menemonic,"push -%02X",(0x100-(BYTE)Opcode[i+1]));</span><br><span class="line">	}</span><br><span class="line">//有符号处理，正数处理</span><br><span class="line">else{</span><br><span class="line">	//正数直接转换</span><br><span class="line">	wsprintf(menemonic,"push %02X",(0x100-(BYTE)Opcode[i+1]));</span><br><span class="line">}</span><br><span class="line">	//保存汇编语句</span><br><span class="line">	lstrcat(Disasm-&gt;Assembly,menemonic);</span><br><span class="line">	//组装机器码信息</span><br><span class="line">	wsprintf(menemonic,"6A%02X",(BYTE)*(Opcode+i+1));</span><br><span class="line">	//保存机器码信息</span><br><span class="line">	lstrcat(Disasm-&gt;Opcode,menemonic);</span><br><span class="line">	//设置指令长度与指令前缀长度</span><br><span class="line">	Disasm-&gt;OpcodeSize = 2;</span><br><span class="line">	Disasm-&gt;PrefixSize = PrefixesSize;</span><br><span class="line">	//对当前分析指令地址下标加2字节偏移量</span><br><span class="line">	++(*Index);</span><br><span class="line">}</span><br><span class="line">break;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>刚把柴佬的任务完成，急忙🏃‍♂️回来，继续整理笔记😁</p>
+<p>代码省略了其他机器码的解析过程，列举了push的两种机器指令方式，自己大概了解了：通过解析Opcode指令操作码，找到对应的解析方式，将机器码重组为汇编代码。通过第一个参数DISASSEMBLY *Disasm传出解析结果，将机器码指令长度由参数Index传出，用于寻找下一个Opcode指令操作码</p>
+<p><strong>Decode对机器码进行分析</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//假设此字符数组为机器指令编码</span><br><span class="line">unsigned char szAsmData[]={</span><br><span class="line">	0x6A,0x00,	//push 00</span><br><span class="line">	0x68,0x00,0x30,0x40,0x00,	//push 00403000</span><br><span class="line">	0x50,	//push eax</span><br><span class="line">	0x51,	//push ecx</span><br><span class="line">	0x52,	//push edx</span><br><span class="line">	0x53,	//push ebx</span><br><span class="line">};</span><br><span class="line">char szCode[256]={0};	//存放汇编指令信息</span><br><span class="line">unsigned int nIndex = 0;	//每条机器指令的长度，用于地址偏移</span><br><span class="line">unsigned int nLen = 0l	//分析机器码总长度</span><br><span class="line">unsigned char *pCode = szAsmData;</span><br><span class="line"></span><br><span class="line">//获取分析机器码长度</span><br><span class="line">nLen = sizeof(szAsmData);IN</span><br><span class="line">while(nLen){</span><br><span class="line">	//检查是否超出分析范围</span><br><span class="line">	if(nLen &lt; nIndex){</span><br><span class="line">		break;</span><br><span class="line">	}</span><br><span class="line">	//修改pCode偏移</span><br><span class="line">	pCode + = nIndex；</span><br><span class="line">	//解析机器码(转下一个函数)Decode2Asm函数</span><br><span class="line">	//pCode：分析机器码首地址</span><br><span class="line">	//szCode：返回值，保存解析后的汇编指令语句信息</span><br><span class="line">	//nIndex: 返回值，保存机器码指令长度</span><br><span class="line">	//模拟机器码，没有对应代码地址，因此传入0</span><br><span class="line">	Decode2Asm(pCode,szCode,&amp;nIndex,0);</span><br><span class="line">	//显示汇编指令</span><br><span class="line">	puts(szCode);</span><br><span class="line">	memset(szCode,0,sizeof(szCode));</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>通过函数Decode2Asm，启动反汇编引擎Proview，解析出对应汇编指令语句代码，并输出</p>
+<p><strong>Decode2Asm实现流程</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void_stdcall</span><br><span class="line">Decode2Asm(IN PBYTE pCodeEntry,	//分析Opcode地址，无符号字符型指针</span><br><span class="line">		   OUT char* strAsmCode,	//传出值，保存汇编指令的语句信息</span><br><span class="line">		   OUT OINT* pnCodeSize，	//传出值，保存机器码指令的大小</span><br><span class="line">		   UINT nAddress)	//分析机器码所在地址</span><br><span class="line">{</span><br><span class="line">	DISASSEMBLY Disasm;	//结构体在上上面啦</span><br><span class="line">	//保存Opcode指针，用于传递函数参数</span><br><span class="line">	char *Linear = (char *)pCodeEntry;</span><br><span class="line">	//初始化指令长度</span><br><span class="line">	DWORD	Index = 0;</span><br><span class="line">	//设置机器码所在地址</span><br><span class="line">	Disasm.Address = nAddress;</span><br><span class="line">	//初始化Disasm</span><br><span class="line">	FlushDecoded(&amp;Disasm);</span><br><span class="line">	//调用Decode进行机器码分析</span><br><span class="line">	Decode(&amp;Disasm,Linear,&amp;Index);</span><br><span class="line">	//保存汇编指令语句信息</span><br><span class="line">	strcpy(strAsmCode,Disasm.Assembly);</span><br><span class="line">	//组装汇编语句的字符串，从参数strAsmCode返回信息</span><br><span class="line">	if(strstr((char*)Disasm.Opcode,":")){</span><br><span class="line">	Disasm.OpcodeSize++;</span><br><span class="line">	char ch='';</span><br><span class="line">	strncat(strAsmCode,&amp;ch,sizeof(char));</span><br><span class="line">	}</span><br><span class="line">	strcat(strAsmCode,Disasm.Remarks);</span><br><span class="line">	*pnCodeSize = Disasm.OpcodeSize;</span><br><span class="line">	FlushDecoded(&amp;Disasm);</span><br><span class="line">	return;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>对汇编引擎Proview的使用进行了封装，以简化Decode函数的调用过程，方便使用者调用</p>
+<h1>第二章-基本数据类型的表现方式</h1>
+<h2 id="2-1-整数类型">2.1 整数类型</h2>
+<p>感觉这边有点基础，就不总结了</p>
+<h2 id="2-2-浮点数类型">2.2 浮点数类型</h2>
+<p>上次自己的问题就是 <code>Opcode</code>和<code>menemonic</code>对应的原则，群里的大佬给出了答案</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/PJ63_QD0%5D0U4BC51BXZZJ$X.png"  alt="img"></p>
+<p><strong>浮点数编码方式</strong></p>
+<p>浮点数编码采用的是IEEE规定的编码标准，IEEE规定的浮点数编码会将一个浮点数转换为二进制数，以科学计数法划分，将浮点数拆分为3部分：符号，指数，尾数</p>
+<p><strong>float类型的IEEE编码</strong></p>
+<p>float 4字节(32位)，最高位用于表示符号：在剩余的31位中，从左向右取8位用于表示指数，其余用于表示尾数</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200422223744183.png"  alt="image-20200422223744183"></p>
+<p>假设：12.25f 转化成对应的二进制数 1100.01，整数部分是1100，小数部分01，小数点向左移动，每移动一次指数+1，移动到除符号位的最高位为1处，停止移动，这里移动了3次，变成1.10001，指数部分为3，在IEEE编码规则瞎，最高位一定是1的，所以如果这里如果是整数符号位就填写0</p>
+<p>12.25f 经过IEEE转换后情况：</p>
+<p>符号位：0</p>
+<p>指数位：十进制 3+127，转换为二进制是10000010</p>
+<p>尾数位10001 000000000000000000 （不足23位的时候，低位补0填充）</p>
+<p>变换成16进制位0x41440000，由于小端序所以内存变成了这个样子</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200422225402526.png"  alt="image-20200422225402526"></p>
+<p>-0.125f 经过IEEE转化后的情况</p>
+<p>符号位：1</p>
+<p>指数位：127+(-3)，二进制 ‭00011000‬，如果不足8为，则高位补0</p>
+<p>尾数位：00000000000000000000000</p>
+<p>转化为16进制为0xBE000000</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200422231512042.png"  alt="image-20200422231512042"></p>
+<p>1.3f 经过IEEE转化情况 (1.3f转化比较奇怪，因为小数部分是一直有，由于规则尾数部分所以到23位停止的：0.3 0.6 1.2 0.4 0.8 1.6 1.2 0.4…)</p>
+<p>符号位：0</p>
+<p>指数位：127+0 二进制 01111111</p>
+<p>尾数位：010011001001100100110</p>
+<p>转化为16进制为0x3FA66666</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200422232126544.png"  alt="image-20200422232126544"></p>
+<p>所以说这个浮点数计算是一个近似值，存在一定的误差，如果把这个转化成小数的话，那么就是 1.299999523162841796875 四舍五入之后为1.3，所以这就解释了为什么C++在比较浮点数值是否为0时候，要进行一个区间比较，并不是等值比较</p>
+<p><strong>浮点数比较代码</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">float fTemp = 0.0001f;	//精确范围</span><br><span class="line">if (fFloat &gt;= -fTemp &amp;&amp; fFloat &lt;= fTemp){</span><br><span class="line">	//fTemp等于0</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>double类型的IEEE编码</strong></p>
+<p>double类型为8字节 64位 指数11位 剩余52位标识位数 double中的指数为+1023 用于指数符号的判断，剩下的 同float</p>
+<p><strong>基本浮点数指令</strong></p>
+<p>浮点数操作是通过浮点寄存器来实现的，浮点寄存器通过栈结构来实现，由ST(0) ---- ST(7)的8个栈空间组成，每个浮点寄存器占8个字节，每次使用浮点寄存器的时候先使用ST(0)，不能越过ST(0)直接使用ST(1)，当ST(0)存在数据时，执行压栈操作后，将ST(0)的数据装入ST(1)，如果没有出栈的操作就一直压，一直到浮点寄存器占满   <code>IN</code>表示操作数入栈，<code>OUT</code>表示操作数出栈</p>
+<p>指令表</p>
+<table>
+<thead>
+<tr>
+<th>指令名称</th>
+<th>使用格式</th>
+<th>指令功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FLD</td>
+<td>FLD IN</td>
+<td>将浮点数IN压入ST(0)中，IN (mem 32/64/80)</td>
+</tr>
+<tr>
+<td>FILD</td>
+<td>FILD IN</td>
+<td>将整数IN压入ST(0)中，IN (mem 32/64/80)</td>
+</tr>
+<tr>
+<td>FLDZ</td>
+<td>FLDZ</td>
+<td>将0.0 压入ST(0)中</td>
+</tr>
+<tr>
+<td>FLD1</td>
+<td>FLD1</td>
+<td>将1.0压入ST(0)中</td>
+</tr>
+<tr>
+<td>FST</td>
+<td>FST OUT</td>
+<td>ST(0)中的数据以浮点形式存入OUT地址中  OUT (mem 32/64)</td>
+</tr>
+<tr>
+<td>FSTP</td>
+<td>FSTP OUT</td>
+<td>和FST作用一样，但是会执行一次出栈的操作</td>
+</tr>
+<tr>
+<td>FIST</td>
+<td>FIST OUT</td>
+<td>ST(0)数据以整数形式存入OUT地址中   OUT (mem 32/64)</td>
+</tr>
+<tr>
+<td>FISTP</td>
+<td>FISTP OUT</td>
+<td>和FIST指令一样，但是会执行一次出栈的操作</td>
+</tr>
+<tr>
+<td>FCOM</td>
+<td>FCOM IN</td>
+<td>将IN地址数据与ST(0)进行实数比较，影响对应的标记为</td>
+</tr>
+<tr>
+<td>FTST</td>
+<td>FTST</td>
+<td>比较ST(0)是否为0.0，影响对应标记位</td>
+</tr>
+<tr>
+<td>FADD</td>
+<td>FADD IN</td>
+<td>将IN地址内的数据与ST(0)做加法运算，结果放到ST(0)中</td>
+</tr>
+<tr>
+<td>FADDP</td>
+<td>FADDP ST(N),ST</td>
+<td>将ST(N)中的数据与ST(0)中的数据做加法运算，N为 0-7 ，先执行一次出栈操作，然后将相加的结果放入ST(0)中</td>
+</tr>
+</tbody>
+</table>
+<p>使用浮点指令的时候，都要用ST(0)先进行运算，如果ST(0)中有值时，会将ST(0)中的数据向下存放到ST(1)中，然后再将数据放到ST(0)中，如果再次执行ST(0)，那么就把ST(1)放到ST(2)中，如果8个寄存器都有值，继续像ST(0)存入数据的时候，我们会舍弃ST(7)的数据</p>
+<p>这里介绍个C语言函数：<code>_ftol</code>将float型转化为int型</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//c++源码对比，argc为命令行参数</span><br><span class="line">float fFloat = (float)argc;</span><br><span class="line">//将地址ebp+8的整数类型数据转换成浮点型，并放入ST[0]中，对应的变量是argc</span><br><span class="line">0040E9D8	fild dword ptr [ebp+0x8]</span><br><span class="line">//从ST[0]中取出数据以浮点编码的形式放入ebp-4，对应变量fFloat</span><br><span class="line">0040E9D8	fst	dword ptr [ebp-0x4]</span><br><span class="line">总结一下：将argc转化为浮点型，然后存入fFloat的变量中</span><br><span class="line">//c++源码对比，浮点数作为函数参数进行传递</span><br><span class="line">printf("%f",fFloat);</span><br><span class="line">//esp-8,需要转化成双精度浮点数，提前准备好8个字节的栈空间，便于存访double数组</span><br><span class="line">0040E9DE	sub	esp,0x8</span><br><span class="line">//将ST(0)中的数据传入esp中，并弹出ST(0)</span><br><span class="line">0040E9E1	fstp qword ptr [esp]</span><br><span class="line">//printf调用，略了 都懂</span><br><span class="line">//c++源码对比，将float类型转换成int类型</span><br><span class="line">argc = (int)fFloat</span><br><span class="line">//将ebp-4处额数据以浮点型压入ST[0]中</span><br><span class="line">0040E9F1	fld dword ptr [ebp-0x4]</span><br><span class="line">//调用函数_ftol进行浮点数转换(下面源码会写)</span><br><span class="line">0040E9F4	call _ftol(0040e688)</span><br><span class="line">//转换后结果放入eax中，并传递到ebp+8地址处</span><br><span class="line">0040E9F9	mov dword ptr [ebp+0x8],eax</span><br></pre></td></tr></tbody></table></figure>
+<p>总结：float类型浮点数，占4个字节，但是都是以8个字节方式处理即double形式，当浮点数作为参数的时候，不能直接压入栈，push传的4字节，会丢失4个字节，所以printf使用整数方式输出浮点数会报错，printf以整数方式输出的时候，将对应参数作为4字节数据，按照补码的方式解释，而压入参数为浮点数类型的时候，数据长度为8字节，需要按浮点编码方式解释</p>
+<p><strong>浮点数作为返回值</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//c++源码对比，返回值为浮点数的函数调用</span><br><span class="line">fFloat = GetFloat();</span><br><span class="line">//调用函数GetFloat</span><br><span class="line">0040EA3D	call @ILT+5(GetFloat)(0040100a)</span><br><span class="line">//由于浮点数要进行特殊处理，浮点数占8个字节，无法使用eax传递，使用浮点寄存器ST[0]作为返回值</span><br><span class="line">0040EA42	fst	dword ptr [ebp-4]</span><br><span class="line"></span><br><span class="line">//c++源码对比，GetFloat函数实现</span><br><span class="line">float GetFloat()</span><br><span class="line">{</span><br><span class="line">	//C++源码对比，返回浮点数12.25f</span><br><span class="line">	return 12.25f</span><br><span class="line">	//将浮点数保存在ST[0],返回时浮点数情况无法使用eax</span><br><span class="line">	0040E9D8	fld	dword ptr[(0042301c)]</span><br><span class="line">	//附加代码 略</span><br><span class="line">	0040E9E4	ret</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>类型转换函数_ftol的实现</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//提升堆栈</span><br><span class="line">push ebp</span><br><span class="line">mov ebp,esp</span><br><span class="line">add esp,0F4h</span><br><span class="line">//浮点异常检查，CPU与FPU同步工作(FPU是专用于浮点运算的处理器，以前的FPU是一种单独芯片，在486之后，英特尔把FPU集成在CPU之内)</span><br><span class="line">wait</span><br><span class="line">fnstcw	word ptr [ebp-0x2]    //FNSTCW浮点不检查保存控制器</span><br><span class="line">wait</span><br><span class="line">mov	ax,word	ptr	[ebp-0x2]</span><br><span class="line">or ah,0ch</span><br><span class="line">mov word ptr [ebp-0x4],ax</span><br><span class="line">fldcw word ptr [ebp-0x4]       //FLDCW 浮点加载控制器</span><br><span class="line">//从ST[0]中取出8字节数据转换成整型并存入ebp-0ch中</span><br><span class="line">//将ST[0]从栈中弹出来</span><br><span class="line">fistp	qword ptr [ebp-0ch]</span><br><span class="line">fldcw	word ptr [ebp-0x2]</span><br><span class="line">//用eax保存长整型数据的低四位用于返回</span><br><span class="line">mov	eax,dword ptr [ebp-0ch]</span><br><span class="line">//使用edx保存长整型数据的高4字节用于返回</span><br><span class="line">mov	edx,dword ptr [ebp-0x8]</span><br><span class="line">//释放栈</span><br><span class="line">leave</span><br><span class="line">ret</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="2-3-字符和字符串">2.3 字符和字符串</h2>
+<p>字符串的结束标记为’\0’，每个字符都记录在一张表中，他们各自对应了一个编号，系统通过标号来找到对应的字符来显示，一看这不说的ASCII码表吗</p>
+<p>VC++6.0中，char定义ASCII编码格式字符，wchar_t定义Unicode编码格式的字符，如果wchar_t保存ASCII编码，不足位补0，假设’a’ ASCII码 0x61 那么Unicode就是0x0061</p>
+<p>汉字编码使用ASCII GB2312-80 保存6763常用汉字编码 Unicode 使用UCS-2 为了让汉字都容纳进来，使用的两个Unicode编码解释一个汉字，UCS-4</p>
+<p>VC6.0，为了使char于wchar_t通用，使用了预编译宏TCHAR来代替他们，TCHAR会根据编译选项定义对应的字符类型，还是第一次知道</p>
+<p><strong>字符串的存储方式</strong></p>
+<p>确定字符串的总长度有两种方法：</p>
+<ol>
+<li>在首地址的4字节中保存字符串的总长度</li>
+<li>在结尾处规定一个特殊字符</li>
+</ol>
+<p>优缺点</p>
+<ul>
+<li>保存总长度</li>
+<li>优点：不需要遍历每个字符，取前n个字节就可以知道总长度，一般来说就是(1,2,4)字节</li>
+<li>缺点：不能超过n的长度，且要多开销n字节，通信情况，双方需要事先知道通信字符串的长度</li>
+<li>结束符</li>
+<li>优点：没有记录开销，设计通信可以通过实际情况来决定</li>
+<li>缺点：获取字符时候要遍历所有字符，比较慢</li>
+</ul>
+<p>C++使用结束符’\0’为字符串结束标识，ASCII码使用1个字节\0，Unicode使用两个字节\0，不能使用ASCII的处理函数对Unicode处理，会报错</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200423013907882.png"  alt="image-20200423013907882"></p>
+<p>一般程序中会使用一个字符型指针来保存字符串首地址，char* wchar_t* TCHAR*</p>
+<p>IDA这里有个操作是快捷键A，直接分析到’\0‘，解释字符串！</p>
+<h2 id="2-4-布尔类型">2.4 布尔类型</h2>
+<p>布尔类型不说了！（内存占1位 0 1）</p>
+<h2 id="2-5-地址-指针和引用">2.5 地址 指针和引用</h2>
+<p>地址，指针，引用，，地址就是&amp;那个，只有变量才存在内存地址(除了const)，指针用来保存地址的，引用就是取别名，别名的操作就是对源变量的操作</p>
+<p><strong>指针和地址的区别关系：</strong></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200423014925082.png"  alt="image-20200423014925082"></p>
+<p>不同点：</p>
+<table>
+<thead>
+<tr>
+<th>指针</th>
+<th>地址</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>变量，保存变量地址</td>
+<td>常量，内存编号</td>
+</tr>
+<tr>
+<td>可修改，再次保存其他变量地址</td>
+<td>不可以修改</td>
+</tr>
+<tr>
+<td>可以对其执行地址操作得到地址</td>
+<td>不可以执行取地址操作</td>
+</tr>
+<tr>
+<td>包含对保存地址的解释信息</td>
+<td>仅仅有地址值无法解释数据</td>
+</tr>
+</tbody>
+</table>
+<p>相同点：</p>
+<table>
+<thead>
+<tr>
+<th>指针</th>
+<th>地址</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>取出指向地址内存中的数据</td>
+<td>取出地址对应内存中的数据</td>
+</tr>
+<tr>
+<td>对地址偏移后，取数据</td>
+<td>偏移后取数据，自身不变</td>
+</tr>
+<tr>
+<td>求两个地址的差</td>
+<td>求两个地址的差</td>
+</tr>
+</tbody>
+</table>
+<p>指针保存的都是地址，每种数据类型在内存中所占的内存空间不同，指针中只保存了存放数据的首地址，没有指明在哪里结束，所以需要根据对应的类型来寻找解释数据的结束地址，同一个地址使用不同类型指针进行访问，取出的内容就会不一样</p>
+<p><strong>各类指针访问同一地址代码</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//c++源码对比，定义int类型变量，初始化为0x12345678</span><br><span class="line">int nVar = 0x12345678;</span><br><span class="line">//为地址赋值4字节数据12345678h</span><br><span class="line">0040EB1D	mov	dword ptr [ebp-10h],12346578h</span><br><span class="line">//c++源码对比，定义int类型指针变量，初始化为变量nVar地址</span><br><span class="line">int *pnVar = &amp;nVar;</span><br><span class="line">0040EB24	lea	ecx,[ebp-10h]</span><br><span class="line">0040EB27	mov	dword ptr [ebp-14h],ecx</span><br><span class="line">//c++源码对比，定义char类型指针变量，初始化为变量nVar地址</span><br><span class="line">char *pcVar = (char*)&amp;nVar;</span><br><span class="line">0040EB2A	lea edx,[ebp-10h]</span><br><span class="line">0040EB2D	mov dword ptr [ebp-18h],edx</span><br><span class="line">//c++源码对比，定义short类型指针变量，初始化为变量nVar地址</span><br><span class="line">short *psVar = (short*)&amp;nVar;</span><br><span class="line">0040EB30	lea eax,[ebp-10h]</span><br><span class="line">0040EB33	mov dword ptr [ebp-1Ch],eax</span><br><span class="line">//c++源码对比，取出指针pnVar指向的地址内容并显示</span><br><span class="line">printf("%08x \r\n",*pnVar);</span><br><span class="line">//取出pnVar中保存的地址值并放入ecx中</span><br><span class="line">0040EB36	mov	ecx,dword ptr [ebp-14h]</span><br><span class="line">//从ecx保存的地址中，以4字节方式读取数据，存入edx中</span><br><span class="line">0040EB39	mov edx,dword ptr [ecx]</span><br><span class="line">//printf函数调用部分略</span><br><span class="line">//c++源码对比，取出指针pnVar指向的地址内容并显示</span><br><span class="line">printf("%08x \r\n",*pcVar);</span><br><span class="line">//取出pcVar中保存的地址并放入eax中</span><br><span class="line">0040EB49	mov	eax,dword ptr [ebp-18h]</span><br><span class="line">//从eax保存的地址中，以1字节的方式读取数据，存入ecx中</span><br><span class="line">0040EB4C	movsx ecx,byte ptr [eax]</span><br><span class="line">//printf函数调用部分略</span><br><span class="line">//c++源码对比，取出指针pnVar指向的地址内容并显示</span><br><span class="line">printf("%08x \r\n",*psnVar);</span><br><span class="line">//取出psnVar中保存的地址并放入edx中</span><br><span class="line">0040EB5D	mov edx,dword ptr [ebp-1Ch]</span><br><span class="line">//从edx保存的地址中，以2字节方式读取数据，存入eax中</span><br><span class="line">0040EB60	movsx eax,word ptr [edx]</span><br><span class="line">//printf函数调用部分略</span><br></pre></td></tr></tbody></table></figure>
+<p>取出来的地址会根据指针类型的长读来取出来</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200424100537599.png"  alt="image-20200424100537599"></p>
+<p>这里测试没有问题的，我们去反汇编看一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200424100932740.png"  alt="image-20200424100932740"></p>
+<p>看了一下反汇编，和源码解析的差不多，反汇编的意思大概差不多，差别就是编译器的不同，只要有汇编，他编译器干什么就都会知道了</p>
+<p>总结：在我存入的是<code>0x12345678</code>的时候再内存中存放是根据小端序存放<code>78 56 34 12</code>，首地址从7 8 开始，指针pnVar为int类型指针，以int类型在内存中占用的空间大小和排列的方式对地址进行解释，然后取出数据，int占4字节，所以取出来<code>12345678</code>，我们知道如上图所示，大地址到小地址会进行截取，eax本身就是4字节的空间，那么我分给word和byte的时候，会把前面的低地址位置进行一个截取，取高地址的位置，所以说会把前面的数据砍掉，然后用movsx进行分析符号位的填充</p>
+<p>所有类型的指针对地址的解释都取决于自己本身的指针类型，指针做加法和减法比较有意义，因为指针是保存和解析地址而存在的，我们对指针的地址偏移时，偏移会根据自身的指针类型来决定</p>
+<p><strong>各类型指针寻址方式代码</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//c++源码对比，定义字符型数组，占5字节内存空间</span><br><span class="line">//内存对齐的原则，cVar实际占用8字节 (第5个开始的时候，要根据上面加一起的4字节进行一个对齐的原则)</span><br><span class="line">char cVar[5] = {0x01,0x23,0x45,0x67,0x89};</span><br><span class="line">//数组成员赋值，数组为char类型，每次赋值使用的时byte ptr</span><br><span class="line">0040EB1D	mov byte ptr [ebp-14h],1</span><br><span class="line">0040EB21	mov byte ptr [ebp-13h],23h</span><br><span class="line">0040EB25	mov byte ptr [ebp-12h],45h</span><br><span class="line">0040EB29	mov byte ptr [ebp-11h],67h</span><br><span class="line">0040EB2D	mov byte ptr [ebp-10h],89h</span><br><span class="line">//c++源码对比，定义int类型的指针变量保存数组的首地址</span><br><span class="line">int	*pnVar = (int*)cVar;</span><br><span class="line">//取出数组的首地址保存在ebp-18h中(ebp-0x4往上都是局部变量)(测试一下)</span><br><span class="line">0040EB31	lea ecx,[ebp-14h]</span><br><span class="line">0040EB34	mov,dword ptr [ebp-18h],ecx</span><br><span class="line">//c++源码对比，定义char类型的指针变量保存数组的首地址</span><br><span class="line">char *pcVar = (char*)cVar;</span><br><span class="line">//取出数组的首地址并保存到ebp-1ch中</span><br><span class="line">0040EB37	lea	edx,[ebp-14h]</span><br><span class="line">0040EB3A	mov	dword ptr [ebp-1Ch],edx</span><br><span class="line">//c++源码对比，定义short类型的指针变量保存数组的首地址</span><br><span class="line">short *psnVar = (short*)cVar;</span><br><span class="line">//取出数组首地址保存在ebp-20h</span><br><span class="line">0040EB3D	lea eax,[ebp-14h]</span><br><span class="line">0040EB40	mov dword ptr [ebp-20h],eax</span><br><span class="line">//c++源码对比，对int指针加1</span><br><span class="line">pnVar += 1;</span><br><span class="line">//取出指针内保存的地址并放入ecx中</span><br><span class="line">0040EB43	mov	ecx,dword ptr [ebp-18h]</span><br><span class="line">//保存指针类型获取便宜长度，int类型的指针，追加偏移值4</span><br><span class="line">0040EB46	add	ecx,4</span><br><span class="line">//存回指针中</span><br><span class="line">0040EB49	mov dword ptr [ebp-18h],ecx</span><br><span class="line">//c++源码对比，对char指针加1</span><br><span class="line">pcVar += 1;</span><br><span class="line">0040EB49	mov edx,dword ptr [ebp-1Ch]</span><br><span class="line">//根据指针类型获取偏移长度，char类型指针，追加偏移值1</span><br><span class="line">0040EB4F	add	edx,1</span><br><span class="line">0040EB52	mov dword ptr [ebp-1Ch],edx</span><br><span class="line">//c++源码对比，对short指针加1</span><br><span class="line">psnVar += 1;</span><br><span class="line">0040EB55	mov	eax,dword ptr [ebp-20h]</span><br><span class="line">//根据指针类型获取编译长度，short类型指针，追加偏移值2</span><br><span class="line">0040EB58	add	eax,2</span><br><span class="line">0040EB5B	mov	dword ptr [ebp-20h],eax</span><br></pre></td></tr></tbody></table></figure>
+<p>总结：编译量的计算方式为指针类型长度乘以移动次数，因此得出指针寻址公式如下<br>
+$$<br>
+(p+n)目标地址 = 首地址 + sizeof(指针类型)*n (n为移动次数)<br>
+$$<br>
+两指针做减法，可以求出两地址之间的元素个数(必须同类指针相减)，两指针相加没有作用，公式如下<br>
+$$<br>
+p-q = ((int)p - (int)q) / sizeof(指针类型)<br>
+$$</p>
+<p><strong>引用</strong></p>
+<p>引用类型在c++中被描述为变量的别名，c++为了简化指针的操作，对指针的操作进行了封装，产生了引用类型，实际上引用类型就是指针类型，只不过它用于存放地址的内存空间对使用者而言是隐藏的</p>
+<p><strong>引用类型代码</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//c++源码对比，定义int类型的变量并附初始值0x12345678</span><br><span class="line">int nVar = 0x12345678;</span><br><span class="line">0040E6F8	mov	dword ptr [ebp-4],12345678h</span><br><span class="line">//c++源码对比，定义变量nVar的引用类型nVarType</span><br><span class="line">int	&amp;nVarType = nVar;</span><br><span class="line">//取出变量nVar的地址并放入eax中</span><br><span class="line">0040E6FF	lea	eax,[ebp-4]</span><br><span class="line">//将变量nVar的地址存入地址ebp-8处，这个ebp-8就是引用类型nVarTpye的地址</span><br><span class="line">0040E702	mov	dword ptr [ebp-8],eax</span><br><span class="line">//调用函数Add,Add的参数为int引用类型，将变量nVar作为参数传递</span><br><span class="line">Add(nVar);</span><br><span class="line">//取出变量nVar的地址并放入ecx中</span><br><span class="line">0040E705	lea	ecx,[ebp-4]</span><br><span class="line">//将ecx作为参数入栈，也就是传递变量nVar的地址作为参数</span><br><span class="line">//Add函数代码在下面了,马上就写!</span><br><span class="line">0040E708	push ecx</span><br><span class="line">0040E709	call @ILT+15(ADD)(00401014)</span><br><span class="line">0040E70E	add	esp,4</span><br></pre></td></tr></tbody></table></figure>
+<p>引用类型的存储方式和指针是一样的，都是使用内存空间存访地址值，所以在C++中，引用和指针没有区别，引用时通过编译器实现寻址，而指针需要手动寻址，所以说如果操作失误会有比较糟糕的结果，但是引用就不会存在这种问题，所以c++很推荐使用引用类型，并不是指针</p>
+<p><strong>引用类型作为函数参数代码</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void Add(int &amp;nVar){</span><br><span class="line">//c++源码对比，对引用类型进行nVar执行++操作</span><br><span class="line">	nVar++;	</span><br><span class="line">//取出参数nVar中的内容放入eax中</span><br><span class="line">00401078	mov	eax,dword ptr[ebp+8]</span><br><span class="line">//对eax执行取内容操作</span><br><span class="line">0040107B	mov	ecx,dword ptr [eax]</span><br><span class="line">0040107D	add	ecx,1</span><br><span class="line">00401080	mov	edx,dword ptr [ebp+8]</span><br><span class="line">00401083	mov dword ptr [edx],ecx</span><br><span class="line">}</span><br><span class="line">0040108B	ret</span><br></pre></td></tr></tbody></table></figure>
+<p>这里我看到的结论就是引用的时候，并没有像指针一样进行了数据类型的那种的移动，而就是单纯的进行了数据+1，我们测试一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200424124405103.png"  alt="image-20200424124405103"></p>
+<p>因为前面有一个lea的操作把地址给了eax，然后eax给了ebp-0x24，所以引用也相当于取别名</p>
+<h2 id="2-6-常量">2.6 常量</h2>
+<p>常量数据在程序运行前就已经存在，他们被编译到可执行文件中，当程序启动后，他们会加载进来，数据通常会在常量数据区中保存，该节区的属性没有写权限，所以不可以修改</p>
+<p>常量数据的地址减去基质就是文件中的编译地址</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200424134603028.png"  alt="image-20200424134603028"></p>
+<p>常量的定义</p>
+<p>C++中，使用#define来定义常量，也可以使用const将变量定义为一个常量，#define定义的常量名称，编译器对其进行编译时，会将代码中的宏名称替换成对应信息，宏的使用可以增加代码的可读性，const是为了增加程序的健壮性而参在的，常用字符串处理函数stcpy的第二个参数被定义为一个常量，为了防止该参数在函数内被修改，对原字符串造成破坏</p>
+<p>宏与const的使用</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//定义NUMBER_ONE 为常量1</span><br><span class="line">#define NUMBER_ONE 1</span><br><span class="line">//将常量NUMBER_ONE 赋值给const常量nVar</span><br><span class="line">const int nVar = NUMBER_ONE;</span><br><span class="line">//输出</span><br><span class="line">printf("const = %d #define =%d \r\n",nVar,NUMBER_ONE);</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200424142250055.png"  alt="image-20200424142250055"></p>
+<p>#define是一个真常量，而const却是由编译器判断实现的常量，是一个假常量，实际中使用const，最终还是一个变量，只是在编译器内进行了检查，发现有修改则报错</p>
+<p>由于编译器在编译期间对const变量进行检查，因此被const修饰过的变量是可以修改的，利用指针获取到const修饰过的变量地址，强制将指针的const修饰去掉，就可以修改对应的数据内容</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//c++源码对比，将变量nConst修饰为const</span><br><span class="line">const int nConst = 5;</span><br><span class="line">//将地址ebo-4赋值为4字节数据5</span><br><span class="line">004010B8	mov dword ptr [ebp-4],5</span><br><span class="line">//c++源码对比，定义int类型的指针，保存nConst地址</span><br><span class="line">int *pConst = (int*)&amp;nConst;</span><br><span class="line">//获取ebp-4地址并存入eax中</span><br><span class="line">004010BF	lea eax,[ebp-4]</span><br><span class="line">//将eax中的数据赋值到地址ebp-8处</span><br><span class="line">004010C2	mov	dword ptr [ebp-8],eax</span><br><span class="line">//c++源码对比，修改指针pConst并指向地址中的数据</span><br><span class="line">*pConst = 6;</span><br><span class="line">//获取地址ebp-8的数据并存入ecx</span><br><span class="line">004010C5	mov ecx,dword ptr [ebp-8]</span><br><span class="line">//将地址ebp-8中保存的数据修改为6</span><br><span class="line">004010C8	mov dword ptr [ecx],6</span><br><span class="line">//C++源码对比，将修饰为const的变量nConst赋值给nVar</span><br><span class="line">int nVar = nConst;</span><br><span class="line">//将5赋值到ebp-0Ch处</span><br><span class="line">004010CE	mov dword ptr [ebp-0Ch],5</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200424144617844.png"  alt="image-20200424144617844"></p>
+<p>所以说const修饰的变量nConst被赋值了一个常量5，编译过程中发现nConst的初值是可知的，并修饰为const，之后所有使用的nConst的位置都用这个可预知值替换，所以最后nVar替换的是预知的常量值5，如果nConst是未知的值就不会进行这个优化</p>
+<p><strong>#define与const两者的区别</strong></p>
+<table>
+<thead>
+<tr>
+<th>#define</th>
+<th>const</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>编译期间查找替换</td>
+<td>编译期间检查const修饰的变量是否被修改</td>
+</tr>
+<tr>
+<td>由系统判断是否修改</td>
+<td>由编译器限制修改</td>
+</tr>
+<tr>
+<td>字符串定义在文件只读数据区，数据常量编译为立即数寻址方式，成为二进制代码的一部分</td>
+<td>根据作用域决定所在的内存位置和属性</td>
+</tr>
+</tbody>
+</table>
+<h1>第三章-认识启动函数，找到用户入口</h1>
+<h2 id="3-1-程序的真正入口">3.1 程序的真正入口</h2>
+<p>一般VC++调试的程序，一般都是在main或者WinMain函数开始的，所以说很多人包括很久之前就认为他们是程序的第一条指令处，这个是不对的，main或者是WinMain来说是一个函数，也是需要被调用的，他们没有被调用之前，编译器做了很多的事情，所以main和WinMain来说是<strong>语法规定的用户入口</strong>，<strong>并不是应用程序的入口</strong>，其实我们的程序被操作系统加载的时候，操作系统会分析执行文件内的数据，main或者WinMain是语法规定的用户入口，而不是应用程序入口，在应用程序被操作系统加载的时候，操作系统会分析执行文件内的数据，分配相关的资源，读取执行文件中的代码和数据到合适的内存单元，然后才是执行入口代码，入口代码通常是<code>mainCRTStartup</code>，<code>wmianCRTStartup</code>，<code>WinMainCRTStartup</code>或<code>wWinMainCRTStartup</code>，具体的要根据编译选项来定夺，其中mainCRTStartup和wmainCRTStartup是控制台环境下多字节编码和Unicode编码的启动函数，而WinMainCRTStartup和wWinMainCRTStartup是Windows环境下多字节编码和Unicode编码的启动函数，vc++也可以让自己去指定入口</p>
+<h2 id="3-2-了解VC-6-0的启动函数">3.2 了解VC++ 6.0的启动函数</h2>
+<p>VC++6.0 控制台和多字节编码环境下的启动函数<code>mainCRTStartup</code>，由系统库KERNEL32.dll负责调用</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200425191405630.png"  alt="image-20200425191405630"></p>
+<p>去安装了个vc++ 6.0  可以看到程序运行时调用了三个函数，KERNEL32.dll，mainCRTStartup和main</p>
+<p>其中KERNEL32！76606359()表示在76606359地址调用了mainCRTStartup，VC++提供了mainCRTStartup的源码，直接过去看一下，分析一下(自己没有安装完整版的，导致看不到，直接用书上的一点一点分析了)</p>
+<p><strong>mainCRTStartup函数代码片段分析</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//预编译宏</span><br><span class="line">#else	/* _WINMAIN_ */</span><br><span class="line">#ifdef WPRFLAG</span><br><span class="line">//宽字符版控制台启动函数</span><br><span class="line">void wmainCTRStartup(</span><br><span class="line">#else	/* WPRFLAG* /</span><br><span class="line">//多字节版控制台启动函数</span><br><span class="line">void mainCRTStartup(</span><br><span class="line">#endif	/* WPRFLAG */</span><br><span class="line">#endif	/* _WINMAIN_ */</span><br><span class="line">	void</span><br><span class="line">	)</span><br><span class="line">{</span><br><span class="line">	//获取版本信息</span><br><span class="line">	_osver = GetVersion();</span><br><span class="line">	_winminor = (_osver &gt;&gt; 8) &amp; 0x00FF;</span><br><span class="line">	_winmajor = _osver &amp; 0x00FF;</span><br><span class="line">	_winver = (_winmajor &lt;&lt; 8) + _winminor;</span><br><span class="line">	_osver = (_osver &gt;&gt;16) &amp; 0x00FFFF;</span><br><span class="line">	</span><br><span class="line">	//堆空间初始化过程，在这个函数中，制定了程序中堆空间的起始位置</span><br><span class="line">	//_MT是多线程标记</span><br><span class="line">#ifdef _MT</span><br><span class="line">	if(!_heap_init(1))</span><br><span class="line">#else	/* _MT */</span><br><span class="line">	if(!_heap_init(0))</span><br><span class="line">#endif	/*_MT */</span><br><span class="line">	fast_error_exit(_RT_HEAPINIT);</span><br><span class="line">	//初始化多线程环境</span><br><span class="line">#ifdef _MT</span><br><span class="line">	if(!_mtinit())</span><br><span class="line">		fast_error_exit(_RT_THREAD);</span><br><span class="line">#endif	/* _MT* /</span><br><span class="line">	_try{</span><br><span class="line">		//宽字节处理代码略</span><br><span class="line">		</span><br><span class="line">		//多字节版获取命令行</span><br><span class="line">		_acmdln = (char*)GetCommandLineA();</span><br><span class="line">	//多字节版获取环境变量信息</span><br><span class="line">		_aenvptr = (char*)_crtGetEnvironmentStringsA();</span><br><span class="line">		//多字节版获取命令行信息</span><br><span class="line">		_setargv();</span><br><span class="line">		//多字节版获取环境变量信息</span><br><span class="line">		_setenvp();</span><br><span class="line">#endif	/* WPRFLAG */</span><br><span class="line">		//初始化全局数据和浮点寄存器</span><br><span class="line">		_cinit();</span><br><span class="line">		//窗口程序处理代码略</span><br><span class="line">		</span><br><span class="line">		//宽字符处理代码略</span><br><span class="line">		</span><br><span class="line">		//获取环境变量信息</span><br><span class="line">		_initenv = _environ;</span><br><span class="line">		//调用main函数，传递命令行参数信息</span><br><span class="line">		mainret = main(_argc,_argv,_environ);</span><br><span class="line">#endif	/* WPRFLAG */</span><br><span class="line"></span><br><span class="line">#endif	/* _WINMAIN_ */</span><br><span class="line">		//检查main函数返回值执行析构函数或atexit注册的函数指针，并结束程序</span><br><span class="line">		exit(mainret);</span><br><span class="line">	}</span><br><span class="line">	//退出结束代码略</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>有很多的函数不知道干什么的，总结一下：</p>
+<ul>
+<li><code>GetVersion</code>函数：获取当前运行平台的版本号，控制台程序运行在Windows模拟的DOS下，因此这里获取的版本号为MS-DOS的版本信息</li>
+<li><code>_heap_init</code>函数：用于初始化堆空间，在函数实现中使用HeapCreate申请堆空间，申请空间的大小由<code>_heap_init</code>传递的参数决定，<code>_sbh_heap_init</code>函数用于初始化堆结构信息</li>
+<li><code>GetCommandLineA</code>函数：获取命令行参数信息的首地址</li>
+<li><code>_crtGetEnvironmentStringsA</code>函数：获取环境变量信息的首地址</li>
+<li><code>_setargv</code>函数：根据<code>GetCommandLineA</code>获取命令行参数信息的首地址并进行参数分析，将分离出的参数的个数保存在全局变量<code>_argc</code>中，将分析出的每个命令行参数的首地址存放在数组中，并将这个字符指针数组的首地址保存在全局变量<code>_argv</code>中，从而得到命令行参数的个数以及命令行参数的信息</li>
+<li><code>_setenvp</code>函数：根据<code>_crtGetEnvironmentStringA</code>函数获取环境变量信息的首地址进行分析，将得到的每条环境变量字符串的首地址存放在字符指针数组内，并将这个数组的首地址存放在全局变量<code>env</code>中</li>
+</ul>
+<p>所以当我们的main函数得到这三个参数，<code>_argc</code>,<code>_argv</code>,<code>env</code>三个全局变量，他们作为参数以栈传递的方式传到main函数中</p>
+<ul>
+<li>
+<p><code>_cinit</code>函数：用于全局数据和浮点寄存器的初始化，全局对象和IO流的初始化都是这个函数实现的，利用函数<code>_initterm</code>进行数据链初始化，这个函数由两个参数组成，类型为<code>_PVFV*</code>，这是一个函数指针数组，保留了每个初始化函数的地址，初始化函数的类型为<code>_PVFV</code></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">typedef void(_cdecl *_PVFV)(void);</span><br></pre></td></tr></tbody></table></figure>
+</li>
+</ul>
+<p>所以，这个初始化函数是无参数也是无返回值的，c++规定全局对象和静态对象必须在main函数前构造，在main函数返回后析构，所以这里是用来代理构造析构函数的</p>
+<p><strong>_cinit函数代码</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//用于初始化寄存器</span><br><span class="line">if(_FPinit != NULL)</span><br><span class="line">(*_FPinit)();	//初始化浮点寄存器</span><br><span class="line">//用于初始化C语法中的数据</span><br><span class="line">_initterm( _xi_a, _xi_z);</span><br><span class="line">//用于初始化C++语法中的数据</span><br><span class="line">_initterm( _xc_a , _xc_z);</span><br></pre></td></tr></tbody></table></figure>
+<p>这里<code>_Fpinit</code>是一个全局函数指针，类型是<code>_PVFV</code>，如果编译器扫描代码的时候，发现有浮点计算，则这个指针保存了初始化浮点寄存器的代码地址，否则就是0，如果浮点寄存器没有被出刷，会有异常错误👴在上周的时候说过了，参数<code>xi_a</code>为函数指针数组的其实地址，<code>_xi_z</code>为结束地址，第一个_initterm初始化的都是C支持库中所需要的数据</p>
+<p><strong>_initterm函数代码</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">static void _cdecl _initterm (</span><br><span class="line">	_PVFV * pfbegin, _PVFV * pfend )</span><br><span class="line">{</span><br><span class="line">	//遍历数组的各元素</span><br><span class="line">    while(pfbegin &lt; pfend){</span><br><span class="line">    	//若函数指针不为空，则执行该函数</span><br><span class="line">    	if(*pfbegin!=NULL)</span><br><span class="line">    		(**pfbegin)();</span><br><span class="line">    	++pfbegin;</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>C++初始化操作会在第二次的<code>_initterm</code>进行调用，一般是全局变量或者静态对象的初始化函数(这里不咋懂，书上说第10章会说)</p>
+<p>正常的mainCRTStartup函数会根据编译器版本的不同所有不同！如vs2005，其中的<code>mainCRTStartup</code>变成<code>_tmainCRTStartup</code>，在我们的默认情况下，入口函数是main，这时候会从mainCRTStartup启动，再传入main所需要的三个参数<code>argc</code>，<code>argv</code>，<code>env</code>，最后再调用main</p>
+<p>如果我们重新指定入口函数</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200427145345539.png"  alt="image-20200427145345539"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200427145438829.png"  alt="image-20200427145438829"></p>
+<p>可以看到没有调用mainCRTStartup函数，我们可以再测试一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200427145535373.png"  alt="image-20200427145535373"></p>
+<p>我再写一个新的函数调用并不是main来看一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200427145843968.png"  alt="image-20200427145843968"></p>
+<p>如果我没有调用mainCRTStartup函数，我们的堆空间是没有被初始化的，所以用到堆就会报错</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200427151105530.png"  alt="image-20200427151105530"></p>
+<p>我们看一下，正常的情况</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200427151458866.png"  alt="image-20200427151458866"></p>
+<p>张长是可以分配的，所以说如果书用了malloc函数，没有初始化堆空间会出错的</p>
+<h2 id="3-3-main函数识别">3.3 main函数识别</h2>
+<p>VC++6.0main函数特征，三个参数：命令行参数个数，命令行参数信息，环境变量信息，main是启动函数中唯一一个具有3个参数的函数，WinMain也是启动函数中为一具有4个参数的函数</p>
+<p>VC++6.0，main函数被调用前，要先调用的函数：</p>
+<p><code>GetVersion()</code> <code>_heap_int()</code> <code>GetCommandLineA()</code> <code>_crtGetEnvironmentStringsA()</code> <code>_setargv()</code> <code>_setenvp()</code></p>
+<p><code>_cinit()</code>这些函数调用结束后就会调用main函数，根据main函数调用的特征，将argc，argv，env压入栈作为参数</p>
+<p>用ida可以看到_mainCRTStartup的大概流程</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200427160426209.png"  alt="image-20200427160426209"></p>
+<p>我们用od去看看做了什么，od会直接暂停在程序的入口处，并不是定位在main函数的位置，我们试着通过main函数的特性查找一下他在哪个位置</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200427160802795.png"  alt="image-20200427160802795"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200427161042351.png"  alt="image-20200427161042351"></p>
+<p>自己根据分析，我在断点的位置就是main的函数入口</p>
+<p>我用书上的代码做一个例子，便于分析！</p>
+<p><strong>OD反汇编信息</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//省略部分代码</span><br><span class="line">//OD识别函数名称为GetCommandLineA</span><br><span class="line">00401210	|. FF15 38514200 call dword ptr ds:[&lt;&amp;KERNEL32.GetCommand&gt;]</span><br><span class="line">//得到命令行参数</span><br><span class="line">00401216	|. A3 444F4200	mov dword ptr ds :[424F44],eax </span><br><span class="line">//根据main函数的特性，此处为_crtGetEnvirinmentStringsA()调用</span><br><span class="line">0040121B	|. E8 E0240000	call ProgramE.00403700</span><br><span class="line">00401220	|. A3 BC354200	mov dword ptr ds:[4235BC],eax</span><br><span class="line">//根据main函数特性，此处为函数_setargv()调用</span><br><span class="line">00401225	|. E8 C61F0000	call ProgramE.004031F0</span><br><span class="line">//根据main函数特性，此处为函数_setenvp()调用</span><br><span class="line">0040122A	|. E8 711E0000	call ProgramE.004030A0</span><br><span class="line">//根据main函数特性，此处为函数_cinit()调用</span><br><span class="line">004012FF	|. E8 8C1A0000	call PromgramE.00402CC0</span><br><span class="line">00401234	|. 8B0D 00364200 mov ecx,dword ptr ds:[423600]</span><br><span class="line">0040123A	|. 890D 04364200 mov dword ptr ds:[423604],ecx</span><br><span class="line">00401240	|. 8B15 00364200 mov edx,dword ptr ds:[423600]</span><br><span class="line">//压栈传参，环境变量信息</span><br><span class="line">00401246	|. 52	push edx</span><br><span class="line">00401247	|. A1 F8354200 mov eax,dword ptr ds:[4235F8]</span><br><span class="line">//压栈传参，命令行参数信息</span><br><span class="line">0040124C	|. 50	push eax</span><br><span class="line">0040124D	|. 8B0D	F4354200 mov ecx,dword ptr ds:[4235F4]</span><br><span class="line">//压栈传参，命令行参数个数</span><br><span class="line">00401253	|. 51	push ecx</span><br><span class="line">//此处为卖弄函数的调用出，跟进到函数中便是main函数的实现代码流程</span><br><span class="line">00401254	|. E8 ACFDFFFF	call ProgramE.00401005</span><br></pre></td></tr></tbody></table></figure>
+<p>总结一下，一般我们用od的时候，来到的应该是mainCRTStartup的位置，那么我们寻找main函数的时候，我们需要去找到相应的调用前的函数的流程结束，从<code>GetVersion()</code>获取平台版本号 <code>_heap_init</code>初始化堆空间 <code>GetCommandLineA</code>获取命令行参数信息的首地址，<code>_crtGetEnvironmentStringA</code>获取环境变量信息的首地址，<code>_setargv</code>得到命令行参数个数，以及命令行参数信息，<code>_setenvp</code>获取环境变量字符串的首地址 <code>_cinit</code>全局数据和浮点寄存器初始化，之后main函数所需要的参数压入堆栈，调用main</p>
+<h1>第四章-观察各种表达式的求值过程</h1>
+<h2 id="4-1-算数运算和赋值">4.1 算数运算和赋值</h2>
+<p>看书的时候感觉，这个位置好像在哪里学过，想了海哥有讲过，这里稍微说一下，举一个例子，赋值运算类似于数学中的等于，本质就是将一个内存空间的数据传递到另一个内存空间中，但是内存没有处理器那种的控制能力，所以各个内存单元之间是无法直接传递数据的，必须用过处理器访问并中转，才可以实现两个内存单元之间的数据传输(cpu里的寄存器包括通用寄存器、专用寄存器和控制寄存器)，正常来说，算术运算与传递计算结果的代码组合才可以被看作是一个有效的语句，单独的运算会被视为空语句，应该在上周测试过了，我再测试一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200428141456757.png"  alt="image-20200428141456757"></p>
+<p>看到了吗，如果算术运算，没有赋值的结合是一条无意义的语句，下面的就直接压在了ebp-0x4局部变量那个位置</p>
+<p><strong>各种算术运算的工作形式</strong></p>
+<p><strong>加法：</strong></p>
+<p>加法运算对应的汇编指令 <code>ADD</code>，执行加法运算的时候，针对不同的操作数，转换的指令也会不一样，编译器会根据优化方式选择比较好的匹配方案，VC++ 6.0中常用的优化方案有两种方案：</p>
+<ul>
+<li>1方案：生成文件占用空间最小</li>
+<li>2方案：执行效率最快</li>
+</ul>
+<p>Release编译选项组的默认选项为2方案 <strong>(执行效率优先)</strong> ，在Debug编译选项组中，使用的是Od+ZI选项，这个选项使编译器产生的代码都便于调试，为了便于单步跟踪，以及源码和目标代码块的对应阅读，从而可能增加冗余代码，在不影响调试的前提下，尽可能的优化</p>
+<p><strong>加法运算——Debug版</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码说明：加法运算</span><br><span class="line">//无效语句，不参与编译</span><br><span class="line">15+20</span><br><span class="line">//变量定义</span><br><span class="line">int nVarOne = 0;</span><br><span class="line">int nVarTwo = 0;</span><br><span class="line">//变量加常量的加法运算</span><br><span class="line">nVarOne = nVarOne + 1;</span><br><span class="line">//两个常量加法的加法运算</span><br><span class="line">nVarOne = 1 + 2;</span><br><span class="line">//两个变量相加的加法运算</span><br><span class="line">nVarOne = nVarOne + nVarTwo</span><br><span class="line">printf("nVarOne = %d \r\n", nVarOne);</span><br><span class="line"></span><br><span class="line">//C++源码与对应汇编代码</span><br><span class="line"></span><br><span class="line">//C++源码对比，变量赋值</span><br><span class="line">int nVarOne = 0;</span><br><span class="line">//将立即数0，传入地址ebp-0x4中，即变量nVarOne所在的地址</span><br><span class="line">00401028 mov dword ptr [ebp-4],0</span><br><span class="line">//C++源码对比，变量赋值</span><br><span class="line">int nVarTwo = 0;</span><br><span class="line">0040102F mov dword ptr [ebp-8],0</span><br><span class="line">//C++源码对比，变量 + 常量</span><br><span class="line">nVarOne = nVarOne + 1;</span><br><span class="line">//取出变量nVarOne数据放入eax中</span><br><span class="line">00401036 mov eax,dword ptr [ebp-4]</span><br><span class="line">//对eax执行加等于1运算</span><br><span class="line">00401039 add eax,1</span><br><span class="line">//将结果返回变量nVarOne中，完成加法运算</span><br><span class="line">0040103C mov dword ptr [ebp-4],eax</span><br><span class="line">//C++源码对比，常量 + 常量</span><br><span class="line">nVarOne = 1 + 2;</span><br><span class="line">//这里编译器直接计算出了两个常量相加后的结构，放入变量nVarOne中</span><br><span class="line">0040103F mov dword ptr [ebp-4],3</span><br><span class="line">//C++源码对比，变量 + 变量</span><br><span class="line">nVarOne = nVarOne + nVarTwo;</span><br><span class="line">//使用ecx存放变量nVarOne</span><br><span class="line">00401046 mov ecx,dword ptr [ebp-4]</span><br><span class="line">//使用ecx对变量nVarTwo执行加等于操作</span><br><span class="line">00401049 add ecx,dword ptr [ebp-8]</span><br><span class="line">//将结果存入地址ebp-4处，即变量nVarOne</span><br><span class="line">0040104C mov dword ptr [ebp-4],ecx</span><br></pre></td></tr></tbody></table></figure>
+<p>总结一下：</p>
+<ul>
+<li>两个常量相加的情况下，编译器在编译期间就计算出两个常量相加后的结果，将这个结果作为立即数参与运算，减少了运行期间的计算</li>
+<li>变量参与加法运算的时候，会取出内存中的数据，放入通用寄存器，再通过加法的指令来完成计算的结果，最后存入内存空间中</li>
+</ul>
+<p>如果我们开启Release的时候，会发生比较大的变化，我记得这里我和小哲哲研究过好像，由于效率优先，编译器会把无用的代码去除，并将可合并的代码进行归并处理，我们测试一下刚才的那一段Debug的那段代码</p>
+<p>擦！我的vc++ 6.0 release 不好使！</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200428160856279.png"  alt="image-20200428160856279"></p>
+<p>可以看到，类似于nVarOne = nVarOne +1 这样的代码会被删除，因为后面对其进行了重新赋值操作，所以编译器判定这句话的代码是可以被删除的，可以看到唯一的add是进行的参数平衡，并没有源码中的加法运算，在编译过程中，编译器常常会采用 <strong>常量传播</strong> 和 <strong>常量折叠</strong>这样的方案对代码中的变量与常量进行优化</p>
+<p><strong>常量传播</strong></p>
+<p>将编译期间可计算出的结果的变量转换成常量，这样就减少了变量的使用</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void main(){</span><br><span class="line">	int nVar = 1;</span><br><span class="line">	printf("nVar = %d \r\n", nVar);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200428162906092.png"  alt="image-20200428162906092"></p>
+<p>变量nVar是一个在编译期间可以计算出结果的变量，因此，程序中引用nVar的地方直接引用常量1，代码等于</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void main(){</span><br><span class="line">	printf("nVar = %d \r\n",1);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200428175354770.png"  alt="image-20200428175354770"></p>
+<p>反汇编的release的改变代码和上面的一样，那么结论就是正确的</p>
+<p><strong>常量折叠</strong></p>
+<p>当计算公式中出现，多个常量计算的时候，编译器会在编译期间计算出结果时，源码中所有的常量计算都会被计算结果代替，测试代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void main(){</span><br><span class="line">	int nVar = 1 + 5 - 3*6;</span><br><span class="line">	printf("nVar = %d \r\n", nVar);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200428180821687.png"  alt="image-20200428180821687"></p>
+<p>我们看到release版本的反汇编，我们看到将值也是直接算了出来 push 0FFFFFFF4h，从而推断一下，在编译过程中计算出来的计算出 -12 从而代替原来表达式，替换代码1：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void main(){</span><br><span class="line">	int nVar = -12;</span><br><span class="line">	printf("nVar = %d \r\n", nVar);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>替换代码2(最终等价)：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void main(){</span><br><span class="line">	printf("nVar = %d \r\n", -12);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>测试release的代码想法</strong></p>
+<p>我们对常量折叠和常量传播了解过后，就知道上面Debug的时候，为什么直接push 3了，那么我们按照自己想法，做一个测试，如果变量的值是命令行参数argc，那么argc在编译期间无法确定，所以编译器无法在提前计算出结果，那么变量就不会被编译器计算出的常量替换掉，测试代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">int main(int argc, char* argv[])</span><br><span class="line">{</span><br><span class="line">	int nVarOne = argc;</span><br><span class="line">	int nVarTwo = argc;</span><br><span class="line">	nVarOne = nVarOne + 1;</span><br><span class="line">	nVarOne = 1 + 2;</span><br><span class="line">	nVarOne = nVarOne + nVarTwo;</span><br><span class="line">	printf("nVarOne = %d \r\n", nVarOne);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200428190325576.png"  alt="image-20200428190325576"></p>
+<p>我们只看到了一个参数变量偏移，而我们应该定义了两个局部变量都没了</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">int main(int argc, char* argv[])</span><br><span class="line">{</span><br><span class="line">	int nVarOne = argc;	//在后面的代码中被常量代替</span><br><span class="line">	int nVarTwo = argc;	//虽然不能用常量代替，但是由于后面没有对nVarTwo进行修改，所以nVarTwo等价于引用argc,nVarTwo被删除掉：叫做复写传播</span><br><span class="line">	nVarOne = nVarOne + 1;	//后面对nVarOne赋值了，所以删除了这句话</span><br><span class="line">	nVarOne = 1 + 2;	//常量折叠，等价于nVarOne = 3</span><br><span class="line">	nVarOne = nVarOne + nVarTwo;	//常量传播加复写传播，nVarOne = 3 + argc</span><br><span class="line">	printf("nVarOne = %d \r\n", nVarOne);</span><br><span class="line">	//后面没有nVarOne被访问，所以用3+argc代替</span><br><span class="line">	printf("nVarOne = %d")</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>总结：nVarTwo可以省略，因为它付给了第一个参数argc，在nVarOne被赋值了3以后，做了加法，等同于了nVarOne = 3 + argc，之后的printf引用nVarOne，等价于上面的 3 + argc 于是乎nVarOne也可以删除掉</p>
+<p><strong>减法：</strong></p>
+<p>减法对应的汇编指令是<code>sub</code>，但是我们的计算机只会做加法，我们可以通过补码的方式转换将减法转化为加法形式来完成</p>
+<p>假设有一个二进制数Y，反码为Y(反)，假设二进制长度为8位：<br>
+$$<br>
+Y+Y反 = 1111\ 1111B<br>
+$$</p>
+<p>$$<br>
+Y + Y反 + 1 = 0(进位丢失)<br>
+$$</p>
+<p>$$<br>
+Y(反) + 1 =0-Y &lt;==&gt; Y(反) + 1 = -Y &lt;==&gt; Y(补) == -Y<br>
+$$</p>
+<p>所以负数的补码可以简化为取反+1</p>
+<p>假设一个 算术为 5 - 2<br>
+$$<br>
+5+(0-2)&lt;==&gt;5+(2(反)+1)&lt;==&gt;5+2(补)<br>
+$$<br>
+所以说根据这个公式，所有的减法都可以当作加法来运算</p>
+<p><strong>减法运算——Debug版</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码说明：减法运算</span><br><span class="line">//变量定义</span><br><span class="line">int nVarOne = argc;</span><br><span class="line">int nVarTwo = 0;</span><br><span class="line">//获取变量nVarTwo的数据，使用scanf防止被常量化</span><br><span class="line">scanf("%d",&amp;nVarTwo);</span><br><span class="line">//变量减常量的减法运算</span><br><span class="line">nVarOne = nVarOne - 100;</span><br><span class="line">//减法与加法混合运算</span><br><span class="line">nVarOne = nVarOne + 5 - nVarTwo;</span><br><span class="line">printf("nVarOne = %d \r\n",nVarOne);</span><br><span class="line"></span><br><span class="line">//C++源码对应汇编代码讲解</span><br><span class="line">//C++源码对比，变量 - 常量</span><br><span class="line">nVarOne = nVarOne - 100;</span><br><span class="line">//取变量nVarOne的数据到eax中</span><br><span class="line">00401125	mov	eax,dword ptr [ebp-4]</span><br><span class="line">//是用减法指令sub，对eax执行减等于100操作</span><br><span class="line">00401128	sub	eax,64h</span><br><span class="line">//将结果赋值回nVarOne中</span><br><span class="line">0040112B	mov dword ptr [ebp-4],eax</span><br><span class="line">//C++源码对比，减法与加法混合运算</span><br><span class="line">nVarOne = nVarOne +5 - nVarTwo;</span><br><span class="line">//按照自左向右顺序依次执行</span><br><span class="line">0040112E	mov	ecx,dword ptr [ebp-4]</span><br><span class="line">00401131	add	ecx,5</span><br><span class="line">00401134	sub	ecx,dword ptr [ebp-8]</span><br><span class="line">00401137	mov	dword ptr [ebp-4],ecx</span><br><span class="line">//printf函数调用显示略</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200428205809617.png"  alt="image-20200428205809617"></p>
+<p>总结：实际分析中，根据加法操作数的情况，当加数为负数的时候，执行的并不是加法，而是减法的操作，release和加法同就不说了</p>
+<p><strong>乘法：</strong></p>
+<p>乘法运算对应的汇编指令为有符号<code>imul</code>和无符号<code>mul</code>两种，由于乘法指令的执行周期比较长，在编译过程中，编译器会先尝试将乘法转换成加法，或者使用移位等周期较短的指令，当他们都不可以转换的时候，才会使用乘法指令</p>
+<p><strong>乘法转换——Debug版</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码说明，乘法运算</span><br><span class="line">//防止被视为无效代码，将每条运算作为printf参数使用</span><br><span class="line">//变量定义</span><br><span class="line">int nVarOne = argc;</span><br><span class="line">int nVarTwo = argc;</span><br><span class="line">//变量乘常量(常量为非2的幂)</span><br><span class="line">printf("nVarOne*15 = %d \r\n",nVarOne * 15);</span><br><span class="line">//变量乘常量(常量值为2的幂)</span><br><span class="line">printf("nVarOne*16 = %d",nVarOne * 16)</span><br><span class="line">//两常量相乘</span><br><span class="line">printf("2*2 = %d",2 * 2);</span><br><span class="line">//混合运算</span><br><span class="line">printf("nVarTwo *4 +5 = %d",nVarTwo * 4 + 5);</span><br><span class="line">//两变量相乘</span><br><span class="line">printf("nVarOne * nVarTwo = %d",nVarOne * nVarTwo);</span><br><span class="line"></span><br><span class="line">//C++源码对应汇编</span><br><span class="line">//C++源码对比，变量 * 常量</span><br><span class="line">printf("nVarOne*15 = %d \r\n",nVarOne * 15);</span><br><span class="line">0040B8A4	mov	edx,dword ptr [ebp-4]</span><br><span class="line">//直接使用有符号乘法指令imul</span><br><span class="line">0040B8A7	imul	edx,edx,0Fh</span><br><span class="line"></span><br><span class="line">//C++源码对比 常量*常量(常量值为2的幂)</span><br><span class="line">printf("nVarOne*16 = %d",nVarOne * 16)</span><br><span class="line">0040B8B8	mov	eax,dword ptr [ebp-4]</span><br><span class="line">//使用左移运算代替乘法运算</span><br><span class="line">0040B8BB	shl	eax,4</span><br><span class="line"></span><br><span class="line">//C++源码对比，常量*常量</span><br><span class="line">printf("2*2 = %d",2 * 2);</span><br><span class="line">//在编译期间计算出2*2的结果，将表达式转换为常量值</span><br><span class="line">0040B8CC	push 4</span><br><span class="line">0040B8CE	push offest string "2 * 2 = %d"(0041ffac)</span><br><span class="line">0040B8D3	call printf(0040B750)</span><br><span class="line">0040B8D8	add esp,8</span><br><span class="line"></span><br><span class="line">//c++源码对比，变量*常量+常量(组合运算)</span><br><span class="line">printf("nVarTwo *4 +5 = %d",nVarTwo * 4 + 5);</span><br><span class="line">0040B8DB	mov	ecx,dword ptr [ebp-8]</span><br><span class="line">//利用lea指令完成组合运算</span><br><span class="line">0040B8DE	lea	edx,[ecx*4+5]</span><br><span class="line"></span><br><span class="line">//c++源码对比，变量*变量</span><br><span class="line">printf("nVarOne * nVarTwo = %d",nVarOne * nVarTwo);</span><br><span class="line">0040B90A	mov	ecx,dword ptr [ebp-4]</span><br><span class="line">//直接使用有符号乘法指令</span><br><span class="line">0040B90D	imul ecx,dword ptr [ebp-8]</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200428223154371.png"  alt="image-20200428223154371"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200428223212478.png"  alt="image-20200428223212478"></p>
+<p>上面的代码大概👴都能搞明白，总结一下😋：在二进制数中乘以2的时候等同于位依次向左移动(shl)1位，假设十进制3的二进制数为0011，3乘2以后等于6，相当于0110，当乘数和被乘数都是未知变量的时候，无法运用优化的方式，这时候处理器不会优化处理，直接变成乘法指令完成乘法计算(imul)</p>
+<p>我们可以看到这里面有几个地方用了lea指令，😡我也不太懂，于是乎了解一下嘛！分析了一下！如果我们乘法运算与加法的运算结合了编译器会采用lea指令来处理，我们按照猜想去测试一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200428223929170.png"  alt="image-20200428223929170"></p>
+<p>测试一下我猜想的1 2 4 8为lea</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200428224044646.png"  alt="image-20200428224044646"></p>
+<p>1不行，1不就相当于一个加法了，👴真是傻了</p>
+<p>那么我们如果组合运算中的乘数，不等于2 4 8如何处理</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码对比 变量*常量*常量 (乘数超过8)</span><br><span class="line">printf("nVarTwo * 9 + 5 = %d",nVarTwo * 9 + 5);</span><br><span class="line">0040B8F3	mov	eax,dword ptr [ebp-8]</span><br><span class="line">0040B8F6	imul eax,eax,9</span><br><span class="line">0040B8F9	add	eax,5</span><br><span class="line">0040B8FC	push eax</span><br><span class="line">0040B8FD	push offset string "nVarTwo * 9 + 5 = %d"(0041ff7c)</span><br><span class="line">0040B902	call printf(0040b750)</span><br><span class="line">0040B907	add esp,8</span><br></pre></td></tr></tbody></table></figure>
+<p>我们看一下release版本的</p>
+<p><strong>各类型乘法转换——release版</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//IDA直接将参数作为局部变量使用</span><br><span class="line">arg_0 = dword ptr 4</span><br><span class="line">//保存环境</span><br><span class="line">push esi</span><br><span class="line">//取出参数变量存入esi中</span><br><span class="line">mov esi,[esp+4+arg_0]</span><br><span class="line">//经过优化后，将nVarOne*15先转化为 乘2加自身，相当于乘3</span><br><span class="line">//eax = esi*2+esi = 3*esi</span><br><span class="line">lea	eax,[esi+esi*2]</span><br><span class="line">//将上一步操作结果乘4加自身，等同于乘15</span><br><span class="line">//eax = eax * 4 + eax = 5 * eax = 5 * (3*esi)</span><br><span class="line">lea	eax,[eax+eax*4]</span><br><span class="line">push eax</span><br><span class="line">push offset aNvaronel15D; "nVarOne * 15 = %d"</span><br><span class="line">call _printf</span><br><span class="line">// esi中的数据传送到ecx，esi中保存的为参数数据</span><br><span class="line">mov	ecx,esi</span><br><span class="line">//将ecx中的数据左移4为，ecx乘以2^4</span><br><span class="line">shl	ecx,4</span><br><span class="line">push ecx</span><br><span class="line">push offset aNvarone15D; "nVarOne * 16 = %d"</span><br><span class="line">call _printf</span><br><span class="line">//两常量相乘直接转换常量值</span><br><span class="line">push 4</span><br><span class="line">push offset a22D;	"2*2 = %d"</span><br><span class="line">call _printf</span><br><span class="line">//这句话等等同于lea edx,[esi*4+5]都是混合运算</span><br><span class="line">lea	edx,ds:5[esi*4]</span><br><span class="line">push edx</span><br><span class="line">push offset aNvartwo45D;	"nVarTwo * 4 +5 =%d"</span><br><span class="line">call _printf</span><br><span class="line">//此处为乘数不等于2 4 8 情况，编译优化9进行分解：(nVarTwo*1+nVarTwo*8),这样就可以使用lea了</span><br><span class="line">lea eax,[esi+esi*8+5]</span><br><span class="line">push eax</span><br><span class="line">push _offset aNvartwo95D;	"nVarTwo * 9 +5 =%d"</span><br><span class="line">call _printf</span><br><span class="line">//此处为两个变量相乘，都是未知数，无忧化</span><br><span class="line">mov	ecx,esi</span><br><span class="line">imul ecx,esi</span><br><span class="line">push ecx</span><br><span class="line">push offest aNvaroneNvartwo;	"nVarOne * nVarTwo = %d"</span><br><span class="line">call _printf</span><br><span class="line">add	esp,30h</span><br><span class="line">pop	esi</span><br></pre></td></tr></tbody></table></figure>
+<p>可以看到除了两个未知变量的乘法没有优化外，其它形式的乘法运算都可以进行优化</p>
+<p><strong>除法</strong></p>
+<p>除法计算约定，对应汇编指令分有符号<code>idiv</code>和无符号<code>div</code>两种，除法指令的执行周期比较长，效率比较低，所以编译器会想尽办法用其他运算指令代替除法指令，所以C++中的除法和数学中的除法不同，在C++中，除法运算补保留余数，有专门求取余数的运算(运算符为%)，叫做取模运算，对于整数除法，C++的规定是仅仅保留整数部分，小数部分完全舍弃</p>
+<p>计算机整数除法，<code>a/b</code>两个无符号整数相除，结果是无符号，两个有符号相除，结果是有符号，一个有符号，一个无符号相除，结果是无符号的，有符号数的最高位(符号位)被作为数据位对持，然后作为无符号数参与计算</p>
+<p>对于除法而言，计算机面临着如何处理小数部分的问题，正常来说 7/2 = 3.5，而计算机而言，整数除法的结果必须为整数，对于3.5这样的，计算机取整数部分的方式有如下几种：</p>
+<p><strong>向下取整</strong></p>
+<p>根据整数值的取值范围，可以画出以下坐标轴：</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200429172745689.png"  alt="image-20200429172745689"></p>
+<p>向下取整：就是取像<strong>负无穷</strong>方向最接近<strong>x</strong>的整数值，换而言之也就是取得不大于<strong>x</strong>的最大整数</p>
+<p>例如：+3.5向下取整得到3；-3.5向下取整得到-4</p>
+<p>数学描述中，这个符号有点打不出来，我直接画一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200429174930773.png"  alt="image-20200429174930773"></p>
+<p>C语言中<code>math.h</code>中，定义了<code>floor</code>函数，作用就是向下取整，也叫为地板取整，向下取整的除法，除数为2的幂时，直接用右移指令 <code>sar</code>来完成</p>
+<p><strong>向上取整</strong></p>
+<p>所谓对x向上取整，就是取 正无穷方向接近x的整数值，取得不小于x的最小整数</p>
+<p>例如：+3.5向下取整得到4；-3.5向下取整得到-3</p>
+<p>数学描述中，这个符号有点打不出来，我直接画一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200429174329067.png"  alt="image-20200429174329067"></p>
+<p>在C语言的<code>math.h</code>中定义了<code>ceil</code>函数，作用就是向上取整，称为天花板取整</p>
+<p><strong>向零取整</strong></p>
+<p>所谓对x向零取整，就是取得往0方向最接近x的整数值，换而言之也就是放弃小数部分</p>
+<p>例如：+3.5向零取整得到3；-3.5向零取整得到-3</p>
+<p>在我们的数学描述中，[x] 表示对 x向零取整</p>
+<p>这三个问题都会存在一个定律，我直接用ipad写吧，这个画板不好写</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200429184749337.png"  alt="image-20200429184749337"></p>
+<p>在C语言中和其他高级语言中，对整数除法规定为向零取整，也称为 截断除法</p>
+<p><strong>除法数学定理以及推导</strong></p>
+<p>好的，👴感觉我学了一波计算机无关的东西，学了一堆数学，小盆友你是否有很多问号🤣，这里大部分我将会用iPad写一下</p>
+<p>回顾一下除法以以及余数的原则：</p>
+<p>假设被除数为a，除数为b，商为q，余数为r，会有如下一些重要的性质：</p>
+<ul>
+<li>r的绝对值 &lt; b的绝对值</li>
+<li>a  = b*q + r</li>
+<li>b = (a - r) / q</li>
+<li>q = (a - r) / b</li>
+<li>r = a - q*b</li>
+</ul>
+<p>举例子：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">printf("8 %% -3 = %d \r\n",8 % -3)</span><br></pre></td></tr></tbody></table></figure>
+<p>C语言规定的整数除法为向零取整，所以 8 / -3 = -2  那么余数就是2，👴就不举例子了，大家都会 很基础</p>
+<p>直接说定理吧：</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200429215858565.png"  alt="image-20200429215858565"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200429221612549.png"  alt="image-20200429221612549"></p>
+<p>VC++ 6.0对除数为整形常量的除法的处理，如果除数是变量，则只能使用除法指令，如果除数为常量，就有了优化的余地，根据除数值的相关特性，编译器有对应的处理方式，测试一下除数为2的幂，非2的幂，负数等各类情况的处理方式，假设整形为4字节补码的形式</p>
+<p><strong>各类型除法转换——Debug版</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码说明：除法运算</span><br><span class="line">//变量定义</span><br><span class="line">int	nVarOne = argc;</span><br><span class="line">int nVarTwo = argc;</span><br><span class="line">//两个变量做除法</span><br><span class="line">printf("nVarOne / nVarTwo = %d", nVarOne / nVarTwo);</span><br><span class="line">//变量除以常量，常量为2的1次方</span><br><span class="line">printf("nVarOne / 2 = %d", nVarOne / 2);</span><br><span class="line">//变量除以非2的幂</span><br><span class="line">printf("nVarTwo / 7 = %d", nVarTwo / 7);</span><br><span class="line">//变量对非2的幂取模</span><br><span class="line">printf("nVarTwo % 7 = %d", nVarTwo % 7);</span><br><span class="line">//变量除以常量，常量为2的3次方</span><br><span class="line">printf("nVarOne / 8 = %d", nVarOne / 8);</span><br><span class="line"></span><br><span class="line">//C++源码与对应汇编代码讲解</span><br><span class="line">//C++源码对比，变量定义</span><br><span class="line">int nVarOne = argc;</span><br><span class="line">0040B7E8	mov	eax,dword ptr [ebp+8]</span><br><span class="line">0010B7EB	mov	dword ptr [ebp-4],eax</span><br><span class="line">//C++源码对比，变量定义</span><br><span class="line">int nVarTwo = argc;</span><br><span class="line">0040B7EE	mov	ecx,dword ptr [ebp+8]</span><br><span class="line">0040B7F1	mov	dword ptr [ebp-8],ecx</span><br><span class="line">//除法运算转换特性</span><br><span class="line">//C++源码对比，变量 / 变量</span><br><span class="line">printf("nVarOne / nVarTwo = %d", nVarOne / nVarTwo);</span><br><span class="line">//取出被除数放入eax中</span><br><span class="line">0040B7F4	mov	eax,dword ptr [ebp-4]</span><br><span class="line">//扩展高位(EDX:EAX,这里表示EDX，EAX连用表示64位数 )</span><br><span class="line">0040B7F7	cdq</span><br><span class="line">//两变量相除，直接使用有符号除法指令idiv</span><br><span class="line">0040B7F8	idiv	eax,dword ptr [ebp-8]</span><br><span class="line">//eax保存商值，作为参数压栈，调用函数printf</span><br><span class="line">0040B7FB	push eax</span><br><span class="line">0040B7FC	push offset string "nVarOne / nVarTwo = %d" (00420034)</span><br><span class="line">0040B801	call printf (0040B750)</span><br><span class="line">0040B806	add	esp,8</span><br><span class="line">//C++源码对比，变量 / 常量 (常量值为2的1次方)</span><br><span class="line">printf("nVarOne / 2 = %d", nVarOne / 2);</span><br><span class="line">0040B809	mov	eax,dword ptr [ebp-4]</span><br><span class="line">0040B80C	cdq</span><br><span class="line">//自身减去扩展高位</span><br><span class="line">0040B80D	sub	eax,edx</span><br><span class="line">//和乘法运算类似，乘法是左移</span><br><span class="line">0040B80F	sar	eax,1</span><br><span class="line">//printf函数说明略</span><br><span class="line">//C++源码对比，变量 / 常量 (非2的幂)</span><br><span class="line">printf("nVarTwo / 7 = %d", nVarTwo / 7);</span><br><span class="line">0040B81F	mov eax,dword ptr [ebp-8]</span><br><span class="line">00040B22	cdq</span><br><span class="line">0040B823	mov	ecx,7</span><br><span class="line">//无忧化直接使用有符号除法指令idiv</span><br><span class="line">0040B828	idiv eax,ecx</span><br><span class="line">//printf函数说明略</span><br><span class="line">//C++源码对比，变量 % 常量</span><br><span class="line">printf("nVarTwo % 7 = %d", nVarTwo % 7);</span><br><span class="line">0040B838	mov	eax,dword ptr [ebp-8]</span><br><span class="line">0040B83B	cdq  //执行 CDQ 后， CDQ 把第 31 bit 复制至 EDX 所有 bit</span><br><span class="line">0040B83C	mov ecx,7</span><br><span class="line">//无忧化，直接使用有符号指令idiv</span><br><span class="line">0040B841	idiv eax,ecx</span><br><span class="line">//除法指令过后，余数保存在扩展为edx中</span><br><span class="line">0040B843	push edx</span><br><span class="line">//printf 函数说明略</span><br><span class="line">//C++源码对比，变量 / 常量(常量值为2的3次方)</span><br><span class="line">printf("nVarOne / 8 = %d",nVarOne / 8);</span><br><span class="line">//取出被除数放入eax</span><br><span class="line">0040B851	mov eax,dword ptr [ebp-4]</span><br><span class="line">//扩展eax高位到edx</span><br><span class="line">0040B854	cdq</span><br><span class="line">//如果eax为负数</span><br><span class="line">0040B855	and edx,7</span><br><span class="line">//使用eax加edx，若eax为负数则加7，反之加0</span><br><span class="line">0040B858	add	eax,edx</span><br><span class="line">//将eax右移3位</span><br><span class="line">0040B85A	sar	eax,3</span><br><span class="line">//printf函数说明略</span><br></pre></td></tr></tbody></table></figure>
+<p>👴这里最后的那步操作没太懂，我决定调试去看看咋回事</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200429231134465.png"  alt="image-20200429231134465"></p>
+<p>我去试试正负数</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200429233828187.png"  alt="image-20200429233828187"></p>
+<p>我们对除数为2的幂，进行分析</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200429235133925.png"  alt="image-20200429235133925"></p>
+<p>那么上面的代码中拿出来仔细分析一下</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码对比，变量 / 常量 (常量值为2的1次方)</span><br><span class="line">printf("nVarOne / 2 = %d", nVarOne / 2);</span><br><span class="line">0040B809	mov	eax,dword ptr [ebp-4]</span><br><span class="line">0040B80C	cdq</span><br><span class="line">//自身减去扩展高位</span><br><span class="line">0040B80D	sub	eax,edx</span><br><span class="line">//和乘法运算类似，乘法是左移</span><br><span class="line">0040B80F	sar	eax,1</span><br><span class="line">//printf函数说明略</span><br></pre></td></tr></tbody></table></figure>
+<p>0040B80C的cdq的含义是符号扩展到高位edx，如果eax的最高位(符号位)为1，那么edx的值为0xFFFFFFFF，也就是-1，否则就是0，0040B80D地址处的<code>sub eax,edx</code>执行的操作就是将eax减去高位edx，实际上就是被除数为负数的情况下，由于除数为整数(+2的幂)，除法的商为负数，移位运算等同于向下取整，C语言的除法是向零取整，因此需要对商为负的情况进行+1处理，那么这里的sub eax,edx，如果edx 为0xFFFFFFFF 减去等同于+1，如果为0 减去就是0 说明 eax为正数，那么进行向下取整无问题，所以这样的设计可以避免分支结构的产生</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码对比，变量 / 常量(常量值为2的3次方)</span><br><span class="line">printf("nVarOne / 8 = %d",nVarOne / 8);</span><br><span class="line">//取出被除数放入eax</span><br><span class="line">0040B851	mov eax,dword ptr [ebp-4]</span><br><span class="line">//扩展eax高位到edx</span><br><span class="line">0040B854	cdq</span><br><span class="line">//如果eax为负数</span><br><span class="line">0040B855	and edx,7</span><br><span class="line">//使用eax加edx，若eax为负数则加7，反之加0</span><br><span class="line">0040B858	add	eax,edx</span><br><span class="line">//将eax右移3位</span><br><span class="line">0040B85A	sar	eax,3</span><br><span class="line">//printf函数说明略</span><br></pre></td></tr></tbody></table></figure>
+<p>0040B854的cdq是符号扩展到高位edx，在0040B855处对edx做位与运算，当被除数为负数时，edx的值为7，在0040B858处的add eax，edx就是被除数为负数时加上2^n -1，不为负数则加0，最后sar右移完成除法</p>
+<p><strong>各类型输出转换——Release版</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//IDA中的参数标识，经过优化后，省去了局部变量，直接使用参数</span><br><span class="line">arg_0 = dword ptr 4</span><br><span class="line">//变量 / 变量 和Debug版相同，此处省略</span><br><span class="line">//......</span><br><span class="line">//变量 / 常量 (常量值为2的幂)和Debug版相同，此处省略</span><br><span class="line">//.....</span><br><span class="line">//变量 / 常量 (常量值为非2的幂)，这里的汇编代码和Debug版的汇编代码差别很大</span><br><span class="line">//将数值 92492493h放到eax中</span><br><span class="line">mov	eax,92492493h</span><br><span class="line">//有符号乘法，用esi乘以eax，esi中保存被除数</span><br><span class="line">imul esi</span><br><span class="line">//edx为扩展的高位</span><br><span class="line">add	edx,esi</span><br><span class="line">//右移2位</span><br><span class="line">sar	edx,2</span><br><span class="line">//结果放回eax</span><br><span class="line">mov	eax,edx</span><br><span class="line">//将eax右移31次</span><br><span class="line">shr	eax，1Fh</span><br><span class="line">//加以右移结果，放入edx中</span><br><span class="line">add	edx,eax</span><br><span class="line">push edx</span><br><span class="line">push offset aNvarTwo7D; "nVarTwo / 7 = %d"</span><br><span class="line">call _printf</span><br><span class="line">//其余代码和Debug版类似，略</span><br><span class="line">//......</span><br></pre></td></tr></tbody></table></figure>
+<p>这个方式有点没看懂，出现了一个大数据0x92492493，我去搞一下数学证明：</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200501154537929.png"  alt="image-20200501154537929"></p>
+<p>搞几个例子，反推一下吧，这样便于多方面的理解</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">.text:00401000	_main proc near ; CODE XREF: start+AF p</span><br><span class="line">.text:00401000	arg_0 = dword ptr 4</span><br><span class="line">.text:00401000	mov	ecx,[esp+arg_0]</span><br><span class="line">.text:00401004	mov	eax,38E38E39h</span><br><span class="line">.text:00401000  imul ecx	//ecx乘以参数</span><br><span class="line">.text:0040100B	sar	edx,1	//有符号移位</span><br><span class="line">.text:0040100D	mov eax,edx</span><br><span class="line">.text:0040100F	shr	eax,1Fh	//无符号移位</span><br><span class="line">.text:00401012	add	edx,eax</span><br><span class="line">.text:00401014	push edx</span><br><span class="line">.text:00401015	push offset Format ; "%d"</span><br><span class="line">.text:0040101A	call _printf</span><br><span class="line">.text:0040101F	add esp,8</span><br><span class="line">.text:00401022	retn</span><br><span class="line">.text:00401022_main endp</span><br></pre></td></tr></tbody></table></figure>
+<p>看一下我们的.text:00401004位置，是<code>mov eax,38E38E39h</code>，之后做了乘法和移位的操作，最后<code>push edx</code>，乘法指令中，<code>edx</code>存放乘积数据的高4字节，所以直接用<code>edx</code>相当于，将我们的乘积直接右移32位，之后又进行了一次右移1位，那么这里就相当于一个 2^33 的除法，在地址.text:0040100D处，eax得到了ecx的值，然后对eax右移了1F位，对应10进制也就是右移了31位，然后有一个加法，其实这里移位的目的是得到有符号数的符号位，如果结果是正数，那么<code>add edx,eax</code>就是加0，等于什么都没干，如果结果是负数，那么后面的代码直接使用edx作为计算结果，需要对除法的商调整+1，满足向零取，数学证明：</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200501165014099.png"  alt="image-20200501165014099"></p>
+<p>所以我们可以反推出C代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">printf("%d",argc / 9);</span><br></pre></td></tr></tbody></table></figure>
+<p>总结：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">mov	eax,MagicNumber</span><br><span class="line">imul ...</span><br><span class="line">sar	edx,...</span><br><span class="line">mov	reg,edx</span><br><span class="line">shr	reg,1Fh</span><br><span class="line">add	edx,reg</span><br><span class="line">//之后就直接用edx的值，eax的不用</span><br></pre></td></tr></tbody></table></figure>
+<p>遇到上面你的指令序列的时候，基本可以判定是除法优化后的代码，除法的原型为<code>a/o</code>，<code>imul</code>是表明的有符号计算，操作数是优前的被除数a，右移的总次数确定n的值，用公式<code>o= 2^n/c</code>，将MagicNumber作为c代入公式求我们的除数o的近似值，四舍五入取整，就可以恢复除法原型！</p>
+<p>👴再搞个例子</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">.text:00401080 _main proc near ; CODE xREF: start+AF p</span><br><span class="line">.text:00401080 arg_0 = dword ptr 4</span><br><span class="line">.text:00401080	mov ecx,[esp+arg_0]</span><br><span class="line">.text:00401084	mov eax,24924925h</span><br><span class="line">.text:00401089	mul	ecx</span><br><span class="line">.text:0040108B	sub	ecx,edx</span><br><span class="line">.text:0040108D	shr	ecx,1</span><br><span class="line">.text:0040108F	add	ecx,edx</span><br><span class="line">.text:00401091	shr	ecx,2</span><br><span class="line">.text:00401094	push ecx</span><br><span class="line">.text:00401095	push offset	Format</span><br><span class="line">.text:0040109A	call _printf</span><br><span class="line">.text:0040109F	add	esp,8</span><br><span class="line">.text:004010A2	xor	eax,eax</span><br><span class="line">.text:004010A4	retn</span><br><span class="line">.text:004010A4 _ma in endp</span><br></pre></td></tr></tbody></table></figure>
+<p>我们再去用公式推导一下：</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200501180545772.png"  alt="image-20200501180545772"></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">printf("nVarTwo / 7 = %d\r\n", argc /7);</span><br></pre></td></tr></tbody></table></figure>
+<p>计算得出MagicNumber后，如果其值超出4字节整数的表达范围，编译器会对其进行调整，如上个例子中的<code>argc/7</code>，计算MagicNumber时，编译器选择 <code>2^35/7</code>，其结果超出了4字节整数的表达范围，所以编译器调整MagicNumber的取值为<code>2^35/7-2^32</code></p>
+<p>公式：<code>a/o = [(a-a*c/2^32)/2 + a*c/2^32]/2^(n-1)</code></p>
+<p>总结：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">mov eax,MagicNumber</span><br><span class="line">//reg表示通用寄存器</span><br><span class="line">mul reg</span><br><span class="line">sub	reg,edx</span><br><span class="line">shr	reg,1</span><br><span class="line">add	reg,edx</span><br><span class="line">shr	reg,A	//这句没有，那么n就是1，否则这里就是n-1的值</span><br></pre></td></tr></tbody></table></figure>
+<p>如果遇到上面的指令序列，基本可以判定出发优化后的代码，其除法原型为a/常量o，mul代表的无符号计算，用公式<code>o = 2^(32+n)/(2^32+c)</code>将MagicNumber作为c值代入公式求解常数除数o，即可恢复除法原型</p>
+<p>那么我们返回去深度分析最开始的代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//IDA中的参数标识，经过优化后，省去了局部变量，直接使用参数</span><br><span class="line">arg_0 = dword ptr 4</span><br><span class="line">//变量 / 变量 和Debug版相同，此处省略</span><br><span class="line">//......</span><br><span class="line">//变量 / 常量 (常量值为2的幂)和Debug版相同，此处省略</span><br><span class="line">//.....</span><br><span class="line">//变量 / 常量 (常量值为非2的幂)，这里的汇编代码和Debug版的汇编代码差别很大</span><br><span class="line">//将数值 92492493h放到eax中</span><br><span class="line">mov	eax,92492493h</span><br><span class="line">//有符号乘法，用esi乘以eax，esi中保存被除数</span><br><span class="line">imul esi</span><br><span class="line">//edx为扩展的高位</span><br><span class="line">add	edx,esi</span><br><span class="line">//右移2位</span><br><span class="line">sar	edx,2</span><br><span class="line">//结果放回eax</span><br><span class="line">mov	eax,edx</span><br><span class="line">//将eax右移31次</span><br><span class="line">shr	eax，1Fh</span><br><span class="line">//加以右移结果，放入edx中</span><br><span class="line">add	edx,eax</span><br><span class="line">push edx</span><br><span class="line">push offset aNvarTwo7D; "nVarTwo / 7 = %d"</span><br><span class="line">call _printf</span><br><span class="line">//其余代码和Debug版类似，略</span><br><span class="line">//......</span><br></pre></td></tr></tbody></table></figure>
+<p>编译器在计算MagicNumber时是作为无符号处理的，而代入除法转换乘法的代码中又是作为有符号乘数处理的，因为有符号的最高位不是数值，而是符号位，所以对应的符号乘法指令是不会让最高位参与数值计算的，这会导致乘数的数学意义和MagicNumber不一致</p>
+<p><strong>除法优化</strong></p>
+<p>上次除法优化搞了搞，vct师傅给我发了他的除法优化的笔记，直接就他看的了，写的很好</p>
+<p>先给一些背景：</p>
+<p>（1）比如 7 / 2 = 3 …… 1    -7 / 2 = -3 …… -1</p>
+<p>比较重要的是，余数的绝对值小于除数的绝对值，并且余数和被除数同正负</p>
+<p>（2）由于C语言中除法是向0取整，也就是“截断除法”</p>
+<p>不难发现，正数除以正数时，截断除法相当于向下取整（3.5 -&gt; 3）；而负数除以正数时，截断除法相当于向上取整( -3.5 -&gt; -3 )</p>
+<p>（3）除以2的k次幂通常会被优化成右移k位，这里考虑除以2时</p>
+<p>用一个signed byte表示7，是00000111，右移一位变成00000011是3，是正确的</p>
+<p>但是，考虑-7/2，-7是11111001，右移一位后变成11111100，这是-4，因为这是向下取整的结果，所以比正确的答案 -3少了1</p>
+<p>代码中为了统一和效率，如果是32位的数字，会先右移31位扩展符号位。原先是正数则最高位是0，那么最后会变成32个0，也就是0,；原先是负数最高位是1，最后会变成32个1，也就是-1，暂且把这个扩展符号位后形成的数记作S,</p>
+<p>那么，我们只需要把右移一位的结果，减去这个S，就可以得到正确的截断除法的值</p>
+<p>7/2 = 7&gt;&gt;1 – (0) = 3    -7/2 == -7&gt;&gt;1 – (-1) = -3</p>
+<p>( 这一点在例题代码中会再次提到 )</p>
+<p>（4）当除以正数N，而N不是2的次幂时，编译器会生成一个magic_number（C），以使除法优化成乘法，提高效率</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200512180523744.png"  alt="image-20200512180523744"></p>
+<p>手动的推导过程，图片中的证明表示：被除数（正数）乘以magic_number后再右移n位，即为除法的结果；如果是负数需要 +1，最后统一减去符号扩展形成的数即可，也就是高位存放符号位的地方</p>
+<p><a href="https://ctftime.org/task/5294?tdsourcetag=s_pcqq_aiomsg" target="_blank" rel="noopener">https://ctftime.org/task/5294?tdsourcetag=s_pcqq_aiomsg</a></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200512181826245.png"  alt="image-20200512181826245"></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">$ cat foo.c</span><br><span class="line">long long div(long long x) {</span><br><span class="line">    return x / N;</span><br><span class="line">}</span><br><span class="line">$ gcc -DN=$N -c -O2 foo.c</span><br><span class="line">$ objdump -d foo.o</span><br><span class="line"></span><br><span class="line">foo.o:     file format elf64-x86-64</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Disassembly of section .text:</span><br><span class="line"></span><br><span class="line">0000000000000000 </span><br><span class="line">:</span><br><span class="line">   0:   48 89 f8                mov    %rdi,%rax</span><br><span class="line">   3:   48 ba 01 0d 1a 82 9a    movabs $0x49ea309a821a0d01,%rdx</span><br><span class="line">   a:   30 ea 49 </span><br><span class="line">   d:   48 c1 ff 3f             sar    $0x3f,%rdi</span><br><span class="line">  11:   48 f7 ea                imul   %rdx</span><br><span class="line">  14:   48 c1 fa 30             sar    $0x30,%rdx</span><br><span class="line">  18:   48 89 d0                mov    %rdx,%rax</span><br><span class="line">  1b:   48 29 f8                sub    %rdi,%rax</span><br><span class="line">  1e:   c3                      retq   </span><br><span class="line">$ echo “HarekazeCTF{$N}” &gt; /dev/null</span><br></pre></td></tr></tbody></table></figure>
+<p>手算吧！</p>
+<p>0x49ea309a821a0d01为magic number给了rdx，我们右移了63位也就是剩余的符号位是给了rdi，如果是正数那么就是0，负数就是-1，imul扩展了乘积高位被放在rdx，低位被放在rax</p>
+<p>这么看，因为rdx扩展了，大概就是已经移动64位，然后再移动了48位也就是112位，那么计算就是0x49ea309a821a0d01，n=112</p>
+<p>公式就是 c = 2^n / y  y是除数，那么y = 2^n / c</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200512194355299.png"  alt="image-20200512194355299"></p>
+<p>974873638438446</p>
+<p><strong>算术结果溢出</strong></p>
+<p>假设如果我们占据4字节32位内存空间数据进行运算，得到的结果超过了存储空间大小，就会产生溢出</p>
+<p>int型数据0xFFFFFFFF加2就会得到超出int类型的存储范围，超出的部分就叫溢出数据，溢出的数据不能保存，会丢失，有符号数来说，原数据是负数，溢出后表示符号的最高位被进位，原来的1变成0，那么负数也被变成了正数0</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200512210122860.png"  alt="image-20200512210122860"></p>
+<p>一个无符号数产生溢出后会从一个最大数变成最小数，有符号数溢出会修改符号位</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//利用溢出跳出循环</span><br><span class="line">for(int i = 1 ; i &gt; 0 ; i++){</span><br><span class="line">	printf("%d\r\n",i)</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>int的类型i是一个有符号数，当i等于它允许取到的最大整数值0x7FFFFFFF时，再加上1，数值会产生进位，将符号位0修改为1，最终结果为0x80000000，这时候最高位为1，有符号来说是一个负数，也就是最大的负数，for直接跳出循环</p>
+<ul>
+<li>
+<p>进位</p>
+<p>无符号超出存储范围叫做进位，因为没有符号位，不会破坏数据，而多出的1位数据在进位标志为CF保存，数据产生了进位，只是进位后的1位数据1不在自身的存储空间，而在标志的CF位的位置，通过观察CF位来判断无符号的进位情况</p>
+</li>
+<li>
+<p>溢出</p>
+<p>有符号数超过存储的范围叫做溢出，因为数据进位，从而破坏了有符号的最高位——符号位，只有有符号数才有符号位，针对有符号数，可以查看溢出标志位OF，从而检查数据是否溢出</p>
+</li>
+</ul>
+<p><strong>自增和自减</strong></p>
+<p>vc6.0 使用 ++ – 来实现自增自减的操作，一般形式分为两种，一种为自增运算符在语句块之后，另一种是自增运算符在语句块之前，如果在之前，先执行自增自减，在执行语句块，如果在之后，先执行语句块在自增自减，直接看汇编代码吧！</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//自增自减代码</span><br><span class="line">//C++源码说明:除法运算</span><br><span class="line">//变量定义并出初始化</span><br><span class="line">int nvarOne = argc;</span><br><span class="line">int nvarTwo = argc;</span><br><span class="line">//变量后缀自增参与表达式运算</span><br><span class="line">nvarTwo = 5 + (nvarOne++);</span><br><span class="line">//变量前缀自增参与表达式运算</span><br><span class="line">nvarTwo = 5 + (++nvarOne);</span><br><span class="line">//变量后缀自减参与表达式运算</span><br><span class="line">nvarone = 5 + (nvarTwo--);</span><br><span class="line">//变量前缀自减参与表达式运算</span><br><span class="line">nvarone = 5 + (--nvarTwo);</span><br><span class="line"></span><br><span class="line">//c++源码对应汇编</span><br><span class="line">//变量对应初始化</span><br><span class="line"></span><br><span class="line">//后缀自增运算</span><br><span class="line">nvarTwo = 5 + (nvarTwo++);</span><br><span class="line">//取出变量nvarOne，保存在edx中</span><br><span class="line">0040BA34	mov	edx,dword ptr [ebp-4]</span><br><span class="line">//讲edx执行加等于5</span><br><span class="line">0040BA37	add	edx,5</span><br><span class="line">//讲edx赋值给变量nvarTwo，可以看到没有对变量nvarOne执行自增操作</span><br><span class="line">0040BA3A	mov	dword ptr [ebp-8],edx</span><br><span class="line">//再次取出变量nvarOne数据存入eax中</span><br><span class="line">0040BA3D	mov	eax,dword ptr [ebp-4]</span><br><span class="line">//执行eax加等于1</span><br><span class="line">0040BA40	add	eax,1</span><br><span class="line">将eax赋值给变量nvarOne,等同于对变量nvarOne执行自增1操作</span><br><span class="line">0040BA43	mov	dword ptr [ebp-4],ecx</span><br><span class="line"></span><br><span class="line">//c++源码对比，前缀自增运算</span><br><span class="line">nVarTwo = 5 + (++nvarOne);</span><br><span class="line">//取出变量nvarOne数据放入ecx中</span><br><span class="line">0040BA46	mov	ecx,dword ptr [ebp-4]</span><br><span class="line">//对ecx执行加等于1的操作</span><br><span class="line">0040BA49	add	ecx,1</span><br><span class="line">//将ecx赋值给变量nvarOne，完成自增1操作</span><br><span class="line">0040BA4C	mov	dword ptr [ebp-4],ecx</span><br><span class="line">//取出变量nvarOne放到edx中</span><br><span class="line">0040BA4F	mov	edx,dword ptr [ebp-4]</span><br><span class="line">//对edx执行加等于5</span><br><span class="line">0040BA52	add	edx,5</span><br><span class="line">//将结果edx赋值给变量nvarTwo</span><br><span class="line">0040BA55	mov	dword ptr [ebp-8],edx</span><br><span class="line">//自增和自减差不多相同，add替换成sub就可</span><br></pre></td></tr></tbody></table></figure>
+<p>上面的汇编可以看出来，他们会把操作分离，nVarTwo = 5 + (nVarOne++) 会分解 nVarTwo = 5 + nVarOne，以及nVarOne +=1，同理，++在前的时候，两个算术表达式替换位置即可</p>
+<h2 id="4-2-关系运算和逻辑运算">4.2 关系运算和逻辑运算</h2>
+<p>关系运算用于判断两者之间的关系，大部分什么我就不说了，这里我只能说与非门牛逼，万能运算</p>
+<ul>
+<li>或运算：比较运算符 || 有一个值为真，就是真，如果是假，则返回假</li>
+<li>与运算：比较运算符&amp;&amp; 如果有一个为假就是假，都为真就是真</li>
+<li>非运算：改变运算符！真就是假，假就是真</li>
+</ul>
+<p><strong>关系运算和条件跳转的对应</strong></p>
+<table>
+<thead>
+<tr>
+<th>指令助记符</th>
+<th>检查标记位</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JZ</td>
+<td>ZF == 1</td>
+<td>等于0则跳转</td>
+</tr>
+<tr>
+<td>JE</td>
+<td>ZF == 1</td>
+<td>相等则跳转</td>
+</tr>
+<tr>
+<td>JNZ</td>
+<td>ZF == 0</td>
+<td>不等于0则跳转</td>
+</tr>
+<tr>
+<td>JNE</td>
+<td>ZF == 0</td>
+<td>不相等则跳转</td>
+</tr>
+<tr>
+<td>JS</td>
+<td>SF == 1</td>
+<td>符号为负则跳转</td>
+</tr>
+<tr>
+<td>JNS</td>
+<td>SF == 0</td>
+<td>符号为正则跳转</td>
+</tr>
+<tr>
+<td>JP/JPE</td>
+<td>PF == 1</td>
+<td>"1"的个数为偶数则跳转</td>
+</tr>
+<tr>
+<td>JNP/JPO</td>
+<td>PF == 0</td>
+<td>"1"的个数为奇数则跳转</td>
+</tr>
+<tr>
+<td>JO</td>
+<td>OF == 1</td>
+<td>溢出则跳转</td>
+</tr>
+<tr>
+<td>JNO</td>
+<td>OF == 0</td>
+<td>无溢出则跳转</td>
+</tr>
+<tr>
+<td>JC</td>
+<td>CF == 1</td>
+<td>进位则跳转</td>
+</tr>
+<tr>
+<td>JB</td>
+<td>CF == 1</td>
+<td>小于则跳转</td>
+</tr>
+<tr>
+<td>JNAE</td>
+<td>CF == 1</td>
+<td>不大于等于则跳转</td>
+</tr>
+<tr>
+<td>JNC</td>
+<td>CF == 0</td>
+<td>无进位则跳转</td>
+</tr>
+<tr>
+<td>JNB</td>
+<td>CF == 0</td>
+<td>不小于则跳转</td>
+</tr>
+<tr>
+<td>JAE</td>
+<td>CF == 0</td>
+<td>大于则跳转</td>
+</tr>
+</tbody>
+</table>
+<p><strong>表达式短路</strong></p>
+<p>表达式短路时通过逻辑与运算和逻辑或运算使语句根据条件在执行的时候发生中断，看一下汇编代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码说明：递归函数，用于计算整数累计，nNumber为累加值</span><br><span class="line">int Accumulation(int nNumber){</span><br><span class="line">//当nNumber等于0时，逻辑与运算符左边的值为假，不会执行右边的语句</span><br><span class="line">//形成表达式短路，从而找到递归出口</span><br><span class="line">nNumber &amp;&amp; (nNumber += Accumulation(nNumber - 1));</span><br><span class="line">return nNumber</span><br><span class="line">}</span><br><span class="line">//对应汇编</span><br><span class="line">int Accumulation(int nNumber){</span><br><span class="line">nNumber &amp;&amp; (nNumber += Accumulation(nNumber - 1));</span><br><span class="line">//这里为短路模式汇编代码，比较变量nNumber是否等于0</span><br><span class="line">0040BAA8	cmp	dword ptr [ebp+8],0</span><br><span class="line">//通过JE跳转，检查ZF标记位等于1跳转</span><br><span class="line">0040BAAC	je	Accumulation+35h (0040bac5)</span><br><span class="line">//跳转失败，进入递归调用</span><br><span class="line">0040BAAE	mov	eax,dword ptr [ebp+8]</span><br><span class="line">//对变量nNumber减1后，结果作为参数压栈</span><br><span class="line">0040BAB1	sub	eax,1</span><br><span class="line">0040BAB4	push eax</span><br><span class="line">//继续调用自己，形成递归</span><br><span class="line">0040BAB5	call @ILT+30(Accumulation) (00401023)</span><br><span class="line">0040BABA	add esp,4</span><br><span class="line">0040BABD	mov ecx,dword ptr [ebp+8]</span><br><span class="line">0040BAC0	add ecx,eax</span><br><span class="line">0040BAC2	mov dword ptr [ebp+8],ecx</span><br><span class="line">//返回变量nNumber</span><br><span class="line">return nNumber</span><br><span class="line">0040BAC5	mov eax,dword ptr [ebp+8]</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>测试一下</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200605085223132.png"  alt="image-20200605085223132"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200605085446570.png"  alt="image-20200605085446570"></p>
+<p>所以通过递归函数Accumulation进行了整数的累加和计算，之后用&amp;&amp;的原则，左边如果为0就输出出去，用这个原则来决定跳转的过程，逻辑运算 || 与 &amp;&amp; 有些不同</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//c++源码说明，和上面的类似</span><br><span class="line">int Accumulation (int nNumber){</span><br><span class="line">//当nNumber等于0时，逻辑或运算符的左边如果为真就不执行右边的语句</span><br><span class="line">//形成表达式短路，从而找到递归的出口</span><br><span class="line">(nNumber == 0) || (nNumber += Accumulation(nNumber - 1));</span><br><span class="line">return nNumber;</span><br><span class="line">}</span><br><span class="line">//C++源码与对应汇编代码</span><br><span class="line">int Accumulation(int nNumber){</span><br><span class="line">(nNumber == 0) || (nNumber += Accumulation(nNumber - 1));</span><br><span class="line">00401618	cmp	dword ptr [ebp+8],0</span><br><span class="line">0040161C	je Acumulation+35h (00401635)</span><br><span class="line">0040161E	mov	eax,dword ptr [ebp+8]</span><br><span class="line">00401621	sub	eax,1</span><br><span class="line">00401624	push eax</span><br><span class="line">00401625	call @ILT+30(Accumulation) (00401023)</span><br><span class="line">0040162A	add	esp,4</span><br><span class="line">0040162D	mov ecx,dword ptr [ebp+8]</span><br><span class="line">00401630	add	ecx,eax</span><br><span class="line">00401632	mov	dword ptr [ebp+8],ecx</span><br><span class="line">return nNumber</span><br><span class="line">00401635	mov eax,dword ptr [ebp+8]</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>条件表达式</strong></p>
+<p>条件表达式就是我们说的三目运算，也就是 表达式1 ？表达式2 ：表达式3</p>
+<p>表达式2 ，3为常量的时候，条件表达式可以被优化，而表达式2或者表达式3中的一个为变量的时候，条件表达式不可以被优化，会转换成分支结构，而表达式1为一个常量值，编译器会在编译期间得到答案，就不会有条件表达式存在</p>
+<ul>
+<li>表达式1为简单比较，而表达式2，3的差值等于1</li>
+<li>表达式1为简单比较，而表达式2，3的差值大于1</li>
+<li>表达式1为复杂比较，而表达式2，3的差值大于1</li>
+<li>表达式2，3有一个为变量，于是没有优化</li>
+</ul>
+<p><strong>转换方案1</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//c++源码说明，条件表达式</span><br><span class="line">int Condition(int argc , int n){</span><br><span class="line">//比较参数argc是否等于5，真值返回5，假值返回6</span><br><span class="line">return argc == 5 ? 5 : 6;</span><br><span class="line">}</span><br><span class="line">//汇编比较</span><br><span class="line">//清空eax</span><br><span class="line">00401678	xor eax,eax</span><br><span class="line">0040167A	cmp	dword ptr [ebp+8],5</span><br><span class="line">//setne检查ZF标记位，当ZF==1，则赋值al为0，反之则赋值al为1</span><br><span class="line">0040167E	setne al</span><br><span class="line">//若argc等于5则al==0，反之al==1，执行这句后，eax正好为5/6</span><br><span class="line">00401681	add	eax,5</span><br></pre></td></tr></tbody></table></figure>
+<p>测试的时候</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200605104331427.png"  alt="image-20200605104331427"></p>
+<p>大概读了一下，这个用了两个mov进行付给eax，之后跳转到各自的位置上，进行一个赋值的</p>
+<p><strong>转换方案2</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//c++源码说明，条件表达式</span><br><span class="line">int Condition(int argc , int n){</span><br><span class="line">//比较参数argc是否等于5，真值返回5，假值返回6</span><br><span class="line">return argc == 5 ? 4 : 10;</span><br><span class="line">}</span><br><span class="line">//汇编比较</span><br><span class="line">return argc == 5 ? 4 : 10;</span><br><span class="line">00401678	mov	eax,dword ptr [ebp+8]</span><br><span class="line">0040167B	sub	eax,5</span><br><span class="line">0040167E	neg	eax</span><br><span class="line">00401680	sbb	eax,eax</span><br><span class="line">//eax的取值只可能为0或者0xFFFFFFFF</span><br><span class="line">00401682	and	eax,6</span><br><span class="line">00401685	add	eax,4</span><br></pre></td></tr></tbody></table></figure>
+<p>对于argc == 5这种等职的比较，VC++会使用减法和求补运算来判断是否为真值，如果我们的argc不为5，那么执行sub指令后的eax就不为0，neg的指令，会将eax的符号位发生改变，也就是求补的运算，如果eax为0，也就是argc为5的话，那么0进行补+1，也是0，那么CF=0，我们现在假设CF=1的情况，那么执行sbb eax,eax 等同于了 eax-eax-CF 那么eax会变成0xFFFFFFFF，另一个情况就是0，使用eax与6进行与运算，如果eax数值为0xFFFFFFFF那么 想与就是6，相加4就是10，如果是0的情况那么直接就是0+4 = 4</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">总结：</span><br><span class="line">sub reg,A</span><br><span class="line">neg	reg</span><br><span class="line">sbb reg,reg</span><br><span class="line">and reg,B</span><br><span class="line">add reg,C</span><br><span class="line">//reg == A ? C : B</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>转换方案3</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码说明，条件表达式</span><br><span class="line">int Condition(int argc,int n){</span><br><span class="line">	return argc &lt; = 8 ? 4 ：10；</span><br><span class="line">}</span><br><span class="line">//汇编代码</span><br><span class="line">return argc &lt; = 8 ? 4 ：10；</span><br><span class="line">//清空eax,与方案1类似</span><br><span class="line">00401678	xor	eax,eax</span><br><span class="line">0040167A	cmp	dword ptr [ebp+8],8</span><br><span class="line">//根据变量与8进行比较的结果，使用setg指令，当标记位SF=OF且ZF=0赋值al为1</span><br><span class="line">符号标志位SF（Sign Flag），符号标志SF用来反映运算结果的符号位，他与运算结果的最高位相同</span><br><span class="line">溢出标志位OF（Overflow Flag）：比如有一个杯子，放水放满了再放就出去了，叫溢出，但是怎么区别看起来都是最高位的问题</span><br><span class="line">零标志位ZF（Zero Flag），零标志ZF用来反映运算结果是否为0，如果运算结果为0，则值为1，否则值为0，在判断运算结果是否为0时，可以用此标志位</span><br><span class="line">//用于检查变量数据是否大于8，大于则赋值1，小于就赋值0</span><br><span class="line">0040167E	setg al</span><br><span class="line">//此时al中只能为0或1，执行自减的操作，eax中为0xFFFFFFFF或0</span><br><span class="line">00401681	dec eax</span><br><span class="line">//使用al和0xFA做与运算，eax中是0xFFFFFFFA或者0</span><br><span class="line">//2-3=0xFFFFFFFA</span><br><span class="line">00401682	and	al,0FAh</span><br><span class="line">//由于eax只能有两个结果0xFFFFFFFA(-6)或0，加0x0A后结果比然为4，10</span><br><span class="line">00401684	add	eax，0Ah</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>无忧化使用分支结果</strong></p>
+<p>如果表达式2或者表达式3中的值为未知数时候，就无法使用之前的方案去优化，编译器会那招正常的语句流程进行比较和判断，选择对应的表达式</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码说明：条件表达式</span><br><span class="line">int Condition(int argc,int n){</span><br><span class="line">	return argc ? 8 : n;</span><br><span class="line">}</span><br><span class="line">//汇编代码</span><br><span class="line">return argc ? 8 : n;</span><br><span class="line">//比较变量argc</span><br><span class="line">00401448	cmp	dword ptr [ebp+8],0</span><br><span class="line">//使用JE跳转，检查变量argc是否等于0，跳转的地址为0x00401457位置</span><br><span class="line">004014CC	je Condition+27 (00401457)</span><br><span class="line">//跳转失败说明操作数1为真，将表达式1的值(立即数8)存入局部变量ebp-4中</span><br><span class="line">0040144E	mov dword ptr [ebp-4],8</span><br><span class="line">//跳转到返回值赋值处</span><br><span class="line">00401455	jmp Condition+2Dh (00145d)</span><br><span class="line">//参数2的数据存入eax中</span><br><span class="line">00401457	mov	eax，dword ptr [ebp+0Ch]</span><br><span class="line">0040145A	mov dword ptr [ebp-4],eax</span><br><span class="line">0040145D	mov	eax,dword ptr [ebp-4]</span><br><span class="line">//恢复现场</span><br><span class="line">00401466	ret</span><br></pre></td></tr></tbody></table></figure>
+<p>如果经过O2选项优化的Release版中，这些代码都会被编译为分支结构</p>
+<h2 id="4-3-位运算">4.3 位运算</h2>
+<p><code>&lt;&lt;</code>：左移运算，做高位左移到CF位置，最低位补0</p>
+<p><code>&gt;&gt;</code>：右移运算，最高位不变，最低位右移到CF中</p>
+<p><code>|</code>：位或运算，两个数的相同位上，只要有一个为1，则结果为1</p>
+<p><code>&amp;</code>：位与运算，在两个数的相同位上，只要同时为1时，结果才为1</p>
+<p><code>^</code>：异或运算，在两个数的相同位上，当两个值相同时为0，不同时为1</p>
+<p><code>~</code>：取反运算，将操作数每一位上的1变0，0变1</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码对应汇编，位运算(有符号数)</span><br><span class="line">//左移运算3次</span><br><span class="line">argc = argc &lt;&lt; 3;</span><br><span class="line">00401498	mov	eax,dword ptr [ebp+8]</span><br><span class="line">//左移运算对应汇编指令SHL</span><br><span class="line">0040149B	shl	eax,3</span><br><span class="line">0040149E	mov	dword ptr [ebp+8],eax</span><br><span class="line">//C++源码对比，右移运算5</span><br><span class="line">argc = argc &gt;&gt; 5;</span><br><span class="line">004014A1	mov	ecx,dword ptr [ebp+8]</span><br><span class="line">//右移运算对应汇编指令SAR</span><br><span class="line">004014A4	sar	ecx,5</span><br><span class="line">004014A7	mov	dword ptr [ebp+8],ecx</span><br><span class="line">//C++源码对比，位或运算，变量argc低16位不变，高16位设置为1</span><br><span class="line">argc = argc | 0xFFFF0000</span><br><span class="line">004014AA	mov edx,dword ptr [ebp+8]</span><br><span class="line">//位或运算对应汇编指令OR</span><br><span class="line">004014AD	or	edx,0FFFF0000h</span><br><span class="line">004014B3	mov	dword ptr [ebp+8],edx</span><br><span class="line">//C++源码对比，将变量argc低16位清0，高位不变</span><br><span class="line">argc = argc &amp; 0xFFFF0000</span><br><span class="line">//位与运算对应汇编指令AND</span><br><span class="line">004014B9	and eax，0xFFFFh</span><br><span class="line">004014BE	mov	dword ptr [ebp+8],eax</span><br><span class="line">//C++源码对比，对变量argc做异或运算</span><br><span class="line">argc = argc ^ 0xFFFF0000</span><br><span class="line">004014C1	mov	ecx,dword ptr [ebp+8]</span><br><span class="line">//异或运算对应汇编指令XOR</span><br><span class="line">004014C4	xor ecx,0FFFF0000h</span><br><span class="line">004014CA	mov	dword ptr [ebp+8],ecx</span><br><span class="line">//C++源码对比，将argc按位取反</span><br><span class="line">argc = ~argc;</span><br><span class="line">004014CD	mov	edx,dword ptr [ebp+8]</span><br><span class="line">//取反运算对应汇编指令NOT</span><br><span class="line">004014D0	not	edx</span><br><span class="line">004014D2	mov	dword ptr [ebp+8],edx</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码说明：无符号数位移</span><br><span class="line">int BitOperation(int argc){</span><br><span class="line">	unsigned int nVar = argc;</span><br><span class="line">	nVar &lt;&lt;= 3;</span><br><span class="line">	nVar &gt;&gt;= 5;</span><br><span class="line">}</span><br><span class="line">//C++源码对应汇编代码讲解</span><br><span class="line">unsigned int nVar = argc;</span><br><span class="line">004016C8	mov	eax,dword ptr [ebp+8]</span><br><span class="line">004016CB	mov	dword ptr [ebp-4],eax</span><br><span class="line">//C++源码对比，对变量nVar左移3位</span><br><span class="line">nVar &lt;&lt;= 3;</span><br><span class="line">004016CE	mov	ecx,dword ptr [ebp-4]</span><br><span class="line">//和有符号数左移一样</span><br><span class="line">004016D1	shl	ecx,3</span><br><span class="line">004016D4	mov	dword ptr [ebp-4],ecx</span><br><span class="line">//C++源码对比，对变量nVar右移5位</span><br><span class="line">004016D7	mov	edx,dword ptr [ebp-4]</span><br><span class="line">//使用shr进行右移位，最高位补0，最低位进CF</span><br><span class="line">004016DA	shr edx,5</span><br><span class="line">004016DD	mov dword ptr [ebp-4],edx</span><br></pre></td></tr></tbody></table></figure>
+<p>左移的时候，有符号数和无符号数(unsigned)的移位操作是一样的，都不需要考虑符号位，但是右移的时候，有符号进行的是sar，无符号进行的是shr，所以无符号的时候不需要符号位，直接使用shr将最高位补0即可</p>
+<h2 id="4-4-编译器使用的优化技巧">4.4 编译器使用的优化技巧</h2>
+<p>讨论一下基于Pentiun微处理器的优化技术</p>
+<p><strong>代码优化一般有四个方向：</strong></p>
+<ul>
+<li>执行速度优化</li>
+<li>内存存储空间优化</li>
+<li>磁盘存储空间优化</li>
+<li>编译时间优化</li>
+</ul>
+<p><strong>常量折叠</strong></p>
+<p>x = 1 + 2</p>
+<p>1和2都是常量，结果可以直接知道，那么就是3，所以没有必要产生add的指令，直接生成x = 3即可</p>
+<p><strong>常量传播</strong></p>
+<p>如果上面的代码接着下面有一个 y = x + 3，由于上面最后生成了x = 3，那么结果还是可以遇见的，所以直接生成 y = 6即可</p>
+<p><strong>减少变量</strong></p>
+<p>假设一个 <code>x = i*2 y = j*2 if(x&gt;y){}</code>这里的x和y比较等价于i和j的比较，所以如果后面没有引用x，y，那么就会直接去掉x，y，生成 <code>if(i&gt;j)</code>，那么假设 <code>x = i*2 y = i*2</code>所以 <code>i*2 </code>叫做公共表达式，可以归并为一个，<code>x = i*2 y = x</code></p>
+<p><strong>复写传播</strong></p>
+<p>类似于常量传播，但是目标变成了变量</p>
+<p><code>x = a;  ......  y = x+c ;</code></p>
+<p>如果中间的代码中没有修改变量x，那么可以直接用变量a代替x</p>
+<p><code>y = a + c</code></p>
+<p>减去不可以达分支(剪支优化)</p>
+<p><code>if ( 1 &gt; 2 ) </code>如果代码用换不可能被执行，那么整个if代码块就会有不存在的理由</p>
+<p>等等的方案</p>
+<p><strong>目标代码生成阶段的优化方案</strong></p>
+<ul>
+<li>流水线优化</li>
+<li>分支优化</li>
+<li>高速缓存 ( cache ) 优化</li>
+</ul>
+<p><strong>流水线优化规则</strong></p>
+<p>指令工作流程</p>
+<ol>
+<li>取指令：CPU从高速缓存或内存中取机器码</li>
+<li>指令译码：分析指令的长度，功能和寻址方式</li>
+<li>按寻址方式确定操作数：指令的操作数可以是寄存器，内存单元或者立即数，如果操作数在内存单元里，这一步就要计算出有效地址</li>
+<li>取操作数：按操作数存放的位置获得数值，并存放在临时寄存器中</li>
+<li>执行指令：由控制单元或者计算单元执行指令规则的操作</li>
+<li>存放计算结果</li>
+</ol>
+<p>假设</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">执行指令： add	eax,dword ptr ds:[ebx+40DA44]</span><br><span class="line">对应的机器代码： 0383	44DA4000</span><br></pre></td></tr></tbody></table></figure>
+<p>Intel处理器位小端序排列，数据的高位对应内存的高地址，低位对应内存的低地址</p>
+<p>步骤：取指令，得到第一个十六进制字节：0x03，并且eip+1，译码知道这个指令是加法，但是信息不够，于是乎将0x03放入处理器的指令队列缓存中，取指令得到第二个十六进制字节：0x83，机器码放入处理器的指令队列缓存中，eip+1，译码后知道这个寄存器相对寻址方法的加法，而且参与寻址的寄存器是ebx，存放的目标是eax，后面还有4字节的偏移，指令长度确定后，机器码放入处理器的指令队列，取地址，得到第三个十六进制字节：0x44，这是指令中包含的4字节地址偏移量信息的第一个字节，放入内部暂存区，ebx保存在ALU，准备计算有效的地址，eip+1，之后依次开始取指令0xDA  0x40  0x00 放入寄存器，eip依次+1，这时候eax的值传给ALU，调度MMU，得到内存单元，传送到ALU，计算结果，最后将计算结果存回eax中</p>
+<p><strong>流水线</strong></p>
+<p>由于每条指令的工作流程都是由取指令，译码，执行，回写的步骤组成，所以很多处理器设计了多流程的结构，A流水线处理过程中，B流水线可以提前对下一条指令做处理</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">004010AA	mov	eax,92492493h</span><br><span class="line">004010AF	add	esp,8</span><br></pre></td></tr></tbody></table></figure>
+<p>我们的处理器会先读取004010AA处的二进制指令，之后开始进行译码等操作，这些工作的每一个步骤都是需要时间的，如果我们取指令，内存管理单元开始工作，其他的部件进行闲置等待，等拿到了指令才进行下一步的工作，于是我们为了提高效率，开始了流水线的这一个机制</p>
+<p>因为流水线的机制，我们在执行mov eax,92492493h过程中对第二条的地址进行读取以及译码，进行并行处理，那么我们提高了处理器的工作的效率</p>
+<p><strong>指令相关性</strong></p>
+<p>如果后一条指令的执行依赖前一条指令的硬件资源，那么这样的情况就是指令相关</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">add	edx,esi</span><br><span class="line">sar	edx,2</span><br></pre></td></tr></tbody></table></figure>
+<p>两条指令都需要访问并设置edx，所以只能执行完add edx，esi后才能执行 sar edx，2，这样的情况产生了寄存器的争用，影响了效率</p>
+<p><strong>地址相关性</strong></p>
+<p>这个和上一个指令相关差不多，这个等待的是内存地址的争用</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">add	[00401234],esi</span><br><span class="line">mov	eax,[00401234]</span><br></pre></td></tr></tbody></table></figure>
+<p>由于第一条指令访问的是0x401234地址，那么只能第一条指令操作完后再去执行第二条语句，会影响效率，VC++的O2的release选项生成的代码会考虑流水线执行的工作方式</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">0040101F	push eax</span><br><span class="line">00401020	push offset aNvarone2D ; "nVarOne / 2 = %d"</span><br><span class="line">00401025	call _printf</span><br><span class="line">0040102A	mov	eax,92492493h</span><br><span class="line">0040102F	add	esp,8</span><br><span class="line">00401032	imul esi</span><br><span class="line">00401034	add edx,esi</span><br><span class="line">00401036	sar edx,2</span><br><span class="line">00401039	mov eax,edx</span><br><span class="line">0040103B	shr eax,1Fh</span><br><span class="line">0040103E	add	edx,eax</span><br></pre></td></tr></tbody></table></figure>
+<p>恢复栈顶的指令add esp,8，中间有mov eax,92492493h指令，这里为流水线优化，因为后面的imul esi需要设置eax，吧计算结果的低位放在eax中，那么中间换成add esp,8防止了寄存器争用，后面的这里的 add edx,esi 与 sar edx,2不能移动是因为，在后面的mov eax,edx 与 edx有关系，如果位置移动的话，我们会出现edx的一个的计算结果不正确，于是乎不能改变顺序</p>
+<p><strong>分支优化规则</strong></p>
+<p>配合流水线的工作模式，处理器增加了一个分支目标缓冲器，在流水线的工作模式下，如果遇见分支结构，我们就可以利用分支目标缓冲器预测并且读取指令的目标地址，分支目标缓冲器在程序运行的时候将动态记录和调整转移指令的目标地址，可以记录多个地址，进行表格化的管理，当发生转移的时候秒如果分支目标缓冲器中有记录，下一条指令在取指令阶段就会将其作为目标地址，如果我们记录地址不等于实际目标地址，就会被流水线冲刷，用一个分支，多次与邪恶失败，就会更新记录目标地址，所以我们在编写多重循环的时候，要把大循环放在内层，可以增加分支预测的准确度</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">for(int i=0; i &lt; 10; i++){</span><br><span class="line">//下面每次循环会预测成功9999次</span><br><span class="line">//第一次没有预测，最后退出循环的时候预测失败1次</span><br><span class="line">//重复10次</span><br><span class="line">for(int j = 0 ; j &lt; 10000 ; j++){</span><br><span class="line">	a[i][j]++;</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">for(int i=0; i &lt; 10000; i++){</span><br><span class="line">//下面每次循环会预测成功9次</span><br><span class="line">//第一次没有预测，最后退出循环的时候预测失败1次</span><br><span class="line">//重复10000次</span><br><span class="line">for(int j = 0 ; j &lt; 9 ; j++){</span><br><span class="line">	a[i][j]++;</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>所以说大循环在里面可以增加分支预测准确度</p>
+<p><strong>高速缓存 ( cache ) 优化规则</strong></p>
+<p>计算机内存的访问效率低于处理器，而且在程序的运行中，于是乎处理器准备了 cache来存放需要经常访问的数据和代码，这些数据内存用VA以表格方式一 一对应，从处理器访问内存数据时候，要去cache中看看这个VA有没有记录，如果有，则名终，就不需要访问内存单元，如果没有找到，就转换VA访问数据，然后保存到cache中，一般来说，cache会把读取指令需要的数据以及附近的数据都读取进来，从而节省cache宝贵的空间，VA值的二进制低位不会被保存，所以保存的数据是2^n字节为单位的</p>
+<p>cache优化：</p>
+<ol>
+<li>数据对齐</li>
+<li>数据集中</li>
+<li>减少体积</li>
+</ol>
+<h1>第五章-流程控制语句的识别</h1>
+<h2 id="5-1-if语句">5.1 if语句</h2>
+<p>if语句只能判断两种情况："0"为假，"非0"为真，if语句转换的条件跳转指令与if语句的判断结果是相反的</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码说明：if语句结构组成</span><br><span class="line">if( argc == 0 ){</span><br><span class="line">	printf("%d \r\n", argc);</span><br><span class="line">}</span><br><span class="line">//C++源码对应汇编</span><br><span class="line">//如果argc = 0的情况，为真</span><br><span class="line">if( argc == 0 )</span><br><span class="line">//使用cmp指令，将ebp+8地址的4字节和0相减</span><br><span class="line">//结果argc不改变，淡水会改变CF,ZF,OF,AF和PF</span><br><span class="line">00401028	cmp	dword ptr [ebp+8],0</span><br><span class="line">//JNE看ZF，如果等于0跳转，表示现在的argc不等于0</span><br><span class="line">//跳转到0x40103F</span><br><span class="line">//这个地址为if的结束地址，之后跳转出if</span><br><span class="line">0040102C	jne	main+2F(0040103f)</span><br><span class="line">{</span><br><span class="line">//printf略</span><br><span class="line">}</span><br><span class="line">//函数返回</span><br><span class="line">return 0;</span><br><span class="line">0040103F	xor	eax,eax</span><br></pre></td></tr></tbody></table></figure>
+<p>JNE代表了，ZF=0 跳转，当前代码也就是argc不等于0就跳转，正常我们的c语言来说是满足if的条件执行语句块，汇编中是满足某条件进行跳转，与C语言相反</p>
+<p>因为我们C语言中，是根据我们代码行的位置来决定编译后二进制的高低，也就是低行数对应低地址，高行数，对应高地址，那么根据这个特性，如果我们是 argc &gt; 0 ，那么跳转的条件就是小于等于0是否满足，满足的不跳转</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码说明: if语句大于0比较</span><br><span class="line">if( argc &gt; 0 ){</span><br><span class="line">	printf("%d \r\n",argc);</span><br><span class="line">}</span><br><span class="line">//C++源码对应汇编代码</span><br><span class="line">//C++源码对比，如果参数argc大于0，结果为真，进入执行语句</span><br><span class="line">if(argc &gt; 0)</span><br><span class="line">//使用cmp，将ebp+8地址的4字节数据和0进行减法</span><br><span class="line">0040103F	cmp dword ptr [ebp+8],0</span><br><span class="line">00401043	jle	MyIf + 42h (00401052)</span><br><span class="line">{</span><br><span class="line">//printf略</span><br><span class="line">}</span><br><span class="line">00401052	pop edi</span><br></pre></td></tr></tbody></table></figure>
+<p>我们在使用反汇编的时候，表达式短路和if语句想像，实现的结构类似</p>
+<h2 id="5-2-if…else…语句">5.2 if…else…语句</h2>
+<p>两种结构的对比</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200607004352276.png"  alt="image-20200607004352276"></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码说明: if  else</span><br><span class="line">if(argc == 0){</span><br><span class="line">	printf("argc = 0");</span><br><span class="line">}</span><br><span class="line">else{</span><br><span class="line">	printf("argc != 0");</span><br><span class="line">}</span><br><span class="line">//对应汇编</span><br><span class="line">004010B8	cmp	dword ptr [ebp+8],0 //相减</span><br><span class="line">004010BC	jne	IfElse+2Dh	(004010cd){</span><br><span class="line">//printf 略</span><br><span class="line">}</span><br><span class="line">004010CB	jmp	IfElse+3Ah (004010da)</span><br><span class="line">{</span><br><span class="line">//进入else</span><br><span class="line">004010CD	push offset string "argc != 0" (00420030)</span><br><span class="line">004010D2	call printf (00401150)</span><br><span class="line">004010D7	add	esp,4</span><br><span class="line">}</span><br><span class="line">//结束</span><br><span class="line">004010DA	pop edi</span><br></pre></td></tr></tbody></table></figure>
+<p>正常流程和if差不多，这里纠正了自己的一个思想，就是跳转的时候，也是比较</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码说明，if...else..模拟条件表达式转换方式</span><br><span class="line">if(argc == 0){</span><br><span class="line">	argc = 5;</span><br><span class="line">}</span><br><span class="line">else{</span><br><span class="line">	argc = 6;</span><br><span class="line">}</span><br><span class="line">printf("%d \r\n",argc); //防止argc被优化处理</span><br><span class="line">//对应汇编</span><br><span class="line">if(argc == 0){</span><br><span class="line">00401098	cmp	dword ptr [ebp+8],0</span><br><span class="line">0040109c	jne	main+27h(004010a7)</span><br><span class="line">argc = 5;</span><br><span class="line">0040109E	mov	dword ptr [ebp+8],5</span><br><span class="line">}</span><br><span class="line">else{</span><br><span class="line">004010A5	jmp	main+2Eh(004010ae)</span><br><span class="line">argc = 6;</span><br><span class="line">004010A7	mov dword ptr [ebp+8],6</span><br><span class="line">}</span><br><span class="line">printf("%d \r\n",argc);</span><br><span class="line">//略</span><br><span class="line">004010AE	...</span><br></pre></td></tr></tbody></table></figure>
+<p>所以说汇编还是比较好看的，记住一下JNE即可</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">总结结构：</span><br><span class="line">//产生修改标志位的指令</span><br><span class="line">jxx else_begin</span><br><span class="line">if begin:</span><br><span class="line">//执行if中的内容</span><br><span class="line">if end:</span><br><span class="line">jmp else end</span><br><span class="line">else begin:</span><br><span class="line">//执行else的内容</span><br><span class="line">else end</span><br></pre></td></tr></tbody></table></figure>
+<p>两处跳转可以准确的划分一下哪里是else哪里是if，在我们else begin之前会有一个 jmp的指令，那么那里之后就是我们lelse块的开始，从而分析if else</p>
+<p>O2优化选项，反汇编代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">arg_0 = dword ptr 4</span><br><span class="line">//取到的参数数据放在edx中</span><br><span class="line">mov	edx,[esp+argc_0]</span><br><span class="line">//将eax清0</span><br><span class="line">xor	eax,eax</span><br><span class="line">//对edx和edx进行想与的操作，结果不影响edx</span><br><span class="line">test edx,edx</span><br><span class="line">//检查ZF的标记位，edx不等于0的时候，我们的al = 1，等于0 我们的al = 0</span><br><span class="line">setnz al</span><br><span class="line">add eax,5 //这里可能是5/6，看al了，我们不等于0，那么就是6，我们等于0，那么就是5</span><br><span class="line">push eax</span><br><span class="line">push offset Format ; "%d \r\n"</span><br><span class="line">call _printf</span><br><span class="line">add	esp,8</span><br><span class="line">retn</span><br></pre></td></tr></tbody></table></figure>
+<p>所以分析一下可以知道我们的优化后的代码也可以做到这个分支结构的选项，主要用了setnz这个指令</p>
+<h2 id="5-3-用if构成的多分支流程">5.3 用if构成的多分支流程</h2>
+<p>总体来说就是我们经常看到的 if … else if … else if … else …</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">//C++源码说明，多分支结构</span><br><span class="line">void IfElseIf(int argc){</span><br><span class="line">if (argc &gt; 0){</span><br><span class="line">	printf("argc &gt; 0");</span><br><span class="line">}</span><br><span class="line">else if (argc == 0){</span><br><span class="line">	printf("argc == 0");</span><br><span class="line">}</span><br><span class="line">else{</span><br><span class="line">	printf("argc &lt;= 0");</span><br><span class="line">	}</span><br><span class="line">}</span><br><span class="line">//对应汇编</span><br><span class="line">if(argc &gt; 0)</span><br><span class="line">00401108	cmp	dword ptr [ebp+8],0</span><br><span class="line">//相减 argc-0 之后使用小于等于跳转的条件,jle</span><br><span class="line">0040110C	jle	IfElseIf+2Dh(0040111d) //到else位置，目测那边是一个cmp 一个jne{</span><br><span class="line">printf("argc &gt; 0");</span><br><span class="line">//printf 略</span><br><span class="line">0040110E	push offset string "argc &gt; 0"(00420f9c)</span><br><span class="line">00401113	call printf(00401150)</span><br><span class="line">00401118	add	esp,4</span><br><span class="line">}</span><br><span class="line">else if ( argc == 0 )</span><br><span class="line">0040111B	jmp	IfElseIf+4Fh(0040113f)</span><br><span class="line">//if比较转换，和我上面目测的差不多一个cmp，一个jne</span><br><span class="line">0040111D	cmp	dword ptr [ebp+8],0</span><br><span class="line">00401121	jne	IfElseIf+42h(00401132) //到下一个else的位置，直接就是执行了</span><br><span class="line">{</span><br><span class="line">printf("argc == 0");</span><br><span class="line">//printf 略</span><br><span class="line">00401123	push offset string "argc == 0"(0042003c)</span><br><span class="line">00401128	call printf(00401150)</span><br><span class="line">0040112D	add esp,4</span><br><span class="line">}</span><br><span class="line">//跳转到多分支结构结束地址</span><br><span class="line">00401130	jmp	IfElseIf+4Fh(0040113f)</span><br><span class="line">{</span><br><span class="line">printf("argc &lt; = 0");//上面都不满足，无条件执行</span><br><span class="line">//printf略</span><br><span class="line">00401132	push offset string "argc != 0" (00420030)</span><br><span class="line">00401137	call printf (00401150)</span><br><span class="line">0040113C	add	esp,4</span><br><span class="line">}</span><br><span class="line">0040113F	pop	edi</span><br></pre></td></tr></tbody></table></figure>
+<p>上面的大部分结构都是个 cmp jxx jmp cmp jxx jmp 这样类似</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">总结：</span><br><span class="line">//影响标志位</span><br><span class="line">jxx else if begin</span><br><span class="line">if begin:</span><br><span class="line">...</span><br><span class="line">if end:</span><br><span class="line">jmp end</span><br><span class="line">else if begin:</span><br><span class="line">//影响标志位</span><br><span class="line">jxx else begin</span><br><span class="line">...</span><br><span class="line">else if end:</span><br><span class="line">jmp end</span><br><span class="line">else begin</span><br><span class="line">...</span><br><span class="line">end:</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+<p>这个属于没有优化的版本，如果开了O2编译选项，，我们将会对永远不能达到的地方进行不执行，不参与编译处理</p>
+<p>假设我们的argc = 0，我们看一下O2版本的</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">sub_401000 proc near</span><br><span class="line">push offset Format; "argc == 0"</span><br><span class="line">call _printf</span><br><span class="line">pop ecx</span><br><span class="line">retn</span><br><span class="line">sub_401000 endp</span><br></pre></td></tr></tbody></table></figure>
+<p>我们把不可以达到的分支直接删除，从而只剩下我们的一个必达分支语句块</p>
+<p>如果我们把单分支if结构，每个位置加上一个return语句，那么我们没有了else，减少了一次JMP跳转，使代码执行效率提高</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">void IfElseIf(int argc){</span><br><span class="line">	if (argc &gt; 0){</span><br><span class="line">		printf("argc &gt; 0");</span><br><span class="line">		return;</span><br><span class="line">	}</span><br><span class="line">	if (argc == 0){</span><br><span class="line">		printf("argc == 0");</span><br><span class="line">		return;</span><br><span class="line">	}</span><br><span class="line">	printf("argc &lt;= 0");</span><br><span class="line">	return;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">.text:00401000 sub_401000	proc near ; CODE XREF: _main+5p</span><br><span class="line">//arg_0为函数参数</span><br><span class="line">.text:00401000 arg_0 = dword ptr 4</span><br><span class="line">//取出参数数据，放入eax，进行第一次if比较</span><br><span class="line">.text:00401000	mov eax,[esp+arg_0]</span><br><span class="line">.text:00401004	test eax,eax</span><br><span class="line">//比较后进行转移，目测jle</span><br><span class="line">.text:00401006	jle	short loc_401016</span><br><span class="line">//执行</span><br><span class="line">.text:00401008	push offset Format ; "argc &gt; 0"</span><br><span class="line">.text:0040100D	call _printf</span><br><span class="line">.text:00401012	add esp,4</span><br><span class="line">//使用retn指令返回，结束函数调用</span><br><span class="line">.text:00401015	retn</span><br><span class="line"></span><br><span class="line">//代表此处代码被符号sub_401000地址加6的地方引用</span><br><span class="line">.text:00401016 loc_401006:	 ;CODE XREF: sub_401000+6j</span><br><span class="line">//这里目测因为有test的问题 直接jne就可以</span><br><span class="line">.text:00401018	push offset aArgc0_0 ; "argc == 0"</span><br><span class="line">.text:0040101D	call _printf</span><br><span class="line">.text:00401022	add esp,4</span><br><span class="line">//返回</span><br><span class="line">.text:00401025	retn</span><br><span class="line"></span><br><span class="line">//前两次失败没返回直接执行此处</span><br><span class="line">.text:00401026	loc_401026: ; CODE XREF: sub_401000:loc_401016j</span><br><span class="line">.text:00401026	push offset aArgc0_1; "argc &lt;= 0"</span><br><span class="line">.text:0040102B	call _printf</span><br><span class="line">.text:00401030	pop ecx</span><br><span class="line">.text:00401031	retn</span><br><span class="line">.text:00401031	sub_401000	endp</span><br></pre></td></tr></tbody></table></figure>
+<p>可以看出来大大的节省了效率</p>
 <h2 id="5-4-Switch的真相">5.4 Switch的真相</h2>
 <p>小分支switch ( 分支数小于等于3 )</p>
 <p>总结：cmp - je - cmp - je - cmp - je …  end ( je到end/break )</p>
