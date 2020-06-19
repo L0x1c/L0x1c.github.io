@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>计划任务</title>
+    <title>Todo list</title>
     <url>/2020/06/19/%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1/</url>
-    <content><![CDATA[<p>title: Todo list<br>
-tags:</p>
-<ul>
-<li>计划<br>
-categories: 计划</li>
-</ul>
-<hr>
-<h1>TODO List</h1>
+    <content><![CDATA[<h1>TODO List</h1>
 <h2 id="Book">Book</h2>
 <ul>
 <li>程序员的自我修养</li>
@@ -56,6 +49,12 @@ categories: 计划</li>
             document.body.appendChild(img);
           });
       </script>]]></content>
+      <categories>
+        <category>plan</category>
+      </categories>
+      <tags>
+        <tag>plan</tag>
+      </tags>
   </entry>
   <entry>
     <title>字节码 ( python )</title>

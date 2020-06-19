@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://l0x1c.github.io/"/>
-  <updated>2020-06-19T07:43:27.738Z</updated>
+  <updated>2020-06-19T08:34:57.141Z</updated>
   <id>https://l0x1c.github.io/</id>
   
   <author>
@@ -17,34 +17,34 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>计划任务</title>
+    <title>Todo list</title>
     <link href="https://l0x1c.github.io/2020/06/19/%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1/"/>
     <id>https://l0x1c.github.io/2020/06/19/%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1/</id>
     <published>2020-06-19T06:36:51.157Z</published>
-    <updated>2020-06-19T07:43:27.738Z</updated>
+    <updated>2020-06-19T08:34:57.141Z</updated>
     
-    <content type="html"><![CDATA[<p>title: Todo list<br>tags:</p><ul><li>计划<br>categories: 计划</li></ul><hr><h1>TODO List</h1><h2 id="Book">Book</h2><ul><li>程序员的自我修养</li><li>加密与解密4</li><li>操作系统导论</li><li>A Friendly Introduction to Number Theory</li><li>Understanding Cryptography</li></ul><h2 id="Programming-languages">Programming languages</h2><ul><li>C++</li><li>python</li></ul><h2 id="Summer-holiday">Summer holiday</h2><ul><li>GOSSIP实习</li></ul><h2 id="Learning-direction">Learning direction</h2><ul><li>Reverse</li><li>Crypto</li></ul><h2 id="Health">Health</h2><ul><li>Run 19:00 - 20:00</li></ul><script>        document.querySelectorAll('.github-emoji')          .forEach(el => {            if (!el.dataset.src) { return; }            const img = document.createElement('img');            img.style = 'display:none !important;';            img.src = el.dataset.src;            img.addEventListener('error', () => {              img.remove();              el.style.color = 'inherit';              el.style.backgroundImage = 'none';              el.style.background = 'none';            });            img.addEventListener('load', () => {              img.remove();            });            document.body.appendChild(img);          });      </script>]]></content>
+    <content type="html"><![CDATA[<h1>TODO List</h1><h2 id="Book">Book</h2><ul><li>程序员的自我修养</li><li>加密与解密4</li><li>操作系统导论</li><li>A Friendly Introduction to Number Theory</li><li>Understanding Cryptography</li></ul><h2 id="Programming-languages">Programming languages</h2><ul><li>C++</li><li>python</li></ul><h2 id="Summer-holiday">Summer holiday</h2><ul><li>GOSSIP实习</li></ul><h2 id="Learning-direction">Learning direction</h2><ul><li>Reverse</li><li>Crypto</li></ul><h2 id="Health">Health</h2><ul><li>Run 19:00 - 20:00</li></ul><script>        document.querySelectorAll('.github-emoji')          .forEach(el => {            if (!el.dataset.src) { return; }            const img = document.createElement('img');            img.style = 'display:none !important;';            img.src = el.dataset.src;            img.addEventListener('error', () => {              img.remove();              el.style.color = 'inherit';              el.style.backgroundImage = 'none';              el.style.background = 'none';            });            img.addEventListener('load', () => {              img.remove();            });            document.body.appendChild(img);          });      </script>]]></content>
     
     <summary type="html">
     
       
       
-        &lt;p&gt;title: Todo list&lt;br&gt;
-tags:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;计划&lt;br&gt;
-categories: 计划&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h1&gt;TODO List&lt;/h1&gt;
+        &lt;h1&gt;TODO List&lt;/h1&gt;
 &lt;h2 id=&quot;Book&quot;&gt;Book&lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;程序员的自我修
+&lt;li&gt;程序员的自我修养&lt;/li&gt;
+&lt;li&gt;加密与解密4&lt;/li&gt;
+&lt;li&gt;操作系统导论&lt;/li&gt;
+&lt;li&gt;A Friendly Introduction to Number Theo
       
     
     </summary>
     
     
+      <category term="plan" scheme="https://L0x1c.github.io/categories/plan/"/>
+    
+    
+      <category term="plan" scheme="https://L0x1c.github.io/tags/plan/"/>
     
   </entry>
   
