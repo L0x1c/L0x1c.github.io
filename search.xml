@@ -1,9 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>计划任务</title>
+    <url>/2020/06/19/%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1/</url>
+    <content><![CDATA[<p>title: Todo list<br>
+top: 1<br>
+tags:</p>
+<ul>
+<li>计划<br>
+categories: 计划</li>
+</ul>
+<hr>
+<h1>TODO List</h1>
+<h2 id="Book">Book</h2>
+<ul>
+<li>程序员的自我修养</li>
+<li>加密与解密4</li>
+<li>操作系统导论</li>
+<li>A Friendly Introduction to Number Theory</li>
+<li>Understanding Cryptography</li>
+</ul>
+<h2 id="Programming-languages">Programming languages</h2>
+<ul>
+<li>C++</li>
+<li>python</li>
+</ul>
+<h2 id="Summer-holiday">Summer holiday</h2>
+<ul>
+<li>GOSSIP实习</li>
+</ul>
+<h2 id="Learning-direction">Learning direction</h2>
+<ul>
+<li>Reverse</li>
+<li>Crypto</li>
+</ul>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+  </entry>
+  <entry>
     <title>2020-6-17</title>
     <url>/2020/06/17/2020-6-17/</url>
-    <content><![CDATA[<p>title: python字节码题目<br>
+    <content><![CDATA[<p>title: 字节码 ( python )<br>
 categories: 个人笔记<br>
 tages:</p>
 <ul>
@@ -341,6 +395,56 @@ Please input password:</p>
 <p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200618121700829.png"  alt="image-20200618121700829"></p>
 <p>可以看到两者所属的内存地址空间不同，所以静态成员不参与长度的计算</p>
 <h2 id="9-4-对象作为函数参数">9.4 对象作为函数参数</h2>
+<p>书上给了个对象属性很少的例子，这个时候，对象作为函数参数调用过去的时候，他们复制了一份数据过去，然后压入堆栈，测试结果</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200618205454245.png"  alt="image-20200618205454245"></p>
+<p>这里并不是push ebp-4那些，而是经过给寄存器赋值进行的传参，传参顺序先定义的后传</p>
+<p>又举了个数组的方式，这个对象作为参数和上面的类同就不说了，这里有说到析构和拷贝函数，日后再详细说，书上给了个对象作为参数的资源释放错误的例子（学完析构和拷贝回来研究一下）</p>
+<h2 id="9-5-对象作为返回值">9.5 对象作为返回值</h2>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200618215712821.png"  alt="image-20200618215712821"></p>
+<p>作为返回地址的时候，会把我们的对象的首地址的数据依次复制到返回地址下面，等我们后面的printf调用的时候，直接调用就可以了</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200618220008107.png"  alt="image-20200618220008107"></p>
+<p>用ebp调用，放入寄存器传参即可</p>
+<h2 id="补上的东西">补上的东西</h2>
+<p>大概想了一下，这章有析构和构造函数，大概去学习了一下大概的东西</p>
+<p>析构函数：</p>
+<ul>
+<li>只能有一个析构函数，不能重载</li>
+<li>不能带任何参数</li>
+<li>不能带返回值</li>
+<li>主要用于清理工作</li>
+<li>编译器不要求必须提供</li>
+</ul>
+<p>构造函数</p>
+<ul>
+<li>与类同名</li>
+<li>没有返回值</li>
+<li>创建对象的时候执行</li>
+<li>主要用于初始化</li>
+<li>可以有多( 最好有一个无参的 )，称为重载，其他函数也可以重载</li>
+<li>编译器不要求必须提供</li>
+</ul>
+<p>那么我就把书上自己没看懂的位置理解一下 ( 不欠债！)</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">class cMyString{</span><br><span class="line">public:</span><br><span class="line">	cMyString(){</span><br><span class="line">		m_pstring = new char[10];</span><br><span class="line">		if(m_pstring == NULL){</span><br><span class="line">			return;</span><br><span class="line">		}</span><br><span class="line">		strcpy(m_pstring,"hello");</span><br><span class="line">	}</span><br><span class="line">	~cMyString(){</span><br><span class="line">		if(m_pstring != NULL){</span><br><span class="line">			deletle m_pstring;</span><br><span class="line">			m_pstring = NULL;</span><br><span class="line">		}</span><br><span class="line">	}</span><br><span class="line">	char *GetString(){</span><br><span class="line">		return m_pString;</span><br><span class="line">	}</span><br><span class="line">private:</span><br><span class="line">	char *m_pString;</span><br><span class="line">};</span><br><span class="line">void ShowMyString(cMyString MyStringCpy){</span><br><span class="line">	printf(MyStringCpy.GetString());</span><br><span class="line">}</span><br><span class="line">void main(){</span><br><span class="line">	cMyString MyString;</span><br><span class="line">	ShowMyString(MyString);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>这边出现的问题，就是析构函数和成员函数的返回值进行了异常的问题，书上的图很好解释这个问题</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200618233212735.png"  alt="image-20200618233212735"></p>
+<p>堆的首地址被释放，但是我们delete的时候，找不到首地址会出现问题，里面的数据保留且我们再次申请new的时候，会找不到堆的位置</p>
+<p>&amp;((struct A)*NULL) -&gt; m_float 不会崩溃，因为求的是 m_float在结构体中的偏移：0+4</p>
+<p>this指针这里科二师傅给我大概说了一个很清楚的记录一下：</p>
+<p>类 -&gt; 变量类型（如int）<br>
+对象 -&gt; 具体变量（如int e 这个声明中的e)<br>
+this -&gt; (&amp;e)</p>
+<h1>第十章-关于构造函数和析构函数</h1>
+<p>这里大概自己又了解了一下继承</p>
+<p>继承：</p>
+<ul>
+<li>继承就是数据的复制</li>
+<li>减少重复代码的编写</li>
+<li>定义共同属性的类叫做父类或者基类</li>
+<li>里面需要共同属性的叫做子类或者派生类</li>
+<li>子类或者派生类中的对象，叫做对象或者实例</li>
+<li>可以用父类指针指向子类的对象</li>
+</ul>
+<h2 id="10-1-构造函数的出现时机">10.1 构造函数的出现时机</h2>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
