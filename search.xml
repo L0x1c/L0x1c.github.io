@@ -1571,6 +1571,110 @@ this -&gt; (&amp;e)</p>
 <li>可以用父类指针指向子类的对象</li>
 </ul>
 <h2 id="10-1-构造函数的出现时机">10.1 构造函数的出现时机</h2>
+<p>这里大概了解了，局部对象，堆对象，参数对象，返回对象，全局对象，静态对象</p>
+<h2 id="10-2每个对象都有默认的构造函数吗">10.2每个对象都有默认的构造函数吗</h2>
+<p>本类中定义的成员对象或者父类中有虚函数存在</p>
+<p>父类或者本类中定义的成员对象带有构造函数</p>
+<h2 id="10-3-析构函数的出现时机">10.3 析构函数的出现时机</h2>
+<ul>
+<li>局部对象：作用域结束前调用析构函数</li>
+<li>堆对象：释放对空间前调用析构函数</li>
+<li>参数对象：退出函数前，调用参数对象的析构函数</li>
+<li>返回对象：如无对象引用定义，退出函数后，调用返回对象的析构函数，否则与对象引用的作用域一致</li>
+<li>全局对象：main函数退出后调用析构函数</li>
+<li>静态对象：main函数推出后调用析构函数</li>
+</ul>
+<h1>第十一章-从内存角度看继承和多重继承</h1>
+<p>其实自己虚函数，以及继承这里没有按照书上的来了，而去看了海哥的视频，感觉书上说的不容易理解，所以从第十三章讲异常处理那个位置我再看</p>
+<p>继承这里分了多层继承和多重继承</p>
+<p>继承无非就是子类继承父类，来完善C的一些作用，上面我也有写道，<code>子类::父类</code>，微软不建议使用多重继承，首先我们看一下多层继承的图</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200620225942322.png"  alt="image-20200620225942322"></p>
+<p>这个是我们多层继承，那么我们再看一下多重继承</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-09/image-20200620230018577.png"  alt="image-20200620230018577"></p>
+<p>其实虽然我们用反汇编看起来都一样，但是多重继承来说它增加了程序的复杂度，容易出错，所以不推荐使用</p>
+<p>这里有一个很好玩的地方就是，我们的对象的sizeof大小，如果这里我们假设属性a，在爷爷x里存在，父亲y中也存在，子类z还存在，那么他们其实是有不同的存储空间的，取的时候要<code>Z.X::a</code>这样进行取，如果单纯的<code>Z.a</code>，那么会等同于<code>Z.Z::a</code>的</p>
+<h1>第十二章-关于虚函数</h1>
+<pre><code>class Base				
+{				
+public:				
+    void Function_1()				
+    {				
+        printf("Function_1...\n");				
+    }				
+    virtual void Function_2()				
+    {				
+        printf("Function_2...\n");				
+    }				
+};				
+
+观察反汇编：				
+				
+void TestMethod()				
+{				
+	Base base;			
+				
+	base.Function_1();			
+	00401090 8D 4D FC             lea         ecx,[ebp-4]			
+	00401093 E8 9F FF FF FF       call        @ILT+50(Base::Function_1) (00401037)			
+				
+	base.Function_2();			
+	00401098 8D 4D FC             lea         ecx,[ebp-4]			
+	0040109B E8 65 FF FF FF       call        @ILT+0(Base::Function_2) (00401005)			
+				
+	Base* pb = &amp;base;			
+				
+	pb-&gt;Function_1();			
+	004010A6 8B 4D F8             mov         ecx,dword ptr [ebp-8]			
+	004010A9 E8 89 FF FF FF       call        @ILT+50(Base::Function_1) (00401037)			
+				
+	pb-&gt;Function_2();			
+	004010AE 8B 4D F8             mov         ecx,dword ptr [ebp-8]			
+	004010B1 8B 11                mov         edx,dword ptr [ecx]			
+	004010B3 8B F4                mov         esi,esp			
+	004010B5 8B 4D F8             mov         ecx,dword ptr [ebp-8]			
+	004010B8 FF 12                call        dword ptr [edx]			
+}				
+</code></pre>
+<p>总结：				<br>
+1、通过对象调用时，virtual函数与普通函数都是E8 Call						<br>
+2、通过指针调用时，virtual函数是FF Call,也就是间接Call</p>
+<p>观察虚函数通过指针调用时的反汇编：</p>
+<pre><code>pb-&gt;Function_1();							
+0040D9E3 8B 4D F0             mov         ecx,dword ptr [ebp-10h]							
+0040D9E6 8B 11                mov         edx,dword ptr [ecx]							
+0040D9E8 8B F4                mov         esi,esp							
+0040D9EA 8B 4D F0             mov         ecx,dword ptr [ebp-10h]							
+0040D9ED FF 12                call        dword ptr [edx]												
+
+pb-&gt;Function_2();							
+0040D9F6 8B 45 F0             mov         eax,dword ptr [ebp-10h]							
+0040D9F9 8B 10                mov         edx,dword ptr [eax]							
+0040D9FB 8B F4                mov         esi,esp							
+0040D9FD 8B 4D F0             mov         ecx,dword ptr [ebp-10h]							
+0040DA00 FF 52 04             call        dword ptr [edx+4]							
+</code></pre>
+<p>总结：							<br>
+1、当类中有虚函数时，会多一个属性，4个字节							<br>
+2、多出的属性是一个地址，指向一张表，里面存储了所有虚函数的地址</p>
+<h1>第十三章-异常处理</h1>
+<p>C++中的异常处理机制由try，throw，catch语句构成的</p>
+<ul>
+<li>try语句块负责监视异常</li>
+<li>throw用于异常信息的发送，也称之为抛出异常</li>
+<li>catch用于异常的捕获，并作出相应的处理</li>
+</ul>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">try{//异常检测</span><br><span class="line">	//执行代码</span><br><span class="line">	throw 异常类型; //抛出异常</span><br><span class="line">}</span><br><span class="line">catch( 捕获异常类型 ) { //异常捕捉</span><br><span class="line">	//处理代码</span><br><span class="line">	}</span><br><span class="line">catch( 捕获异常类型 ){ //异常捕获</span><br><span class="line">	//处理代码</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<ol>
+<li>在函数入口处设置异常回调函数，其回调函数先设置eax为FuncInfo数据的地址，然后跳往_CxxFrameHandler</li>
+<li>异常的跑出由_CxxThrowException函数完成，该函数使用了两个参数，一个是抛出异常的关键字throw的参数的指针，一个是抛出信息类型的指针(ThrowInfo*)</li>
+<li>在异常回调函数中，可以得到异常对象的地址和对应ThrowInfo数据的地址以及FunInfo表结构的地址，根据记录的异常类型，进行try块的匹配工作</li>
+<li>如果没有找到try块，则异构异常对象，返回ExceptionContinueSearch，继续下一个异常回调函数的处理</li>
+<li>当找到对应的try块时，通过TryBlockMapEntry表结构中的pCatch指向catch信息表，用ThrowInfo表结构中的异常类型遍历查找与之匹配的catch块，比较关键字名称(如整型为.h，单精度浮点为.m)找到有效的catch块</li>
+<li>执行栈展开操作，并产生catch块中使用的异常对象(有4中不同的产生方法)</li>
+<li>正确析构所有生命期已结束的对象</li>
+<li>跳转到catch块，执行catch块代码</li>
+<li>调用_JumpToContinuation函数，返回所有catch语句块的结束地址</li>
+</ol>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
