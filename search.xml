@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>程序员的自我修养</title>
+    <url>/2020/06/21/2020-6-21/</url>
+    <content><![CDATA[<p>终于可以看上这个特别好的这本书了，大家都很推荐的：程序员的自我修养，上本书其实让我很好的了解了，底层的release版本和debug版本的不同，以及工作原理等等，让我有了个大概了解，想通过这本书，让自己有个更深刻的了解</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>书籍笔记</category>
+      </categories>
+  </entry>
+  <entry>
     <title>Todo list</title>
     <url>/2020/06/19/%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1/</url>
     <content><![CDATA[<h1>TODO List</h1>
