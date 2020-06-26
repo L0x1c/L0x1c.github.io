@@ -1,6 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>滴水逆向</title>
+    <url>/2020/06/25/2020-6-26/</url>
+    <content><![CDATA[<h3 id="6-25-文件读写练习">6.25 ( 文件读写练习 )</h3>
+<ol>
+<li>用十六进制文本编辑器，打开一个记事本的.exe文件，再打开在内存中的记事本 进程，记录下这两个文件的不同.</li>
+<li>将记事本的.exe文件读取到内存，并返回读取后在内存中的地址.</li>
+<li>将内存中的数据存储到一个文件中，(.exe格式)，然后双击打开，看是否能够使用.</li>
+</ol>
+<ul>
+<li>打开文件</li>
+<li>得到文件的大小</li>
+<li>申请内存</li>
+<li>把文件中的内容读取到内存中</li>
+<li>返回内存编号</li>
+</ul>
+<h4 id="1">1</h4>
+<p><img src="/" class="lazyload" data-src="/2020/06/25/2020-6-26/image-20200625165111259.png"  alt="image-20200625165111259"></p>
+<p>这个问题在之前研究过，在硬盘上我们是根据0x200进行对齐，而在内存中会根据0x1000进行对齐，那么中间的剩余部分用0进行补全说明我们硬盘上的数据会在内存中进行拉伸，我们的offset文件偏移也不同（大概后面PE会有个详细的说明）</p>
+<h4 id="2-and-3">2 and 3</h4>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;stdlib.h&gt;</span><br><span class="line">#include&lt;memory.h&gt;</span><br><span class="line">/*</span><br><span class="line"> 将记事本的.exe文件读取到内存，并返回读取后在内存中的地址.</span><br><span class="line"> 将内存中的数据存储到一个文件中，(.exe格式)，然后双击打开，看是否能够使用.</span><br><span class="line">- 打开文件</span><br><span class="line">- 得到文件的大小</span><br><span class="line">- 申请内存</span><br><span class="line">- 把文件中的内容读取到内存中</span><br><span class="line">- 返回内存编号</span><br><span class="line">*/</span><br><span class="line">//fopen</span><br><span class="line">//fclose</span><br><span class="line">//ftell</span><br><span class="line">//fseek</span><br><span class="line">//fread</span><br><span class="line">int open() {</span><br><span class="line">	int size = 0;</span><br><span class="line">	FILE* pa = NULL;</span><br><span class="line">	pa = fopen("C:\\Windows\\System32\\notepad.exe", "rb" );</span><br><span class="line">	FILE* pb = NULL;</span><br><span class="line">	pb = fopen("D:\\1.txt", "wb");</span><br><span class="line">	if (pa == NULL || pb == NULL) {</span><br><span class="line">		printf("文件打开失败\n");</span><br><span class="line">		return 0;</span><br><span class="line">	}</span><br><span class="line">	fseek(pa, 0, SEEK_END); //定义到文件末尾</span><br><span class="line">	size = ftell(pa);//文件大小</span><br><span class="line">	printf("文件大小 : %d", size);</span><br><span class="line">	char* A;</span><br><span class="line">	A = (char*)malloc(size);//分配文件大小的堆空间</span><br><span class="line">	if (A == NULL) {</span><br><span class="line">		return 0;</span><br><span class="line">	}</span><br><span class="line">	int b;</span><br><span class="line">	memset(A, 0, size);//初始化为0</span><br><span class="line">	fseek(pa, 0, SEEK_SET);//定义到文件首部</span><br><span class="line">	fread(A, 1, size, pa); //数据存储到A</span><br><span class="line">	fwrite(A, 1, size, pb);</span><br><span class="line">	fclose(pa);</span><br><span class="line">	fclose(pb);</span><br><span class="line">	free(A);</span><br><span class="line">	A == NULL;</span><br><span class="line">	return 0;</span><br><span class="line">}</span><br><span class="line">int main() {</span><br><span class="line">	open();</span><br><span class="line">	return 0;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>大概了解到了fopen的用法 b是二进制打开，fseek将指针定位到哪个位置，SEEK_END是末尾，SEEK_SET是开头，fwrite将数组内容写在另一个文件中，fread读取流，将一个文件的内容读取到另一个位置，fclose关闭文件</p>
+<h3 id="6-26-PE头解析，手动">6.26 (PE头解析，手动)</h3>
+<p>拖了个扫雷进去开始一个一个对</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">DOS头:</span><br><span class="line">//64字节</span><br><span class="line">word E_magic; * 5A 4D //MZ标记：用来标记是否为可执行文件</span><br><span class="line">word e_cblp; 00 90</span><br><span class="line">word e_cp;  00 03</span><br><span class="line">word e_crlc; 00 00</span><br><span class="line">word e_cparhdr; 00 04</span><br><span class="line">word e_minalloc; 00 00</span><br><span class="line">word e_maxalloc; FF FF</span><br><span class="line">word e__ss; 00 00</span><br><span class="line">word e_sp; 00 B8</span><br><span class="line">word e_csum; 00 00</span><br><span class="line">word e——IP； 00 00</span><br><span class="line">word e_cs; 00 00</span><br><span class="line">word e_ifarlc; 00 40</span><br><span class="line">word e_ovno; 00 00</span><br><span class="line">word e_res[4]; 00 00 00 00 00 00 00 00</span><br><span class="line">word e_oemid; 00 00</span><br><span class="line">word e_oeminfo; 00 00</span><br><span class="line">word e_res2[10]; 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00     </span><br><span class="line">dword e_ifanew; * 00 00 00 D8 //定位PE文件，PE头相对于文件的偏移量</span><br><span class="line"></span><br><span class="line">NT头</span><br><span class="line">{</span><br><span class="line">1.DWORD Signature; 00 00 45 50 //标记，判断是否为PE文件的第二个标志</span><br><span class="line">2.FILE_HEADER (文件头-PE的基本信息)</span><br><span class="line">//20字节</span><br><span class="line">word MACHINE; * 01 4C //文件的运行平台</span><br><span class="line">word NumberOfSections;* 00 03 //区段的数量</span><br><span class="line">Dword TimeDateStamp;* 3B 7D 84 75 //文件创建的时间</span><br><span class="line">Dword PointerToSymbolTable; 00 00 00 00</span><br><span class="line">Dword NumberOfSymbols; 00 00 00 00</span><br><span class="line">word SizeofOptionalHeader;* 00 E0 //扩展头的大小</span><br><span class="line">word Characteristics;* 01 0F //PE文件的一些属性</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">3.OPTIONAL_HEADER (扩展头-PE文件加载的信息)</span><br><span class="line">//</span><br><span class="line">word MAGIC;* 01 0B //文件类型标志，32位一般是0x010b，64位的一般时0x020B</span><br><span class="line">byte MajorLinkerVersion; 07</span><br><span class="line">byte MinorLinkerVersion; 00</span><br><span class="line">2字节</span><br><span class="line">Dword SizeOfCode;* 00 00 3C 00 //代码区段总大小</span><br><span class="line">Dword SizeOfInitializedData;* 00 01 94 00 //已经初始化数据总大小</span><br><span class="line">Dword SizeOfUninitializedData;* 00 00 00 00 //未初始化数据的总大小</span><br><span class="line">Dword AddressOfEntryPoint;* 00 00 3E 21 //程序开始执行的相对虚拟地址(RVA),也叫OEP，源入口</span><br><span class="line">Dword BaseOfCode;* 00 00 10 00 //起始代码的相对虚拟地址</span><br><span class="line">Dword BaseOfData;* 00 00 50 00 //起始数据的相对虚拟地址</span><br><span class="line">Dword ImageBase;* 01 00 00 00 // 默认加载地址</span><br><span class="line">Dword Section Alignment;* 00 00 10 00 //块对齐数 0x1000</span><br><span class="line">Dword File Alignment;* 00 00 02 00 //文件对齐数 0x200</span><br><span class="line">word MajorOperatingSystemVersion; 00 05</span><br><span class="line">word MinorOperatingSystemVersion; 00 01</span><br><span class="line">word MajorImageVersion; 00 05</span><br><span class="line">word MinirImageVersion; 00 01</span><br><span class="line">word MajorSubsystemVersion; 00 04</span><br><span class="line">word MinirSubsystemVersiion; 00 00</span><br><span class="line">Dword Win32Version Value; 00 00 00 00</span><br><span class="line">16字节</span><br><span class="line">Dword SizeofImage;* 00 02 00 00 //文件加载进内存，所需要的内存大小</span><br><span class="line">Dword SizeofHeaders;* 00 00 04 00 //所有头部大小，Dos头，PE头，区段表的尺寸之和</span><br><span class="line">Dword CheckSum;* 00 02 73 C4 //校验和</span><br><span class="line">word Subsystem; 00 02</span><br><span class="line">word DllCharacteristics; 80 00</span><br><span class="line">4字节</span><br><span class="line">Dword SizeOfStackReserve;* 00 04 00 00 //初始栈大小</span><br><span class="line">Dword SizeOfStackCommit;* 00 00 40 00 //初始化时实际提交栈的大小</span><br><span class="line">Dword SizeOfHeapReserve;* 00 10 00 00 //初始化时保留堆的大小</span><br><span class="line">Dword SizeOfHeapCommit;* 00 00 10 00 //初始化时实际提交的堆的大小</span><br><span class="line">Dword LoaderFlags; 00 00 00 00</span><br><span class="line">Dword NumberOfRvaAndSizes; 00 00 00 10</span><br><span class="line">...[16]</span><br></pre></td></tr></tbody></table></figure>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>个人笔记</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>加密与解密4</title>
+    <url>/2020/06/25/2020-6-25/</url>
+    <content><![CDATA[<p>时隔了很长时间我才开始看这本书籍，希望可以学到很多东西！每天睡前我也会写一下笔记来总结今天所学的，希望这次的读书笔记不那么流水账，hhh</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>书籍笔记</category>
+      </categories>
+  </entry>
+  <entry>
     <title>第五空间CTF</title>
     <url>/2020/06/24/2020-6-24/</url>
     <content><![CDATA[<h3 id="Nop">Nop</h3>
