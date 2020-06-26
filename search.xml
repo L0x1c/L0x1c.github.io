@@ -258,69 +258,6 @@
       </categories>
   </entry>
   <entry>
-    <title>Rust-Xor 分析</title>
-    <url>/2020/06/09/2020-6-10/</url>
-    <content><![CDATA[<h2 id="bakdata">bakdata</h2>
-<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200609235252781.png"  alt="image-20200609235252781"></p>
-<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610010459269.png"  alt="image-20200610010459269"></p>
-<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610010508579.png"  alt="image-20200610010508579"></p>
-<p>这里有返回的信息，进行yes/no的判定</p>
-<p>定位第一个位置下断点就是 call sub_55683666A770</p>
-<p>F7单步进去分析</p>
-<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610011048733.png"  alt="image-20200610011048733"></p>
-<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610011150434.png"  alt="image-20200610011150434"></p>
-<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610011201050.png"  alt="image-20200610011201050"></p>
-<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610011322361.png"  alt="image-20200610011322361"></p>
-<p>输入密码位置，下断再进行调试</p>
-<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610011448641.png"  alt="image-20200610011448641"></p>
-<p>输出字符 ：</p>
-<p>Welcome to full databse backup system!<br>
-Please input password:</p>
-<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610011659302.png"  alt="image-20200610011659302"></p>
-<p>输入密码</p>
-<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610095833331.png"  alt="image-20200610095833331"></p>
-<p>输入的长度</p>
-<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610100634517.png"  alt="image-20200610100634517"></p>
-<p>对输入进行了base32加密</p>
-<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610100835112.png"  alt="image-20200610100835112"></p>
-<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610101128114.png"  alt="image-20200610101128114"></p>
-<p>这个位置进行转换，进行一下猜测</p>
-<p>重新输入了aaaaaaaaaa，进行检测</p>
-<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610111307371.png"  alt="image-20200610111307371"></p>
-<p>这个 00 - A  01 - B 02 - C，正好满足</p>
-<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610111333963.png"  alt="image-20200610111333963"></p>
-<p>所以这个位置是base32加密</p>
-<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610175521992.png"  alt="image-20200610175521992"></p>
-<p>偏移C01F位置就是异或的数据和偏移10F63进行异或</p>
-<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610175641920.png"  alt="image-20200610175641920">‬</p>
-<p>也就是每一次的eax ^ [ebp+42h]</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">0x8 ^ 0x4</span><br><span class="line">0x57 ^ 0x5E</span><br><span class="line">0x5F ^ 0x4F</span><br><span class="line">0x63 ^ 0x75</span><br><span class="line">0x65 ^ 0x63</span><br><span class="line">0xF1 ^ 0xEB</span><br><span class="line">0x42 ^ 0x58</span><br><span class="line">0x63 ^ 0x7C</span><br><span class="line">0xF ^ 0x3</span><br><span class="line">0x39 ^ 0x20</span><br><span class="line">0x12 ^ 0x8</span><br><span class="line">0xAA ^ 0xBC</span><br><span class="line">0x22 ^ 0x3A</span><br><span class="line">0xB4 ^ 0xAF</span><br><span class="line">0x16 ^ 0x14</span><br><span class="line">0x7E ^ 0x61</span><br><span class="line">0xC0 ^ 0xCC</span><br><span class="line">0xD5 ^ 0xC4</span><br><span class="line">0xEB ^ 0xFB</span><br><span class="line">0x12 ^ 0x5</span><br><span class="line">0x58 ^ 0x50</span><br><span class="line">0xCD ^ 0xD5</span><br><span class="line">0x56 ^ 0x5D</span><br><span class="line">0xC7 ^ 0xC5</span><br><span class="line">0x1C ^ 0x10</span><br><span class="line">0x97 ^ 0x92</span><br><span class="line">0xE4 ^ 0xFD</span><br><span class="line">0x39 ^ 0x2F</span><br><span class="line">0xEC ^ 0xE6</span><br></pre></td></tr></tbody></table></figure>
-<p>挨次下断点选取即可 转换成了数字的模式，我们转化为字符：</p>
-<p><code>MJQWG227MZ2WY3C7MRQXIYLCMFZWK</code></p>
-<p>解密：</p>
-<p><img src="/" class="lazyload" data-src="/2020/06/09/2020-6-10/image-20200610183704939.png"  alt="image-20200610183704939"></p>
-<p>flag : back_full_database</p>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-  </entry>
-  <entry>
     <title>C++反汇编与逆向分析技术揭秘</title>
     <url>/2020/06/09/2020-6-09/</url>
     <content><![CDATA[<h1>第一章-熟悉工作环境和相关工具</h1>
