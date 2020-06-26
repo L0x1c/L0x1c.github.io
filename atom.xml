@@ -101,7 +101,7 @@
     <link href="https://l0x1c.github.io/2020/06/22/D-Link/"/>
     <id>https://l0x1c.github.io/2020/06/22/D-Link/</id>
     <published>2020-06-22T15:12:22.485Z</published>
-    <updated>2020-06-22T15:12:56.198Z</updated>
+    <updated>2020-06-26T14:03:42.905Z</updated>
     
     <content type="html"><![CDATA[<h3 id="DSR-250N">DSR-250N</h3><script>        document.querySelectorAll('.github-emoji')          .forEach(el => {            if (!el.dataset.src) { return; }            const img = document.createElement('img');            img.style = 'display:none !important;';            img.src = el.dataset.src;            img.addEventListener('error', () => {              img.remove();              el.style.color = 'inherit';              el.style.backgroundImage = 'none';              el.style.background = 'none';            });            img.addEventListener('load', () => {              img.remove();            });            document.body.appendChild(img);          });      </script>]]></content>
     
