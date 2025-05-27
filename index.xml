@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>My New Hugo Site</title>
-    <link>https://L0x1c.github.io/</link>
+    <link>https://l0x1c.com/</link>
     <description>Recent content on My New Hugo Site</description>
     <generator>Hugo -- 0.120.4</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 27 May 2025 18:49:02 +0800</lastBuildDate>
-    <atom:link href="https://L0x1c.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://l0x1c.com/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>First_blog</title>
-      <link>https://L0x1c.github.io/posts/first_blog/</link>
+      <link>https://l0x1c.com/posts/first_blog/</link>
       <pubDate>Tue, 27 May 2025 18:49:02 +0800</pubDate>
-      <guid>https://L0x1c.github.io/posts/first_blog/</guid>
+      <guid>https://l0x1c.com/posts/first_blog/</guid>
       <description>This is my first blog this is a subtitle this is a subtitle this is a subtitle this is a subtitle this is a subtitle 1 2 3 1 2 3 this is a quote this is a quote</description>
     </item>
   </channel>
