@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Tags on PaperMod</title>
-    <link>https://l0x1c.com/tags/</link>
-    <description>Recent content in Tags on PaperMod</description>
+    <title>FAcategories on PaperMod RTL</title>
+    <link>https://l0x1c.com/fa/facategories/</link>
+    <description>Recent content in FAcategories on PaperMod RTL</description>
     <image>
-      <title>PaperMod</title>
+      <title>PaperMod RTL</title>
       <url>https://l0x1c.com/images/papermod-cover.png</url>
       <link>https://l0x1c.com/images/papermod-cover.png</link>
     </image>
     <generator>Hugo -- 0.120.4</generator>
-    <language>en</language>
+    <language>fa</language>
     <copyright>PaperMod Contributors</copyright>
-    <atom:link href="https://l0x1c.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://l0x1c.com/fa/facategories/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>
