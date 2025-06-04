@@ -12,8 +12,15 @@
     <generator>Hugo -- 0.120.4</generator>
     <language>en</language>
     <copyright>PaperMod Contributors</copyright>
-    <lastBuildDate>Tue, 27 May 2025 18:49:02 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 01 Jun 2025 17:25:09 +0800</lastBuildDate>
     <atom:link href="https://l0x1c.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>D3CTF-WriteUp</title>
+      <link>https://l0x1c.com/posts/d3ctf_writeup/</link>
+      <pubDate>Sun, 01 Jun 2025 17:25:09 +0800</pubDate>
+      <guid>https://l0x1c.com/posts/d3ctf_writeup/</guid>
+      <description>locked-door 加的是vmp的壳子, 需要调试的话直接用TitanHide - &amp;gt; https://github.com/mrexodia/TitanHide就可以调试起来, download后自行加个签名即可</description>
+    </item>
     <item>
       <title>关于CmRegisterCallback的检测/windows进程隐藏的问题</title>
       <link>https://l0x1c.com/posts/dg-pass_anti%E5%88%86%E6%9E%90/</link>
@@ -29,13 +36,6 @@ CmRegisterCallback 直接开始分析一下这个东西具体都干什么了吧,
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>https://l0x1c.com/about/</guid>
       <description>About Profile ctfer@W&amp;amp;M (Intern) Feiyu Security (2020.8 ~2020.9) (Intern) Virus Analysis Engineer@sangfor (2020.9 ~ 2021.5) Security Enginner@QiAnXin (2021.7 ~ 2024.1) Anti-cheat Engineer@Tencent GameSecurity Interest Cybersecurity Binary Play Game Contact L0x1c3r (at) gmail (dot) com</description>
-    </item>
-    <item>
-      <title></title>
-      <link>https://l0x1c.com/posts/d3ctf_writeup/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://l0x1c.com/posts/d3ctf_writeup/</guid>
-      <description></description>
     </item>
   </channel>
 </rss>
