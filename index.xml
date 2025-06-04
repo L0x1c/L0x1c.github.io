@@ -15,11 +15,13 @@
     <lastBuildDate>Tue, 27 May 2025 18:49:02 +0800</lastBuildDate>
     <atom:link href="https://l0x1c.com/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>First_blog</title>
-      <link>https://l0x1c.com/posts/first_blog/</link>
+      <title>关于CmRegisterCallback的检测/windows进程隐藏的问题</title>
+      <link>https://l0x1c.com/posts/dg-pass_anti%E5%88%86%E6%9E%90/</link>
       <pubDate>Tue, 27 May 2025 18:49:02 +0800</pubDate>
-      <guid>https://l0x1c.com/posts/first_blog/</guid>
-      <description>This is my first blog </description>
+      <guid>https://l0x1c.com/posts/dg-pass_anti%E5%88%86%E6%9E%90/</guid>
+      <description>初步分析 分析到一个E语言的外挂, 但是说的是过检测的外挂, 分析一下, 直接ida一把梭大概看到有用的信息, 内部测试3-A.exe explorer.exe 打开外挂后看到的功能大概有这几个, 加载过检, 开始过检, 伪装进程, 隐藏进程这几个, 大概就能猜到肯定用到了驱动 跑起来后, 第一个功能是开始过检测, 发现修改了R3层的应用层访问的状态为拒绝 直接打开process explorer, 可以发现进程的Protection属性变成了PsProtectedSignerWinTcb-Light, 这里的保护和今年的腾讯游戏安全初赛的那个是一样的PPL 直接windbg看一下进程的EPROCESS结构, 可以看到Protection为0x61 -&amp;gt; 0110 0001b, 可以看到修改的为PsProtectedTypeProtectedLight,PsProtectedSignerWinTcb
+//进程保护类型 typedef enum _PS_PROTECTED_TYPE { PsProtectedTypeNone = 0, PsProtectedTypeProtectedLight = 1, PsProtectedTypeProtected = 2 } PS_PROTECTED_TYPE, *PPS_PROTECTED_TYPE; //Audit 审计标志（很少使用） //Signer 签名了进程 typedef enum _PS_PROTECTED_SIGNER { PsProtectedSignerNone = 0, PsProtectedSignerAuthenticode, PsProtectedSignerCodeGen, PsProtectedSignerAntimalware, PsProtectedSignerLsa, PsProtectedSignerWindows, PsProtectedSignerWinTcb, PsProtectedSignerWinSystem, PsProtectedSignerApp, PsProtectedSignerMax } PS_PROTECTED_SIGNER, *PPS_PROTECTED_SIGNER; 直接把这个位置修改为0即可
+CmRegisterCallback 直接开始分析一下这个东西具体都干什么了吧, 可以打开了解到这个是一个E语言的东西, 并且他一定是有一个通信码在和什么东西通信的, 因为有一个点击事件, 直接ida开始分析, 打开后直接可以看到了一个地址，R3反正也是通信做的, 大部分功能应该是在驱动里，直接去驱动分析看一下 发现直接download可以的, 发现这个东西在疯狂套娃, ExAllocatePoolWithTag后创建一个系统线程, 线程的入口点就是申请的内存的位置, 由这个sys中藏的一个PE的oep的位置开始执行 直接双机调试开始搞一下, 还是老地方ioploaddriver, 直接下断释放的函数可以看到这个位置是一个PE 在StartRoutine下断看一下主要在做什么 经过分析后, 可以分析到它通过设置CmRegisterCallback注册表回调, 把代码放在这里开始执行用于隐藏自己的驱动代码 分析BE的时候发现实际上是有对这种情况进行检测的, BE中分别对进程线程回调, 以及注册表回调判断回调函数的其实位置是不是被hook, 是不是jmp reg的跳转来判断是不是有问题 直接打开BE逆向发现他取了CmUnRegisterCallback的特征, 因为这里存有相应的表, 里面存放了相对的地址和cookie</description>
     </item>
     <item>
       <title></title>
@@ -27,6 +29,13 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>https://l0x1c.com/about/</guid>
       <description>About Profile ctfer@W&amp;amp;M (Intern) Feiyu Security (2020.8 ~2020.9) (Intern) Virus Analysis Engineer@sangfor (2020.9 ~ 2021.5) Security Enginner@QiAnXin (2021.7 ~ 2024.1) Anti-cheat Engineer@Tencent GameSecurity Interest Cybersecurity Binary Play Game Contact L0x1c3r (at) gmail (dot) com</description>
+    </item>
+    <item>
+      <title></title>
+      <link>https://l0x1c.com/posts/d3ctf_writeup/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://l0x1c.com/posts/d3ctf_writeup/</guid>
+      <description></description>
     </item>
   </channel>
 </rss>
