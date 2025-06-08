@@ -191,9 +191,10 @@
     </h2>
   </header>
   <div class="entry-content">
-    <p>locked-door 加的是vmp的壳子, 需要调试的话直接用TitanHide - &gt; https://github.com/mrexodia/TitanHide就可以调试起来, download后自行加个签名即可</p>
+    <p>很久没打ctf了, 正好碰见周末有一点空, 就看了一下d3ctf和windows相关的题目
+locked-door 加的是vmp的壳子, 需要调试的话直接用TitanHide - &gt; https://github.com/mrexodia/TitanHide就可以调试起来, download后自行加个签名即可, 发现题目有两个bin文件, 直接可以得到的思路是先dump, 因为一定要读取文件一定会调用readfile, 所以可以根据回溯找到关键位置进行调试 通过readfile回溯已经找到了关键位置, 然后用过函数特征入口点来dump, 正常编程的也就那几个软件, 这个问题在之前我发过看雪的文章可以看一下, 可以看到这里很像入口点了, 看一个正常vs编译出来的程序 比较后可以看很像入口点的位置, 直接dump设置oep, 这样dump后的逻辑就很清晰了 可以看到一个算法, 本身程序对他们的校验的算法是一样的 加密完的数据进行evp的校验 校验过了后才可以走到正确的流程, 参数是key&#43;加密的bin里的data, 那直接替换一下, 就可以得到flag了 d3rpg-revenge 这是一个游戏, 正好我是一个游戏安全的从业者, 直接打开ce开始干, 进入一个房间后, 他让我输入密码, 那么可以对密码的位置进行访问断点, 可以看到可以被很好的断下来 d3rpg.dll&#43;50DEA这里的地址, 这个字符串很可疑, 去搜一下 module Scene_RPG class Secret_Class DELTA = | (($de1ta &#43; 1) * 0xf0000000) def initialize(new_key) @key = str_to_longs(new_key) if @key.length &lt; 4 @key.length.upto(4) { |i| @key[i] = 0 } end end def self....</p>
   </div>
-  <footer class="entry-footer"><span title='2025-06-01 17:25:09 +0800 +0800'>June 1, 2025</span>&nbsp;·&nbsp;1 min&nbsp;·&nbsp;L0x1c</footer>
+  <footer class="entry-footer"><span title='2025-06-01 17:25:09 +0800 +0800'>June 1, 2025</span>&nbsp;·&nbsp;2 min&nbsp;·&nbsp;L0x1c</footer>
   <a class="entry-link" aria-label="post link to D3CTF-WriteUp" href="https://l0x1c.com/posts/d3ctf_writeup/"></a>
 </article>
 
