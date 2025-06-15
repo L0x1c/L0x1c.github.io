@@ -164,6 +164,46 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">内存管理
+      <span class="entry-hint" title="Draft">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" fill="currentColor">
+          <path
+            d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+        </svg>
+      </span>
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>VAD_私有内存 像malloc, virtualalloc申请的内存都是私有内存, MapViewofFile, MapViewOfSize, mdl, 这种是映射的内存
+这些内存是由一个叫做vadroot的节点来管理的, 可以看一下这个位置 这里如果后续想获取到这个位置的话, 因为每个版本的偏移可能不一样, 可以通过函数PsGetProcessExitStatus来获取对应的偏移 &#43; 4就是vadRoot win10上的结构
+&#43;0x658 VadRoot : _RTL_AVL_TREE &#43;0x660 VadHint : 0xffff900f`4bf43e10 Void &#43;0x668 VadCount : 0xde VadRoot: _RTL_AVL_TREE 里面就是代表了二叉搜索树的节点, 而里面的每个节点的结构都是__MMVAD的结构, VadHint多次查询的节点会放在这里, VadCount代表vad节点的个数
+kd&gt; dt _RTL_AVL_TREE ffff900f4c129400&#43;0x658 nt!_RTL_AVL_TREE &#43;0x000 Root : 0xffff900f`4bf44810 _RTL_BALANCED_NODE kd&gt; dt 0xffff900f`4bf44810 _RTL_BALANCED_NODE nt!_RTL_BALANCED_NODE &#43;0x000 Children : [2] 0xffff900f`4b1dcb10 _RTL_BALANCED_NODE &#43;0x000 Left : 0xffff900f`4b1dcb10 _RTL_BALANCED_NODE &#43;0x008 Right : 0xffff900f`4bfe65c0 _RTL_BALANCED_NODE &#43;0x010 Red : 0y0 &#43;0x010 Balance : 0y00 &#43;0x010 ParentValue : 0 !...</p>
+  </div>
+  <footer class="entry-footer"><span title='2025-06-09 22:32:09 +0800 +0800'>June 9, 2025</span>&nbsp;·&nbsp;5 min&nbsp;·&nbsp;L0x1c</footer>
+  <a class="entry-link" aria-label="post link to 内存管理" href="https://l0x1c.com/posts/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">minifilter
+      <span class="entry-hint" title="Draft">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" fill="currentColor">
+          <path
+            d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+        </svg>
+      </span>
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>这周主要看了一下minifilter的东西, 网吧, 杀软, 反作弊都会相应的用到这个
+minifilter_Nt启动 </p>
+  </div>
+  <footer class="entry-footer"><span title='2025-06-08 19:55:11 +0800 +0800'>June 8, 2025</span>&nbsp;·&nbsp;1 min&nbsp;·&nbsp;L0x1c</footer>
+  <a class="entry-link" aria-label="post link to minifilter" href="https://l0x1c.com/posts/minifilter/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">D3CTF-WriteUp
       <span class="entry-hint" title="Draft">
         <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" fill="currentColor">

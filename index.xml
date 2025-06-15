@@ -12,8 +12,26 @@
     <generator>Hugo -- 0.120.4</generator>
     <language>en</language>
     <copyright>PaperMod Contributors</copyright>
-    <lastBuildDate>Sun, 01 Jun 2025 17:25:09 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 09 Jun 2025 22:32:09 +0800</lastBuildDate>
     <atom:link href="https://l0x1c.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>内存管理</title>
+      <link>https://l0x1c.com/posts/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</link>
+      <pubDate>Mon, 09 Jun 2025 22:32:09 +0800</pubDate>
+      <guid>https://l0x1c.com/posts/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</guid>
+      <description>VAD_私有内存 像malloc, virtualalloc申请的内存都是私有内存, MapViewofFile, MapViewOfSize, mdl, 这种是映射的内存
+这些内存是由一个叫做vadroot的节点来管理的, 可以看一下这个位置 这里如果后续想获取到这个位置的话, 因为每个版本的偏移可能不一样, 可以通过函数PsGetProcessExitStatus来获取对应的偏移 + 4就是vadRoot win10上的结构
++0x658 VadRoot : _RTL_AVL_TREE +0x660 VadHint : 0xffff900f`4bf43e10 Void +0x668 VadCount : 0xde VadRoot: _RTL_AVL_TREE 里面就是代表了二叉搜索树的节点, 而里面的每个节点的结构都是__MMVAD的结构, VadHint多次查询的节点会放在这里, VadCount代表vad节点的个数
+kd&amp;gt; dt _RTL_AVL_TREE ffff900f4c129400+0x658 nt!_RTL_AVL_TREE +0x000 Root : 0xffff900f`4bf44810 _RTL_BALANCED_NODE kd&amp;gt; dt 0xffff900f`4bf44810 _RTL_BALANCED_NODE nt!_RTL_BALANCED_NODE +0x000 Children : [2] 0xffff900f`4b1dcb10 _RTL_BALANCED_NODE +0x000 Left : 0xffff900f`4b1dcb10 _RTL_BALANCED_NODE +0x008 Right : 0xffff900f`4bfe65c0 _RTL_BALANCED_NODE +0x010 Red : 0y0 +0x010 Balance : 0y00 +0x010 ParentValue : 0 !</description>
+    </item>
+    <item>
+      <title>minifilter</title>
+      <link>https://l0x1c.com/posts/minifilter/</link>
+      <pubDate>Sun, 08 Jun 2025 19:55:11 +0800</pubDate>
+      <guid>https://l0x1c.com/posts/minifilter/</guid>
+      <description>这周主要看了一下minifilter的东西, 网吧, 杀软, 反作弊都会相应的用到这个
+minifilter_Nt启动 </description>
+    </item>
     <item>
       <title>D3CTF-WriteUp</title>
       <link>https://l0x1c.com/posts/d3ctf_writeup/</link>
