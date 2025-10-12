@@ -12,8 +12,21 @@
     <generator>Hugo -- 0.120.4</generator>
     <language>en</language>
     <copyright>PaperMod Contributors</copyright>
-    <lastBuildDate>Sun, 12 Oct 2025 00:59:09 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 12 Oct 2025 19:54:10 +0800</lastBuildDate>
     <atom:link href="https://l0x1c.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>xv6 环境配置</title>
+      <link>https://l0x1c.com/posts/xv6-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</link>
+      <pubDate>Sun, 12 Oct 2025 19:54:10 +0800</pubDate>
+      <guid>https://l0x1c.com/posts/xv6-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</guid>
+      <description>xv6 环境配置问题 配置的地址: https://pdos.csail.mit.edu/6.828/2020/tools.html 准备的系统： vmware + ubuntu
+mit的实验代码:
+git clone git://g.csail.mit.edu/xv6-labs-2020 git checkout util 这边遇见的坑大概网上都有解答，唯一的一个位置是，如果出现 user/sh.c:58:1: error 的问题修改代码
+加入__attribute__((noreturn)) 即可，后面直接目录下make qemu就可以启动了
+配置gdb调试也有点繁琐，主要就是在这个目录下进行 make qemu-gdb，新开一个窗口，那个窗口运行 gdb
+举个例子用sleep
+这样就可以调试了，具体的一些命令可以看：https://pdos.csail.mit.edu/6.828/2019/lec/gdb_slides.pdf https://xv6.dgs.zone/tranlate_books/Use%20GUN%20Debugger.html</description>
+    </item>
     <item>
       <title>Arm 汇编学习</title>
       <link>https://l0x1c.com/posts/arm-%E6%B1%87%E7%BC%96/</link>

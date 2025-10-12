@@ -164,6 +164,30 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">xv6 环境配置
+      <span class="entry-hint" title="Draft">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" fill="currentColor">
+          <path
+            d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+        </svg>
+      </span>
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>xv6 环境配置问题 配置的地址: https://pdos.csail.mit.edu/6.828/2020/tools.html 准备的系统： vmware &#43; ubuntu
+mit的实验代码:
+git clone git://g.csail.mit.edu/xv6-labs-2020 git checkout util 这边遇见的坑大概网上都有解答，唯一的一个位置是，如果出现 user/sh.c:58:1: error 的问题修改代码
+加入__attribute__((noreturn)) 即可，后面直接目录下make qemu就可以启动了
+配置gdb调试也有点繁琐，主要就是在这个目录下进行 make qemu-gdb，新开一个窗口，那个窗口运行 gdb
+举个例子用sleep
+这样就可以调试了，具体的一些命令可以看：https://pdos.csail.mit.edu/6.828/2019/lec/gdb_slides.pdf https://xv6.dgs.zone/tranlate_books/Use%20GUN%20Debugger.html</p>
+  </div>
+  <footer class="entry-footer"><span title='2025-10-12 19:54:10 +0800 +0800'>October 12, 2025</span>&nbsp;·&nbsp;1 min&nbsp;·&nbsp;L0x1c</footer>
+  <a class="entry-link" aria-label="post link to xv6 环境配置" href="https://l0x1c.com/posts/xv6-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">Arm 汇编学习
       <span class="entry-hint" title="Draft">
         <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" fill="currentColor">
