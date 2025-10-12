@@ -12,8 +12,17 @@
     <generator>Hugo -- 0.120.4</generator>
     <language>en</language>
     <copyright>PaperMod Contributors</copyright>
-    <lastBuildDate>Mon, 09 Jun 2025 22:32:09 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 12 Oct 2025 00:59:09 +0800</lastBuildDate>
     <atom:link href="https://l0x1c.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Arm 汇编学习</title>
+      <link>https://l0x1c.com/posts/arm-%E6%B1%87%E7%BC%96/</link>
+      <pubDate>Sun, 12 Oct 2025 00:59:09 +0800</pubDate>
+      <guid>https://l0x1c.com/posts/arm-%E6%B1%87%E7%BC%96/</guid>
+      <description>ARM 汇编 由于开始好好的接触安卓这些东西，所以还是决定把所有的东西从头到尾的好好学习一下，也是开始记录生活的一种方式吧
+主要的学习流程大概这两个：
+看一下周壑老师的视频 辅助一下利用 https://azeria-labs.com/ 这个网站上的lab进行学习 ARM 汇编介绍 &amp;amp; 环境搭建 环境需要：Android studio （ 模拟器，ndk交叉编译环境，adb工具 ） ida（ 远程调试 ），keypatch 插件</description>
+    </item>
     <item>
       <title>内存管理</title>
       <link>https://l0x1c.com/posts/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</link>
