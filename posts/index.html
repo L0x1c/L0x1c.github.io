@@ -174,15 +174,19 @@
     </h2>
   </header>
   <div class="entry-content">
-    <p>xv6 环境配置问题 配置的地址: https://pdos.csail.mit.edu/6.828/2020/tools.html 准备的系统： vmware &#43; ubuntu
-mit的实验代码:
+    <p>xv6 环境配置问题 ( vmare or docker ) 配置的地址: https://pdos.csail.mit.edu/6.828/2020/tools.html 准备的系统： vmware &#43; ubuntu
+vmare mit的实验代码:
 git clone git://g.csail.mit.edu/xv6-labs-2020 git checkout util 这边遇见的坑大概网上都有解答，唯一的一个位置是，如果出现 user/sh.c:58:1: error 的问题修改代码
 加入__attribute__((noreturn)) 即可，后面直接目录下make qemu就可以启动了
 配置gdb调试也有点繁琐，主要就是在这个目录下进行 make qemu-gdb，新开一个窗口，那个窗口运行 gdb
 举个例子用sleep
-这样就可以调试了，具体的一些命令可以看：https://pdos.csail.mit.edu/6.828/2019/lec/gdb_slides.pdf https://xv6.dgs.zone/tranlate_books/Use%20GUN%20Debugger.html</p>
+这样就可以调试了，具体的一些命令可以看：https://pdos.csail.mit.edu/6.828/2019/lec/gdb_slides.pdf https://xv6.dgs.zone/tranlate_books/Use%20GUN%20Debugger.html
+docker 因为后面准备看csapp lab的适合还是得用到docker去配置环境，所以索性就直接学一下，后面就可以直接用了
+直接网上下载docker就可以
+docker pull ubuntu docker run -i -t -w /root --name ubuntu ubuntu bash # 连接ubuntu系统 docker start -i ubuntu apt-get update apt-get install vim 需要换个源
+vim /etc/apt/source.list #替换 deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse deb http://mirrors....</p>
   </div>
-  <footer class="entry-footer"><span title='2025-10-12 19:54:10 +0800 +0800'>October 12, 2025</span>&nbsp;·&nbsp;1 min&nbsp;·&nbsp;L0x1c</footer>
+  <footer class="entry-footer"><span title='2025-10-12 19:54:10 +0800 +0800'>October 12, 2025</span>&nbsp;·&nbsp;2 min&nbsp;·&nbsp;L0x1c</footer>
   <a class="entry-link" aria-label="post link to xv6 环境配置" href="https://l0x1c.com/posts/xv6-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/"></a>
 </article>
 

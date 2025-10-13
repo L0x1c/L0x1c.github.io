@@ -7,13 +7,17 @@
 <meta name="robots" content="index, follow">
 <title>xv6 环境配置 | L0x1c&#39;s Blog</title>
 <meta name="keywords" content="">
-<meta name="description" content="xv6 环境配置问题 配置的地址: https://pdos.csail.mit.edu/6.828/2020/tools.html 准备的系统： vmware &#43; ubuntu
-mit的实验代码:
+<meta name="description" content="xv6 环境配置问题 ( vmare or docker ) 配置的地址: https://pdos.csail.mit.edu/6.828/2020/tools.html 准备的系统： vmware &#43; ubuntu
+vmare mit的实验代码:
 git clone git://g.csail.mit.edu/xv6-labs-2020 git checkout util 这边遇见的坑大概网上都有解答，唯一的一个位置是，如果出现 user/sh.c:58:1: error 的问题修改代码
 加入__attribute__((noreturn)) 即可，后面直接目录下make qemu就可以启动了
 配置gdb调试也有点繁琐，主要就是在这个目录下进行 make qemu-gdb，新开一个窗口，那个窗口运行 gdb
 举个例子用sleep
-这样就可以调试了，具体的一些命令可以看：https://pdos.csail.mit.edu/6.828/2019/lec/gdb_slides.pdf https://xv6.dgs.zone/tranlate_books/Use%20GUN%20Debugger.html">
+这样就可以调试了，具体的一些命令可以看：https://pdos.csail.mit.edu/6.828/2019/lec/gdb_slides.pdf https://xv6.dgs.zone/tranlate_books/Use%20GUN%20Debugger.html
+docker 因为后面准备看csapp lab的适合还是得用到docker去配置环境，所以索性就直接学一下，后面就可以直接用了
+直接网上下载docker就可以
+docker pull ubuntu docker run -i -t -w /root --name ubuntu ubuntu bash # 连接ubuntu系统 docker start -i ubuntu apt-get update apt-get install vim 需要换个源
+vim /etc/apt/source.list #替换 deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse deb http://mirrors.">
 <meta name="author" content="L0x1c">
 <link rel="canonical" href="https://l0x1c.com/posts/xv6-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.fc220c15db4aef0318bbf30adc45d33d4d7c88deff3238b23eb255afdc472ca6.css" integrity="sha256-/CIMFdtK7wMYu/MK3EXTPU18iN7/MjiyPrJVr9xHLKY=" rel="preload stylesheet" as="style">
@@ -61,13 +65,17 @@ git clone git://g.csail.mit.edu/xv6-labs-2020 git checkout util 这边遇见的�
 
     </style>
 </noscript><meta property="og:title" content="xv6 环境配置" />
-<meta property="og:description" content="xv6 环境配置问题 配置的地址: https://pdos.csail.mit.edu/6.828/2020/tools.html 准备的系统： vmware &#43; ubuntu
-mit的实验代码:
+<meta property="og:description" content="xv6 环境配置问题 ( vmare or docker ) 配置的地址: https://pdos.csail.mit.edu/6.828/2020/tools.html 准备的系统： vmware &#43; ubuntu
+vmare mit的实验代码:
 git clone git://g.csail.mit.edu/xv6-labs-2020 git checkout util 这边遇见的坑大概网上都有解答，唯一的一个位置是，如果出现 user/sh.c:58:1: error 的问题修改代码
 加入__attribute__((noreturn)) 即可，后面直接目录下make qemu就可以启动了
 配置gdb调试也有点繁琐，主要就是在这个目录下进行 make qemu-gdb，新开一个窗口，那个窗口运行 gdb
 举个例子用sleep
-这样就可以调试了，具体的一些命令可以看：https://pdos.csail.mit.edu/6.828/2019/lec/gdb_slides.pdf https://xv6.dgs.zone/tranlate_books/Use%20GUN%20Debugger.html" />
+这样就可以调试了，具体的一些命令可以看：https://pdos.csail.mit.edu/6.828/2019/lec/gdb_slides.pdf https://xv6.dgs.zone/tranlate_books/Use%20GUN%20Debugger.html
+docker 因为后面准备看csapp lab的适合还是得用到docker去配置环境，所以索性就直接学一下，后面就可以直接用了
+直接网上下载docker就可以
+docker pull ubuntu docker run -i -t -w /root --name ubuntu ubuntu bash # 连接ubuntu系统 docker start -i ubuntu apt-get update apt-get install vim 需要换个源
+vim /etc/apt/source.list #替换 deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse deb http://mirrors." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://l0x1c.com/posts/xv6-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" />
 <meta property="og:image" content="https://l0x1c.com/images/papermod-cover.png" />
@@ -78,13 +86,17 @@ git clone git://g.csail.mit.edu/xv6-labs-2020 git checkout util 这边遇见的�
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:image" content="https://l0x1c.com/images/papermod-cover.png" />
 <meta name="twitter:title" content="xv6 环境配置"/>
-<meta name="twitter:description" content="xv6 环境配置问题 配置的地址: https://pdos.csail.mit.edu/6.828/2020/tools.html 准备的系统： vmware &#43; ubuntu
-mit的实验代码:
+<meta name="twitter:description" content="xv6 环境配置问题 ( vmare or docker ) 配置的地址: https://pdos.csail.mit.edu/6.828/2020/tools.html 准备的系统： vmware &#43; ubuntu
+vmare mit的实验代码:
 git clone git://g.csail.mit.edu/xv6-labs-2020 git checkout util 这边遇见的坑大概网上都有解答，唯一的一个位置是，如果出现 user/sh.c:58:1: error 的问题修改代码
 加入__attribute__((noreturn)) 即可，后面直接目录下make qemu就可以启动了
 配置gdb调试也有点繁琐，主要就是在这个目录下进行 make qemu-gdb，新开一个窗口，那个窗口运行 gdb
 举个例子用sleep
-这样就可以调试了，具体的一些命令可以看：https://pdos.csail.mit.edu/6.828/2019/lec/gdb_slides.pdf https://xv6.dgs.zone/tranlate_books/Use%20GUN%20Debugger.html"/>
+这样就可以调试了，具体的一些命令可以看：https://pdos.csail.mit.edu/6.828/2019/lec/gdb_slides.pdf https://xv6.dgs.zone/tranlate_books/Use%20GUN%20Debugger.html
+docker 因为后面准备看csapp lab的适合还是得用到docker去配置环境，所以索性就直接学一下，后面就可以直接用了
+直接网上下载docker就可以
+docker pull ubuntu docker run -i -t -w /root --name ubuntu ubuntu bash # 连接ubuntu系统 docker start -i ubuntu apt-get update apt-get install vim 需要换个源
+vim /etc/apt/source.list #替换 deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse deb http://mirrors."/>
 
 
 <script type="application/ld+json">
@@ -113,12 +125,12 @@ git clone git://g.csail.mit.edu/xv6-labs-2020 git checkout util 这边遇见的�
   "@type": "BlogPosting",
   "headline": "xv6 环境配置",
   "name": "xv6 环境配置",
-  "description": "xv6 环境配置问题 配置的地址: https://pdos.csail.mit.edu/6.828/2020/tools.html 准备的系统： vmware + ubuntu\nmit的实验代码:\ngit clone git://g.csail.mit.edu/xv6-labs-2020 git checkout util 这边遇见的坑大概网上都有解答，唯一的一个位置是，如果出现 user/sh.c:58:1: error 的问题修改代码\n加入__attribute__((noreturn)) 即可，后面直接目录下make qemu就可以启动了\n配置gdb调试也有点繁琐，主要就是在这个目录下进行 make qemu-gdb，新开一个窗口，那个窗口运行 gdb\n举个例子用sleep\n这样就可以调试了，具体的一些命令可以看：https://pdos.csail.mit.edu/6.828/2019/lec/gdb_slides.pdf https://xv6.dgs.zone/tranlate_books/Use%20GUN%20Debugger.html",
+  "description": "xv6 环境配置问题 ( vmare or docker ) 配置的地址: https://pdos.csail.mit.edu/6.828/2020/tools.html 准备的系统： vmware + ubuntu\nvmare mit的实验代码:\ngit clone git://g.csail.mit.edu/xv6-labs-2020 git checkout util 这边遇见的坑大概网上都有解答，唯一的一个位置是，如果出现 user/sh.c:58:1: error 的问题修改代码\n加入__attribute__((noreturn)) 即可，后面直接目录下make qemu就可以启动了\n配置gdb调试也有点繁琐，主要就是在这个目录下进行 make qemu-gdb，新开一个窗口，那个窗口运行 gdb\n举个例子用sleep\n这样就可以调试了，具体的一些命令可以看：https://pdos.csail.mit.edu/6.828/2019/lec/gdb_slides.pdf https://xv6.dgs.zone/tranlate_books/Use%20GUN%20Debugger.html\ndocker 因为后面准备看csapp lab的适合还是得用到docker去配置环境，所以索性就直接学一下，后面就可以直接用了\n直接网上下载docker就可以\ndocker pull ubuntu docker run -i -t -w /root --name ubuntu ubuntu bash # 连接ubuntu系统 docker start -i ubuntu apt-get update apt-get install vim 需要换个源\nvim /etc/apt/source.list #替换 deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse deb http://mirrors.",
   "keywords": [
     
   ],
-  "articleBody": "xv6 环境配置问题 配置的地址: https://pdos.csail.mit.edu/6.828/2020/tools.html 准备的系统： vmware + ubuntu\nmit的实验代码:\ngit clone git://g.csail.mit.edu/xv6-labs-2020 git checkout util 这边遇见的坑大概网上都有解答，唯一的一个位置是，如果出现 user/sh.c:58:1: error 的问题修改代码\n加入__attribute__((noreturn)) 即可，后面直接目录下make qemu就可以启动了\n配置gdb调试也有点繁琐，主要就是在这个目录下进行 make qemu-gdb，新开一个窗口，那个窗口运行 gdb\n举个例子用sleep\n这样就可以调试了，具体的一些命令可以看：https://pdos.csail.mit.edu/6.828/2019/lec/gdb_slides.pdf https://xv6.dgs.zone/tranlate_books/Use%20GUN%20Debugger.html\n",
-  "wordCount" : "29",
+  "articleBody": "xv6 环境配置问题 ( vmare or docker ) 配置的地址: https://pdos.csail.mit.edu/6.828/2020/tools.html 准备的系统： vmware + ubuntu\nvmare mit的实验代码:\ngit clone git://g.csail.mit.edu/xv6-labs-2020 git checkout util 这边遇见的坑大概网上都有解答，唯一的一个位置是，如果出现 user/sh.c:58:1: error 的问题修改代码\n加入__attribute__((noreturn)) 即可，后面直接目录下make qemu就可以启动了\n配置gdb调试也有点繁琐，主要就是在这个目录下进行 make qemu-gdb，新开一个窗口，那个窗口运行 gdb\n举个例子用sleep\n这样就可以调试了，具体的一些命令可以看：https://pdos.csail.mit.edu/6.828/2019/lec/gdb_slides.pdf https://xv6.dgs.zone/tranlate_books/Use%20GUN%20Debugger.html\ndocker 因为后面准备看csapp lab的适合还是得用到docker去配置环境，所以索性就直接学一下，后面就可以直接用了\n直接网上下载docker就可以\ndocker pull ubuntu docker run -i -t -w /root --name ubuntu ubuntu bash # 连接ubuntu系统 docker start -i ubuntu apt-get update apt-get install vim 需要换个源\nvim /etc/apt/source.list #替换 deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse deb http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse deb http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse deb http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse deb http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse deb-src http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse deb-src http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse deb-src http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse 按照mit上面给的文档安装就行\nsudo apt-get install git build-essential gdb-multiarch qemu-system-misc gcc-riscv64-linux-gnu binutils-riscv64-linux-gnu git clone git://g.csail.mit.edu/xv6-labs-2025 cd xv6-labs-2025 git checkout util make qemu 就可以安装成功了 需要配置一下ssh，后面和vscode联动的用的\n目录下创建一个makefile conn-docker: ssh -t root@localhost -p 20000 \"cd xv6-labs-2025; bash\" 配置ssh\napt-get install openssh-server vim /etc/ssh/sshd_config PermitRootLogin yes # 可以登录 root 用户 PubkeyAuthentication yes # 可以使用 ssh 公钥许可 AuthorizedKeysFile .ssh/authorized_keys # 公钥信息保存到文件 .ssh/authorized_keys 中 /etc/init.d/ssh restart 添加主机的 ssh 公钥\ndocker的ubuntu下 mkdir ~/.ssh touch ~/.ssh/authorized_keys mac下 ssh-keygen -t rsa cat id_rsa.pub 再把id_rsa.pub 的内容复制到 authorized_keys中 提交修改到镜像\ndocker ps -a docker commit -m 'add ssh' -a 'L0x1c' eacf5681c653 xv6-ssh docker image ls docker rm {没用的那个docker容器} 最终的docker容器\ndocker run -d -p 20000:22 --name xv6-lab xv6-ssh /usr/sbin/sshd -D 对应的vscode的配置就好很多了，安装ssh的那个插件配置一下就行\n就可以安心的改代码，看代码了\n进行gdb调试\ngdb-multiarch kernel/kernel # (gdb) 进入gdb后执行 set confirm off set architecture riscv:rv64 target remote localhost:25000 set riscv use-compressed-breakpoints yes 保存镜像到本地\ndocker export -o xv6-lab.rar xv6-labs ",
+  "wordCount" : "269",
   "inLanguage": "en",
   "image": "https://l0x1c.com/images/papermod-cover.png","datePublished": "2025-10-12T19:54:10+08:00",
   "dateModified": "2025-10-12T19:54:10+08:00",
@@ -219,7 +231,7 @@ git clone git://g.csail.mit.edu/xv6-labs-2020 git checkout util 这边遇见的�
         </svg>
       </span>
     </h1>
-    <div class="post-meta"><span title='2025-10-12 19:54:10 +0800 +0800'>October 12, 2025</span>&nbsp;·&nbsp;1 min&nbsp;·&nbsp;L0x1c
+    <div class="post-meta"><span title='2025-10-12 19:54:10 +0800 +0800'>October 12, 2025</span>&nbsp;·&nbsp;2 min&nbsp;·&nbsp;L0x1c
 
 </div>
   </header> <div class="toc">
@@ -230,16 +242,23 @@ git clone git://g.csail.mit.edu/xv6-labs-2020 git checkout util 这边遇见的�
 
         <div class="inner"><ul>
                 <li>
-                    <a href="#xv6-%e7%8e%af%e5%a2%83%e9%85%8d%e7%bd%ae%e9%97%ae%e9%a2%98" aria-label="xv6 环境配置问题">xv6 环境配置问题</a>
+                    <a href="#xv6-%e7%8e%af%e5%a2%83%e9%85%8d%e7%bd%ae%e9%97%ae%e9%a2%98--vmare-or-docker-" aria-label="xv6 环境配置问题 ( vmare or docker )">xv6 环境配置问题 ( vmare or docker )</a><ul>
+                        
+                <li>
+                    <a href="#vmare" aria-label="vmare">vmare</a></li></ul>
+                </li>
+                <li>
+                    <a href="#docker" aria-label="docker">docker</a>
                 </li>
             </ul>
         </div>
     </details>
 </div>
 
-  <div class="post-content"><h1 id="xv6-环境配置问题">xv6 环境配置问题<a hidden class="anchor" aria-hidden="true" href="#xv6-环境配置问题">#</a></h1>
+  <div class="post-content"><h1 id="xv6-环境配置问题--vmare-or-docker-">xv6 环境配置问题 ( vmare or docker )<a hidden class="anchor" aria-hidden="true" href="#xv6-环境配置问题--vmare-or-docker-">#</a></h1>
 <p>配置的地址: <a href="https://pdos.csail.mit.edu/6.828/2020/tools.html">https://pdos.csail.mit.edu/6.828/2020/tools.html</a>
 准备的系统： vmware + ubuntu</p>
+<h2 id="vmare">vmare<a hidden class="anchor" aria-hidden="true" href="#vmare">#</a></h2>
 <p>mit的实验代码:</p>
 <pre tabindex="0"><code>git clone git://g.csail.mit.edu/xv6-labs-2020
 git checkout util
@@ -257,7 +276,95 @@ git checkout util
 </p>
 <p>这样就可以调试了，具体的一些命令可以看：https://pdos.csail.mit.edu/6.828/2019/lec/gdb_slides.pdf
 <a href="https://xv6.dgs.zone/tranlate_books/Use%20GUN%20Debugger.html">https://xv6.dgs.zone/tranlate_books/Use%20GUN%20Debugger.html</a></p>
+<h1 id="docker">docker<a hidden class="anchor" aria-hidden="true" href="#docker">#</a></h1>
+<p>因为后面准备看csapp lab的适合还是得用到docker去配置环境，所以索性就直接学一下，后面就可以直接用了</p>
+<p>直接网上下载docker就可以</p>
+<pre tabindex="0"><code>docker pull ubuntu
+docker run -i -t -w /root --name ubuntu ubuntu bash
 
+# 连接ubuntu系统
+docker start -i ubuntu
+
+apt-get update
+apt-get install vim
+</code></pre><p>需要换个源</p>
+<pre tabindex="0"><code>vim /etc/apt/source.list
+
+#替换
+
+deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse 
+</code></pre><p>按照mit上面给的文档安装就行</p>
+<pre tabindex="0"><code>sudo apt-get install git build-essential gdb-multiarch qemu-system-misc gcc-riscv64-linux-gnu binutils-riscv64-linux-gnu 
+
+git clone git://g.csail.mit.edu/xv6-labs-2025
+cd xv6-labs-2025
+git checkout util
+make qemu
+</code></pre><p>就可以安装成功了
+<img loading="lazy" src="image-4.png" alt="alt text"  />
+</p>
+<p>需要配置一下ssh，后面和vscode联动的用的</p>
+<pre tabindex="0"><code>目录下创建一个makefile
+
+conn-docker:
+	ssh -t root@localhost -p 20000 &#34;cd xv6-labs-2025; bash&#34;
+</code></pre><p>配置ssh</p>
+<pre tabindex="0"><code>apt-get install openssh-server
+
+vim /etc/ssh/sshd_config
+
+PermitRootLogin yes # 可以登录 root 用户
+PubkeyAuthentication yes # 可以使用 ssh 公钥许可
+AuthorizedKeysFile  .ssh/authorized_keys # 公钥信息保存到文件 .ssh/authorized_keys 中
+
+/etc/init.d/ssh restart
+</code></pre><p>添加主机的 ssh 公钥</p>
+<pre tabindex="0"><code>docker的ubuntu下
+mkdir ~/.ssh
+touch ~/.ssh/authorized_keys
+
+mac下
+ssh-keygen -t rsa
+cat id_rsa.pub
+
+再把id_rsa.pub 的内容复制到 authorized_keys中
+</code></pre><p>提交修改到镜像</p>
+<pre tabindex="0"><code>docker ps -a
+docker commit -m &#39;add ssh&#39; -a &#39;L0x1c&#39; eacf5681c653 xv6-ssh
+docker image ls
+docker rm {没用的那个docker容器}
+</code></pre><p>最终的docker容器</p>
+<pre tabindex="0"><code>docker run -d -p 20000:22 --name xv6-lab xv6-ssh /usr/sbin/sshd -D
+</code></pre><p><img loading="lazy" src="image-5.png" alt="alt text"  />
+</p>
+<p>对应的vscode的配置就好很多了，安装ssh的那个插件配置一下就行</p>
+<p><img loading="lazy" src="image-7.png" alt="alt text"  />
+</p>
+<p>就可以安心的改代码，看代码了</p>
+<p><img loading="lazy" src="image-6.png" alt="alt text"  />
+</p>
+<p>进行gdb调试</p>
+<pre tabindex="0"><code>gdb-multiarch kernel/kernel
+
+# (gdb) 进入gdb后执行
+set confirm off
+set architecture riscv:rv64
+target remote localhost:25000
+set riscv use-compressed-breakpoints yes
+</code></pre><p><img loading="lazy" src="image-8.png" alt="alt text"  />
+</p>
+<p>保存镜像到本地</p>
+<pre tabindex="0"><code>docker export -o xv6-lab.rar xv6-labs
+</code></pre>
 
   </div>
 
