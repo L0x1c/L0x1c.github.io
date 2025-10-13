@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="index, follow">
-<title>xv6 环境配置 | L0x1c&#39;s Blog</title>
+<title>xv6 环境配置 vmare or docker | L0x1c&#39;s Blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="xv6 环境配置问题 ( vmare or docker ) 配置的地址: https://pdos.csail.mit.edu/6.828/2020/tools.html 准备的系统： vmware &#43; ubuntu
 vmare mit的实验代码:
@@ -64,7 +64,7 @@ vim /etc/apt/source.list #替换 deb http://mirrors.aliyun.com/ubuntu/ bionic ma
         }
 
     </style>
-</noscript><meta property="og:title" content="xv6 环境配置" />
+</noscript><meta property="og:title" content="xv6 环境配置 vmare or docker" />
 <meta property="og:description" content="xv6 环境配置问题 ( vmare or docker ) 配置的地址: https://pdos.csail.mit.edu/6.828/2020/tools.html 准备的系统： vmware &#43; ubuntu
 vmare mit的实验代码:
 git clone git://g.csail.mit.edu/xv6-labs-2020 git checkout util 这边遇见的坑大概网上都有解答，唯一的一个位置是，如果出现 user/sh.c:58:1: error 的问题修改代码
@@ -85,7 +85,7 @@ vim /etc/apt/source.list #替换 deb http://mirrors.aliyun.com/ubuntu/ bionic ma
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:image" content="https://l0x1c.com/images/papermod-cover.png" />
-<meta name="twitter:title" content="xv6 环境配置"/>
+<meta name="twitter:title" content="xv6 环境配置 vmare or docker"/>
 <meta name="twitter:description" content="xv6 环境配置问题 ( vmare or docker ) 配置的地址: https://pdos.csail.mit.edu/6.828/2020/tools.html 准备的系统： vmware &#43; ubuntu
 vmare mit的实验代码:
 git clone git://g.csail.mit.edu/xv6-labs-2020 git checkout util 这边遇见的坑大概网上都有解答，唯一的一个位置是，如果出现 user/sh.c:58:1: error 的问题修改代码
@@ -113,7 +113,7 @@ vim /etc/apt/source.list #替换 deb http://mirrors.aliyun.com/ubuntu/ bionic ma
     {
       "@type": "ListItem",
       "position":  2 ,
-      "name": "xv6 环境配置",
+      "name": "xv6 环境配置 vmare or docker",
       "item": "https://l0x1c.com/posts/xv6-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/"
     }
   ]
@@ -123,8 +123,8 @@ vim /etc/apt/source.list #替换 deb http://mirrors.aliyun.com/ubuntu/ bionic ma
 {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  "headline": "xv6 环境配置",
-  "name": "xv6 环境配置",
+  "headline": "xv6 环境配置 vmare or docker",
+  "name": "xv6 环境配置 vmare or docker",
   "description": "xv6 环境配置问题 ( vmare or docker ) 配置的地址: https://pdos.csail.mit.edu/6.828/2020/tools.html 准备的系统： vmware + ubuntu\nvmare mit的实验代码:\ngit clone git://g.csail.mit.edu/xv6-labs-2020 git checkout util 这边遇见的坑大概网上都有解答，唯一的一个位置是，如果出现 user/sh.c:58:1: error 的问题修改代码\n加入__attribute__((noreturn)) 即可，后面直接目录下make qemu就可以启动了\n配置gdb调试也有点繁琐，主要就是在这个目录下进行 make qemu-gdb，新开一个窗口，那个窗口运行 gdb\n举个例子用sleep\n这样就可以调试了，具体的一些命令可以看：https://pdos.csail.mit.edu/6.828/2019/lec/gdb_slides.pdf https://xv6.dgs.zone/tranlate_books/Use%20GUN%20Debugger.html\ndocker 因为后面准备看csapp lab的适合还是得用到docker去配置环境，所以索性就直接学一下，后面就可以直接用了\n直接网上下载docker就可以\ndocker pull ubuntu docker run -i -t -w /root --name ubuntu ubuntu bash # 连接ubuntu系统 docker start -i ubuntu apt-get update apt-get install vim 需要换个源\nvim /etc/apt/source.list #替换 deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse deb http://mirrors.",
   "keywords": [
     
@@ -223,7 +223,7 @@ vim /etc/apt/source.list #替换 deb http://mirrors.aliyun.com/ubuntu/ bionic ma
   <header class="post-header">
     <div class="breadcrumbs"><a href="https://l0x1c.com/">Home</a>&nbsp;»&nbsp;<a href="https://l0x1c.com/posts/">Posts</a></div>
     <h1 class="post-title entry-hint-parent">
-      xv6 环境配置
+      xv6 环境配置 vmare or docker
       <span class="entry-hint" title="Draft">
         <svg xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 -960 960 960" fill="currentColor">
           <path
