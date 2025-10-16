@@ -144,8 +144,8 @@ c编译环境 https://developer.android.google.cn/ndk/guides/ndk-build?hl=en
   "keywords": [
     
   ],
-  "articleBody": "ARM 汇编 由于开始好好的接触安卓这些东西，所以还是决定把所有的东西从头到尾的好好学习一下，也是开始记录生活的一种方式吧\n主要的学习流程大概这两个：\n看一下周壑老师的视频 辅助一下利用 https://azeria-labs.com/ 这个网站上的lab进行学习 ARM 汇编介绍 \u0026 环境搭建 环境需要：Android studio （ 模拟器，ndk交叉编译环境，adb工具 ） ida（ 远程调试 ），keypatch 插件 cemu 做辅助支持 : https://github.com/hugsy/cemu\n在ubuntu下面折腾了一下，感觉还行\n当然如果有真机做测试使用是最好的了 （ 这里我最后选择的真机，因为机器就在手里，hhhh ）\nAndroid studio \u0026 ida 的配置 勾选这几个选项即可，下载完会在上面表示的sdk Location的目录下\n安装完之后自己在 .zshrc 中配置一下环境变量\nexport ANDROID_HOME=\"Android/sdk所在路径\" export PATH=${PATH}:${ANDROID_HOME}/tools export PATH=${PATH}:${ANDROID_HOME}/platform-tools export PATH=${PATH}:${ANDROID_HOME}/ndk所在的路径 所需要的东西比如Emulator，ndk这些东西都在这个Location的目录下了\n代码的头文件在 toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/include 下\n进到android studio中里面自带有一个arm64的emu，avd所在的位置 .android/avd/{emu:name}\n以后避免每次都打开 android studio可以用emulator里面命令来启动avd\n⚠️ 如果我们后面如果调试或者做什么搞坏了，我们可以直接到 snapshots 目录下把下面的文件删除就行，这样就是冷启动了\n配置ida调试就是直接把 android的server通过adb丢进去然后启动，配置一下端口的转发\n这样后ida attach就可以看到对应的进程那些了\nc编译环境 https://developer.android.google.cn/ndk/guides/ndk-build?hl=en\n主要需要的是 Application.mk 和 Android.mk 这两个文件，现在写一个c然后编译一下试试\nAPP_ABI := arm64-v8a APP_BUILD_SCRIPT := Android.mk APP_PLATFORM := android-16 LOCAL_PATH := $(call my-dir) #LOCAL_ARM_MODE := arm LOCAL_MODULE := hello LOCAL_SRC_FILES := hello.c include $(BUILD_EXECUTABLE) 执行 ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk\n可以看到已经生成了，一个是debug版本的一个是release版本的，ida这样就可以开始调试起来了\n⚠️ 好像mac m1还没办法运行32位的，所以该文章主要都以64位为主，学的时候也是多学一下64位的毕竟是主流 ( 当然也可以先用32位的来做 )\n寄存器和指令基本格式 寄存器介绍 找了一台手机可以支持32位的，以及64位的，这样就可以都学一下了\n这次就可以32位调试起来了，可以很好看到32位的寄存器\narm32下一共有16个通用寄存器和一个状态寄存器\n其中r13叫做SP叫做栈指针寄存器相当于x86汇编中的esp LR叫做linker指针，当执行函数调用指令 BL func（Branch with Link）时，CPU 会自动把下一条指令的地址（PC + 4）写入 LR，并且跳转到 func 标签执行 BL func ; lr = pc + 4, 跳转到 func 函数如果想要返回的话 MOV PC, LR ; 回到调用点继续执行 如果函数内又调用了别的函数，LR 会被覆盖，所以通常编译器会 STMDB sp!, {LR} ; 保存返回地址 ... LDMIA sp!, {PC} ; 恢复并返回 PC (Program Counter) 里面存放的是当前的地址，对应x86里的eip PSR相当于x86中的eflag寄存器 可以看到arm手册里的介绍 对于PSR (当前程序状态寄存器) 这些位的介绍：\n位 名称 含义 说明 N (bit 31) Negative 结果为负 若算术结果为负，N=1 Z (bit 30) Zero 结果为零 若结果为 0，Z=1 C (bit 29) Carry 进位标志 加法进位或减法借位 V (bit 28) Overflow 溢出标志 有符号运算时溢出 ADD r0, r1, r2 ; CPSR.C 被设置为进位标志 SUBS r0, r1, r2 ; 带S的指令会更新 N Z C V 标志 27 位：Q（Saturation flag，饱和标志）\n用于 饱和运算（Saturating Arithmetic）指令，如 QADD、QDADD 当运算结果超出表示范围时，Q=1 可用 MSR CPSR_f, #0 或 MRS/MSR 指令清除或读取 26–25 位：IT[7:6]（If-Then 块标志）\n用于 Thumb 模式的 IT（If-Then）块控制 ITE EQ MOVEQ r0, #1 MOVNE r0, #0 #这时 CPSR 的 IT 位会被硬件自动设置与清空 19–16 位：GE[3:0]（Greater or Equal flags）\n用于 SIMD（多数据并行）中的比较结果标志（例如 UADD8, USUB8 等） 每一位对应 8 位操作结果是否大于等于 9 位：E（Endian bit）现在arm系统几乎都是小端的\nE = 0 → 小端（Little-endian） E = 1 → 大端（Big-endian） 5 位：T（Thumb state）\nT = 0 → ARM 模式（32 位指令） T = 1 → Thumb 模式（16 位指令） BX R0 ; 跳转到R0地址，并根据最低位决定T标志 # 如果 R0 的最低位为 1，会自动切换到 Thumb 模式 4–0 位：M[4:0]（处理器模式位）\n模式位（M4:M0） 模式名 权限 说明 10000 User 非特权 普通用户态 10001 FIQ 特权 快速中断 10010 IRQ 特权 普通中断 10011 Supervisor (SVC) 特权 系统调用 / 启动模式 10111 Abort 特权 内存访问异常 11011 Undefined 特权 未定义指令异常 11111 System 特权 特殊内核态 总体设计和指令规格 arm汇编中没有隐式内存操作指令\n这个怎么理解呢？ 可以这么来说，在x86汇编中有很多的隐式内存操作指令，比如push pop call，比如push这个指令，这个指令本身是没有内存的索引地址的，这个指令操作后会隐式的把esp指针的地址-4并且往其中写一个数，那么这个push这个指令就隐式的操作了内存，包括中断指令int 等等\narm汇编中，指令是 0 - 3个操作数，内存操作数和立即数操作数不能同时存在，内存操作数至多出现1次，寄存器操作数一般都是在前面\n可以观察看到，左边的都是寄存器操作数，上面看到的LDR R6, [R6,#0xC]这种的属于两个操作数，后面的只是内存的一种索引模式 再比如：MOV.W R7, R9,LSR#12 这也是两个操作数，第二个R9,LSR#12这属于一个操作数\n读pc寄存器 在arm的这个汇编的情况中，pc寄存器属于那种正常的寄存器，可以对这个寄存器进行写，那么写到这个寄存器就相当于了指令跳转，写了个例子方便理解，可以看到跳过了地址是8的位置，直接到了c的地址\n读取pc寄存器有很多比较奇怪的行为，读取pc寄存器的时候，如果是arm模式会+8，thumb模式+4，因为ARM的流水线是为了性能优化设计的让CPU在执行当前指令的同时，已经把下一条、下下条都装载进指令缓存\n模式 指令长度 流水线深度 读取 PC 实际值 偏移原因 ARM 模式 4 字节 提前取两条 当前地址 + 8 三段流水线取指超前 Thumb 模式 2 字节 提前取一条 当前地址 + 4 指令短、取指周期短 ldr的指令读pc的内存也同理，可以看到后面的pc读取的数据pc被+8，然后读取8位置的值，所以pc寄存器只要有读的指令存在就是读的就是pc+8\n这里说一个问题就是ldr r0,[pc, #-4]\n但是比如你在ida调试那些环境下，那么读的就不是这个值了\nthumb模式还不一样了开始\n",
-  "wordCount" : "388",
+  "articleBody": "ARM 汇编 由于开始好好的接触安卓这些东西，所以还是决定把所有的东西从头到尾的好好学习一下，也是开始记录生活的一种方式吧\n主要的学习流程大概这两个：\n看一下周壑老师的视频 辅助一下利用 https://azeria-labs.com/ 这个网站上的lab进行学习 ARM 汇编介绍 \u0026 环境搭建 环境需要：Android studio （ 模拟器，ndk交叉编译环境，adb工具 ） ida（ 远程调试 ），keypatch 插件 cemu 做辅助支持 : https://github.com/hugsy/cemu\n在ubuntu下面折腾了一下，感觉还行\n当然如果有真机做测试使用是最好的了 （ 这里我最后选择的真机，因为机器就在手里，hhhh ）\nAndroid studio \u0026 ida 的配置 勾选这几个选项即可，下载完会在上面表示的sdk Location的目录下\n安装完之后自己在 .zshrc 中配置一下环境变量\nexport ANDROID_HOME=\"Android/sdk所在路径\" export PATH=${PATH}:${ANDROID_HOME}/tools export PATH=${PATH}:${ANDROID_HOME}/platform-tools export PATH=${PATH}:${ANDROID_HOME}/ndk所在的路径 所需要的东西比如Emulator，ndk这些东西都在这个Location的目录下了\n代码的头文件在 toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/include 下\n进到android studio中里面自带有一个arm64的emu，avd所在的位置 .android/avd/{emu:name}\n以后避免每次都打开 android studio可以用emulator里面命令来启动avd\n⚠️ 如果我们后面如果调试或者做什么搞坏了，我们可以直接到 snapshots 目录下把下面的文件删除就行，这样就是冷启动了\n配置ida调试就是直接把 android的server通过adb丢进去然后启动，配置一下端口的转发\n这样后ida attach就可以看到对应的进程那些了\nc编译环境 https://developer.android.google.cn/ndk/guides/ndk-build?hl=en\n主要需要的是 Application.mk 和 Android.mk 这两个文件，现在写一个c然后编译一下试试\nAPP_ABI := arm64-v8a APP_BUILD_SCRIPT := Android.mk APP_PLATFORM := android-16 LOCAL_PATH := $(call my-dir) #LOCAL_ARM_MODE := arm LOCAL_MODULE := hello LOCAL_SRC_FILES := hello.c include $(BUILD_EXECUTABLE) 执行 ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk\n可以看到已经生成了，一个是debug版本的一个是release版本的，ida这样就可以开始调试起来了\n⚠️ 好像mac m1还没办法运行32位的，所以该文章主要都以64位为主，学的时候也是多学一下64位的毕竟是主流 ( 当然也可以先用32位的来做 )\n寄存器和指令基本格式 寄存器介绍 找了一台手机可以支持32位的，以及64位的，这样就可以都学一下了\n这次就可以32位调试起来了，可以很好看到32位的寄存器\narm32下一共有16个通用寄存器和一个状态寄存器\n其中r13叫做SP叫做栈指针寄存器相当于x86汇编中的esp LR叫做linker指针，当执行函数调用指令 BL func（Branch with Link）时，CPU 会自动把下一条指令的地址（PC + 4）写入 LR，并且跳转到 func 标签执行 BL func ; lr = pc + 4, 跳转到 func 函数如果想要返回的话 MOV PC, LR ; 回到调用点继续执行 如果函数内又调用了别的函数，LR 会被覆盖，所以通常编译器会 STMDB sp!, {LR} ; 保存返回地址 ... LDMIA sp!, {PC} ; 恢复并返回 PC (Program Counter) 里面存放的是当前的地址，对应x86里的eip PSR相当于x86中的eflag寄存器 可以看到arm手册里的介绍 对于PSR (当前程序状态寄存器) 这些位的介绍：\n位 名称 含义 说明 N (bit 31) Negative 结果为负 若算术结果为负，N=1 Z (bit 30) Zero 结果为零 若结果为 0，Z=1 C (bit 29) Carry 进位标志 加法进位或减法借位 V (bit 28) Overflow 溢出标志 有符号运算时溢出 ADD r0, r1, r2 ; CPSR.C 被设置为进位标志 SUBS r0, r1, r2 ; 带S的指令会更新 N Z C V 标志 27 位：Q（Saturation flag，饱和标志）\n用于 饱和运算（Saturating Arithmetic）指令，如 QADD、QDADD 当运算结果超出表示范围时，Q=1 可用 MSR CPSR_f, #0 或 MRS/MSR 指令清除或读取 26–25 位：IT[7:6]（If-Then 块标志）\n用于 Thumb 模式的 IT（If-Then）块控制 ITE EQ MOVEQ r0, #1 MOVNE r0, #0 #这时 CPSR 的 IT 位会被硬件自动设置与清空 19–16 位：GE[3:0]（Greater or Equal flags）\n用于 SIMD（多数据并行）中的比较结果标志（例如 UADD8, USUB8 等） 每一位对应 8 位操作结果是否大于等于 9 位：E（Endian bit）现在arm系统几乎都是小端的\nE = 0 → 小端（Little-endian） E = 1 → 大端（Big-endian） 5 位：T（Thumb state）\nT = 0 → ARM 模式（32 位指令） T = 1 → Thumb 模式（16 位指令） BX R0 ; 跳转到R0地址，并根据最低位决定T标志 # 如果 R0 的最低位为 1，会自动切换到 Thumb 模式 4–0 位：M[4:0]（处理器模式位）\n模式位（M4:M0） 模式名 权限 说明 10000 User 非特权 普通用户态 10001 FIQ 特权 快速中断 10010 IRQ 特权 普通中断 10011 Supervisor (SVC) 特权 系统调用 / 启动模式 10111 Abort 特权 内存访问异常 11011 Undefined 特权 未定义指令异常 11111 System 特权 特殊内核态 总体设计和指令规格 arm汇编中没有隐式内存操作指令\n这个怎么理解呢？ 可以这么来说，在x86汇编中有很多的隐式内存操作指令，比如push pop call，比如push这个指令，这个指令本身是没有内存的索引地址的，这个指令操作后会隐式的把esp指针的地址-4并且往其中写一个数，那么这个push这个指令就隐式的操作了内存，包括中断指令int 等等\narm汇编中，指令是 0 - 3个操作数，内存操作数和立即数操作数不能同时存在，内存操作数至多出现1次，寄存器操作数一般都是在前面\n可以观察看到，左边的都是寄存器操作数，上面看到的LDR R6, [R6,#0xC]这种的属于两个操作数，后面的只是内存的一种索引模式 再比如：MOV.W R7, R9,LSR#12 这也是两个操作数，第二个R9,LSR#12这属于一个操作数\n读pc寄存器 在arm的这个汇编的情况中，pc寄存器属于那种正常的寄存器，可以对这个寄存器进行写，那么写到这个寄存器就相当于了指令跳转，写了个例子方便理解，可以看到跳过了地址是8的位置，直接到了c的地址\n读取pc寄存器有很多比较奇怪的行为，读取pc寄存器的时候，如果是arm模式会+8，thumb模式+4，因为ARM的流水线是为了性能优化设计的让CPU在执行当前指令的同时，已经把下一条、下下条都装载进指令缓存\n模式 指令长度 流水线深度 读取 PC 实际值 偏移原因 ARM 模式 4 字节 提前取两条 当前地址 + 8 三段流水线取指超前 Thumb 模式 2 字节 提前取一条 当前地址 + 4 指令短、取指周期短 ldr的指令读pc的内存也同理，可以看到后面的pc读取的数据pc被+8，然后读取8位置的值，所以pc寄存器只要有读的指令存在就是读的就是pc+8\n这里说一个问题就是ldr r0,[pc, #-4]\n但是比如你在ida调试那些环境下，那么读的就不是这个值了\n这里加一个小trips (关于ida安装keypatch): 这里我用了高版本的ida9.0，keypatch不支持：https://bbs.kanxue.com/thread-286591.htm#msg_header_h3_4\n编译之前看一下自己ida的架构，然后编译的keystone的dylib要对应上\n就可以用了\n继续回到主题！调试环境下的为什么不是这个值，我们看一下 这里我写的是 ldr r0, [pc, #-4]，ida帮我们优化了一下可以直接看到地址，之前说的pc寄存器遇见读的指令pc在arm模式下会+8，由于我-4了，所以应该是pc+4，读到的值r0应该是912fff1e\n我们现在看一下，读取到底是什么值，可以看到读取的是E7F001F0，这个是什么呢，我在下面硬编码改了一下，发现时UND #10，这个是什么？！\n网上查了一下，这个值都和反调试有关系，那么可以理解为，这里相当于读的断点的中断指令，类似于x86中f8的int 3，相当于单步的时候会有一个信号，信号呢被调试器捕获，然后ida捕获到异常，然后进行处理\nthumb模式下：\n先看第一个指令ldr r0,[pc] 这个在thumb模式下是pc + 4的地址读取出来\n可以看到又读了一个中断 DE10\n但是这里有疑问了，不是pc+4吗，继续往下看下面的两个都是e4的那个，就可以知道了，其实是有地址对齐的问题存在，所以才会两个条指令都是相同的pc+4但是对应的地址是一样的情况，所以thumb模式下还需要对齐，可以总结规律thumb模式下ldr reg,[pc]的pc地址是要 pc - pc % 4\n看一下公式准不准确用上面的d6的地址做一下对应的计算，可以看到是d8\n这种的东西在arm模式下不考虑，因为arm模式下都是4字节的，所以都是对齐的情况\n",
+  "wordCount" : "419",
   "inLanguage": "en",
   "image": "https://l0x1c.com/images/papermod-cover.png","datePublished": "2025-10-12T00:59:09+08:00",
   "dateModified": "2025-10-12T00:59:09+08:00",
@@ -551,7 +551,40 @@ MOVNE r0, #0
 <p><img loading="lazy" src="image-18.png" alt="alt text"  />
 </p>
 <p>但是比如你在ida调试那些环境下，那么读的就不是这个值了</p>
-<p>thumb模式还不一样了开始</p>
+<p>这里加一个小trips (关于ida安装keypatch):
+这里我用了高版本的ida9.0，keypatch不支持：https://bbs.kanxue.com/thread-286591.htm#msg_header_h3_4</p>
+<p>编译之前看一下自己ida的架构，然后编译的keystone的dylib要对应上</p>
+<p><img loading="lazy" src="image-19.png" alt="alt text"  />
+</p>
+<p><img loading="lazy" src="image-20.png" alt="alt text"  />
+</p>
+<p>就可以用了</p>
+<p><img loading="lazy" src="image-21.png" alt="alt text"  />
+</p>
+<p>继续回到主题！调试环境下的为什么不是这个值，我们看一下
+这里我写的是 ldr r0, [pc, #-4]，ida帮我们优化了一下可以直接看到地址，之前说的pc寄存器遇见读的指令pc在arm模式下会+8，由于我-4了，所以应该是pc+4，读到的值r0应该是912fff1e</p>
+<p><img loading="lazy" src="image-22.png" alt="alt text"  />
+</p>
+<p>我们现在看一下，读取到底是什么值，可以看到读取的是E7F001F0，这个是什么呢，我在下面硬编码改了一下，发现时UND #10，这个是什么？！</p>
+<p><img loading="lazy" src="image-23.png" alt="alt text"  />
+</p>
+<p>网上查了一下，这个值都和反调试有关系，那么可以理解为，这里相当于读的断点的中断指令，类似于x86中f8的int 3，相当于单步的时候会有一个信号，信号呢被调试器捕获，然后ida捕获到异常，然后进行处理</p>
+<p><img loading="lazy" src="image-24.png" alt="alt text"  />
+</p>
+<p>thumb模式下：</p>
+<p>先看第一个指令ldr r0,[pc] 这个在thumb模式下是pc + 4的地址读取出来</p>
+<p><img loading="lazy" src="image-25.png" alt="alt text"  />
+</p>
+<p>可以看到又读了一个中断 DE10</p>
+<p><img loading="lazy" src="image-26.png" alt="alt text"  />
+</p>
+<p>但是这里有疑问了，不是pc+4吗，继续往下看下面的两个都是e4的那个，就可以知道了，其实是有地址对齐的问题存在，所以才会两个条指令都是相同的pc+4但是对应的地址是一样的情况，所以thumb模式下还需要对齐，可以总结规律thumb模式下ldr reg,[pc]的pc地址是要 pc - pc % 4</p>
+<p><img loading="lazy" src="image-27.png" alt="alt text"  />
+</p>
+<p>看一下公式准不准确用上面的d6的地址做一下对应的计算，可以看到是d8</p>
+<p><img loading="lazy" src="image-28.png" alt="alt text"  />
+</p>
+<p>这种的东西在arm模式下不考虑，因为arm模式下都是4字节的，所以都是对齐的情况</p>
 
 
   </div>
