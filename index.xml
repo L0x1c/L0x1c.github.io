@@ -12,8 +12,22 @@
     <generator>Hugo -- 0.120.4</generator>
     <language>en</language>
     <copyright>PaperMod Contributors</copyright>
-    <lastBuildDate>Sun, 12 Oct 2025 19:54:10 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 06 Nov 2025 22:25:02 +0800</lastBuildDate>
     <atom:link href="https://l0x1c.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>unluac xxx_app 分析</title>
+      <link>https://l0x1c.com/posts/luadec/</link>
+      <pubDate>Thu, 06 Nov 2025 22:25:02 +0800</pubDate>
+      <guid>https://l0x1c.com/posts/luadec/</guid>
+      <description>这个是工作中遇见的一个app，需要分析一下app对于应用列表检测感知这个问题
+对应的样本的网址：https://github.com/TMLP-Team/TMLP-Detectors-and-Bypassers/blob/main/Detectors/%E5%87%8C%E5%8D%BF%E6%A3%80%E6%B5%8B_v1.6_fix.apk
+直接拖进jeb看一下
+调用lua，看一下lingqing.bin
+Lua 介绍 C 语言和 Lua 的交互是通过 lua_State来实现的，所以首先需要创建一个 lua_State
+把 Lua 脚本加载进 Lua 虚拟机， Lua 提供了三个常用的函数
+LUALIB_API int (luaL_loadfilex) (lua_State *L, const char *filename, const char *mode); #define luaL_loadfile(L,f)	luaL_loadfilex(L,f,NULL) LUALIB_API int (luaL_loadbufferx) (lua_State *L, const char *buff, size_t sz, const char *name, const char *mode); LUALIB_API int (luaL_loadstring) (lua_State *L, const char *s); 这三个函数最后走的都是 lua_load 函数，把经过编译后的代码放到了栈顶，执行加载到栈顶的 Lua 代码，上面的函数只是将程序加载到了栈顶，执行了之后才能变成虚拟机中的函数或者变量，因为在栈顶也没有需要传入的参数，所以只需要调用 lua_pcall 即可
+LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_KContext ctx, lua_KFunction k) 上面的常用的函数有对应的执行合并参数</description>
+    </item>
     <item>
       <title>xv6 环境配置 vmare or docker</title>
       <link>https://l0x1c.com/posts/xv6-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</link>

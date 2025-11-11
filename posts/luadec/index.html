@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>unluac xxx_app 分析 | L0x1c&#39;s Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="这个是工作中遇见的一个app，需要分析一下app对于应用列表检测感知这个问题
+对应的样本的网址：https://github.com/TMLP-Team/TMLP-Detectors-and-Bypassers/blob/main/Detectors/%E5%87%8C%E5%8D%BF%E6%A3%80%E6%B5%8B_v1.6_fix.apk
+直接拖进jeb看一下
+调用lua，看一下lingqing.bin
+Lua 介绍 C 语言和 Lua 的交互是通过 lua_State来实现的，所以首先需要创建一个 lua_State
+把 Lua 脚本加载进 Lua 虚拟机， Lua 提供了三个常用的函数
+LUALIB_API int (luaL_loadfilex) (lua_State *L, const char *filename, const char *mode); #define luaL_loadfile(L,f)	luaL_loadfilex(L,f,NULL) LUALIB_API int (luaL_loadbufferx) (lua_State *L, const char *buff, size_t sz, const char *name, const char *mode); LUALIB_API int (luaL_loadstring) (lua_State *L, const char *s); 这三个函数最后走的都是 lua_load 函数，把经过编译后的代码放到了栈顶，执行加载到栈顶的 Lua 代码，上面的函数只是将程序加载到了栈顶，执行了之后才能变成虚拟机中的函数或者变量，因为在栈顶也没有需要传入的参数，所以只需要调用 lua_pcall 即可
+LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_KContext ctx, lua_KFunction k) 上面的常用的函数有对应的执行合并参数">
+<meta name="author" content="L0x1c">
+<link rel="canonical" href="https://l0x1c.com/posts/luadec/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.fc220c15db4aef0318bbf30adc45d33d4d7c88deff3238b23eb255afdc472ca6.css" integrity="sha256-/CIMFdtK7wMYu/MK3EXTPU18iN7/MjiyPrJVr9xHLKY=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://l0x1c.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://l0x1c.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://l0x1c.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://l0x1c.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://l0x1c.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="unluac xxx_app 分析" />
+<meta property="og:description" content="这个是工作中遇见的一个app，需要分析一下app对于应用列表检测感知这个问题
+对应的样本的网址：https://github.com/TMLP-Team/TMLP-Detectors-and-Bypassers/blob/main/Detectors/%E5%87%8C%E5%8D%BF%E6%A3%80%E6%B5%8B_v1.6_fix.apk
+直接拖进jeb看一下
+调用lua，看一下lingqing.bin
+Lua 介绍 C 语言和 Lua 的交互是通过 lua_State来实现的，所以首先需要创建一个 lua_State
+把 Lua 脚本加载进 Lua 虚拟机， Lua 提供了三个常用的函数
+LUALIB_API int (luaL_loadfilex) (lua_State *L, const char *filename, const char *mode); #define luaL_loadfile(L,f)	luaL_loadfilex(L,f,NULL) LUALIB_API int (luaL_loadbufferx) (lua_State *L, const char *buff, size_t sz, const char *name, const char *mode); LUALIB_API int (luaL_loadstring) (lua_State *L, const char *s); 这三个函数最后走的都是 lua_load 函数，把经过编译后的代码放到了栈顶，执行加载到栈顶的 Lua 代码，上面的函数只是将程序加载到了栈顶，执行了之后才能变成虚拟机中的函数或者变量，因为在栈顶也没有需要传入的参数，所以只需要调用 lua_pcall 即可
+LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_KContext ctx, lua_KFunction k) 上面的常用的函数有对应的执行合并参数" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://l0x1c.com/posts/luadec/" />
+<meta property="og:image" content="https://l0x1c.com/images/papermod-cover.png" />
+<meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2025-11-06T22:25:02+08:00" />
+<meta property="article:modified_time" content="2025-11-06T22:25:02+08:00" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://l0x1c.com/images/papermod-cover.png" />
+<meta name="twitter:title" content="unluac xxx_app 分析"/>
+<meta name="twitter:description" content="这个是工作中遇见的一个app，需要分析一下app对于应用列表检测感知这个问题
+对应的样本的网址：https://github.com/TMLP-Team/TMLP-Detectors-and-Bypassers/blob/main/Detectors/%E5%87%8C%E5%8D%BF%E6%A3%80%E6%B5%8B_v1.6_fix.apk
+直接拖进jeb看一下
+调用lua，看一下lingqing.bin
+Lua 介绍 C 语言和 Lua 的交互是通过 lua_State来实现的，所以首先需要创建一个 lua_State
+把 Lua 脚本加载进 Lua 虚拟机， Lua 提供了三个常用的函数
+LUALIB_API int (luaL_loadfilex) (lua_State *L, const char *filename, const char *mode); #define luaL_loadfile(L,f)	luaL_loadfilex(L,f,NULL) LUALIB_API int (luaL_loadbufferx) (lua_State *L, const char *buff, size_t sz, const char *name, const char *mode); LUALIB_API int (luaL_loadstring) (lua_State *L, const char *s); 这三个函数最后走的都是 lua_load 函数，把经过编译后的代码放到了栈顶，执行加载到栈顶的 Lua 代码，上面的函数只是将程序加载到了栈顶，执行了之后才能变成虚拟机中的函数或者变量，因为在栈顶也没有需要传入的参数，所以只需要调用 lua_pcall 即可
+LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_KContext ctx, lua_KFunction k) 上面的常用的函数有对应的执行合并参数"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://l0x1c.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "unluac xxx_app 分析",
+      "item": "https://l0x1c.com/posts/luadec/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "unluac xxx_app 分析",
+  "name": "unluac xxx_app 分析",
+  "description": "这个是工作中遇见的一个app，需要分析一下app对于应用列表检测感知这个问题\n对应的样本的网址：https://github.com/TMLP-Team/TMLP-Detectors-and-Bypassers/blob/main/Detectors/%E5%87%8C%E5%8D%BF%E6%A3%80%E6%B5%8B_v1.6_fix.apk\n直接拖进jeb看一下\n调用lua，看一下lingqing.bin\nLua 介绍 C 语言和 Lua 的交互是通过 lua_State来实现的，所以首先需要创建一个 lua_State\n把 Lua 脚本加载进 Lua 虚拟机， Lua 提供了三个常用的函数\nLUALIB_API int (luaL_loadfilex) (lua_State *L, const char *filename, const char *mode); #define luaL_loadfile(L,f)\tluaL_loadfilex(L,f,NULL) LUALIB_API int (luaL_loadbufferx) (lua_State *L, const char *buff, size_t sz, const char *name, const char *mode); LUALIB_API int (luaL_loadstring) (lua_State *L, const char *s); 这三个函数最后走的都是 lua_load 函数，把经过编译后的代码放到了栈顶，执行加载到栈顶的 Lua 代码，上面的函数只是将程序加载到了栈顶，执行了之后才能变成虚拟机中的函数或者变量，因为在栈顶也没有需要传入的参数，所以只需要调用 lua_pcall 即可\nLUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_KContext ctx, lua_KFunction k) 上面的常用的函数有对应的执行合并参数",
+  "keywords": [
+    
+  ],
+  "articleBody": "这个是工作中遇见的一个app，需要分析一下app对于应用列表检测感知这个问题\n对应的样本的网址：https://github.com/TMLP-Team/TMLP-Detectors-and-Bypassers/blob/main/Detectors/%E5%87%8C%E5%8D%BF%E6%A3%80%E6%B5%8B_v1.6_fix.apk\n直接拖进jeb看一下\n调用lua，看一下lingqing.bin\nLua 介绍 C 语言和 Lua 的交互是通过 lua_State来实现的，所以首先需要创建一个 lua_State\n把 Lua 脚本加载进 Lua 虚拟机， Lua 提供了三个常用的函数\nLUALIB_API int (luaL_loadfilex) (lua_State *L, const char *filename, const char *mode); #define luaL_loadfile(L,f)\tluaL_loadfilex(L,f,NULL) LUALIB_API int (luaL_loadbufferx) (lua_State *L, const char *buff, size_t sz, const char *name, const char *mode); LUALIB_API int (luaL_loadstring) (lua_State *L, const char *s); 这三个函数最后走的都是 lua_load 函数，把经过编译后的代码放到了栈顶，执行加载到栈顶的 Lua 代码，上面的函数只是将程序加载到了栈顶，执行了之后才能变成虚拟机中的函数或者变量，因为在栈顶也没有需要传入的参数，所以只需要调用 lua_pcall 即可\nLUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_KContext ctx, lua_KFunction k) 上面的常用的函数有对应的执行合并参数\nlua 加载执行流程 luaL_loadbufferx来直接看\nLUALIB_API int luaL_loadbufferx (lua_State *L, const char *buff, size_t size, const char *name, const char *mode) { LoadS ls; ls.s = buff; ls.size = size; return lua_load(L, getS, \u0026ls, name, mode); } 调用lua_load\nLUA_API int lua_load (lua_State *L, lua_Reader reader, void *data, const char *chunkname, const char *mode) { ZIO z; int status; lua_lock(L); if (!chunkname) chunkname = \"?\"; luaZ_init(L, \u0026z, reader, data); status = luaD_protectedparser(L, \u0026z, chunkname, mode); if (status == LUA_OK) { /* no errors? */ LClosure *f = clLvalue(L-\u003etop - 1); /* get newly created function */ if (f-\u003enupvalues \u003e= 1) { /* does it have an upvalue? */ /* get global table from registry */ Table *reg = hvalue(\u0026G(L)-\u003el_registry); const TValue *gt = luaH_getint(reg, LUA_RIDX_GLOBALS); /* set global table as 1st upvalue of 'f' (may be LUA_ENV) */ setobj(L, f-\u003eupvals[0]-\u003ev, gt); luaC_upvalbarrier(L, f-\u003eupvals[0]); } } lua_unlock(L); return status; } luaD_protectedparser\nint luaD_protectedparser (lua_State *L, ZIO *z, const char *name, const char *mode) { struct SParser p; int status; L-\u003enny++; /* cannot yield during parsing */ p.z = z; p.name = name; p.mode = mode; p.dyd.actvar.arr = NULL; p.dyd.actvar.size = 0; p.dyd.gt.arr = NULL; p.dyd.gt.size = 0; p.dyd.label.arr = NULL; p.dyd.label.size = 0; luaZ_initbuffer(L, \u0026p.buff); status = luaD_pcall(L, f_parser, \u0026p, savestack(L, L-\u003etop), L-\u003eerrfunc); luaZ_freebuffer(L, \u0026p.buff); luaM_freearray(L, p.dyd.actvar.arr, p.dyd.actvar.size); luaM_freearray(L, p.dyd.gt.arr, p.dyd.gt.size); luaM_freearray(L, p.dyd.label.arr, p.dyd.label.size); L-\u003enny--; return status; } f_parser\nstatic void f_parser (lua_State *L, void *ud) { LClosure *cl; struct SParser *p = cast(struct SParser *, ud); int c = zgetc(p-\u003ez); /* read first character */ if (c == LUA_SIGNATURE[0]) { checkmode(L, p-\u003emode, \"binary\"); cl = luaU_undump(L, p-\u003ez, p-\u003ename); } else { checkmode(L, p-\u003emode, \"text\"); cl = luaY_parser(L, p-\u003ez, \u0026p-\u003ebuff, \u0026p-\u003edyd, p-\u003ename, c); } lua_assert(cl-\u003enupvalues == cl-\u003ep-\u003esizeupvalues); luaF_initupvals(L, cl); } luaU_undump 或者luaY_parser，一个是luac的二进制文件，一个是luac的脚本文件\n思路和流程 因为有很多魔改对于文件的结构上的那些调整，可以在load完成之后，执行之前的时候，因为这个时候程序在栈顶的时候，调用标准的lua_dump函数，就可以获得luac文件了\ntypedef int (*lua_Writer) (lua_State *L, const void *p, size_t sz, void *ud); 当前的文件是lua 5.3.3版本：\n直接ida看一下luaL_loadbufferx，这个的luaL_loadbufferx和源码中的是不一样的所以如果frida hook的话，是要在leave的时候\n看这个反编译中带有lua_dump的函数，所以可以直接调用，脚本：\nvar lq_lua = Process.findModuleByName(\"liblqd_lua.so\"); var count = 0; var fopen = Process.findModuleByName(\"libc.so\").findExportByName(\"fopen\"); var fwrite = Process.findModuleByName(\"libc.so\").findExportByName(\"fwrite\"); var fopen_func = new NativeFunction(fopen, 'pointer', ['pointer', 'pointer']); var fwrite_func = new NativeFunction(fwrite, 'size_t', ['pointer', 'size_t', 'size_t', 'pointer']); var targetAddr = lq_lua.base.add(0x1660C); var lua_dump_ptr = lq_lua.base.add(0x13E14); var lua_dump = new NativeFunction(lua_dump_ptr, 'int', ['pointer', 'pointer', 'pointer', 'int']); var currentFile = null; var writer_cb = new NativeCallback(function (L, p, sz, ud) { try { const n = Number(sz); if (n === 0) return 0; const wrote = fwrite_func(p, n, 1, ud); return (Number(wrote) === 1) ? 0 : 1; } catch (e) { //expected a pointer console.log(\"writer_cb exception: \" + e); return 1; } }, 'int', ['pointer', 'pointer', 'size_t', 'pointer']); console.log(\"lq_luaV_gettable @ \" + targetAddr + \" insn=\" + Instruction.parse(targetAddr).toString()); console.log(\"lua_dump @ \" + lua_dump_ptr); Interceptor.attach(targetAddr, { onEnter: (args) =\u003e { count += 1; this.fname = \"/data/data/com.lingqing.detector/files/dump/dump.luac\" + count; this.L = args[0]; }, onLeave: (retval) =\u003e { console.log(\"lq_luaV_gettable called \" + count + \" times\"); try { currentFile = new File(this.fname, \"wb\"); } catch (e) { console.log(\"Failed to open file \" + this.fname + \": \" + e); currentFile = null; } var cName = Memory.allocUtf8String(this.fname); var cMode = Memory.allocUtf8String(\"wb\"); var file = fopen_func(cName, cMode); if (currentFile) { try { //fwrite_func var status = lua_dump(this.L, writer_cb, file, 0); console.log(\"lua_dump status=\" + status); } catch (e2) { console.log(\"lua_dump exception: \" + e2); } try { currentFile.flush(); currentFile.close(); } catch (e3) {} } currentFile = null; } }); 可以抓到这6个luac，但是这么抓的还是会有加密的，说明需要调用原版本的lua的lua_dump，自己编译一个调用lua_dump\nvar lq_lua = Process.findModuleByName(\"liblqd_lua.so\"); var liblua = Module.load(\"/data/data/com.lingqing.detector/files/liblua_share.so\"); var pdump = liblua.findExportByName(\"lua_dump\"); var fun_dump = new NativeFunction(pdump, \"int\", [\"pointer\", \"pointer\", \"pointer\", \"int\"]); var count = 0; var fopen = Process.findModuleByName(\"libc.so\").findExportByName(\"fopen\"); var fwrite = Process.findModuleByName(\"libc.so\").findExportByName(\"fwrite\"); var fopen_func = new NativeFunction(fopen, 'pointer', ['pointer', 'pointer']); var fwrite_func = new NativeFunction(fwrite, 'size_t', ['pointer', 'size_t', 'size_t', 'pointer']); var targetAddr = lq_lua.base.add(0x1660C); var lua_dump_ptr = lq_lua.base.add(0x13E14); var lua_dump = new NativeFunction(lua_dump_ptr, 'int', ['pointer', 'pointer', 'pointer', 'int']); var currentFile = null; var writer_cb = new NativeCallback(function (L, p, sz, ud) { try { const n = Number(sz); if (n === 0) return 0; const wrote = fwrite_func(p, n, 1, ud); return (Number(wrote) === 1) ? 0 : 1; } catch (e) { //expected a pointer console.log(\"writer_cb exception: \" + e); return 1; } }, 'int', ['pointer', 'pointer', 'size_t', 'pointer']); console.log(\"lq_luaV_gettable @ \" + targetAddr + \" insn=\" + Instruction.parse(targetAddr).toString()); console.log(\"lua_dump @ \" + lua_dump_ptr); Interceptor.attach(targetAddr, { onEnter: (args) =\u003e { count += 1; this.fname = \"/data/data/com.lingqing.detector/files/dump/dump.luac\" + count; this.L = args[0]; }, onLeave: (retval) =\u003e { console.log(\"lq_luaV_gettable called \" + count + \" times\"); try { currentFile = new File(this.fname, \"wb\"); } catch (e) { console.log(\"Failed to open file \" + this.fname + \": \" + e); currentFile = null; } var cName = Memory.allocUtf8String(this.fname); var cMode = Memory.allocUtf8String(\"wb\"); var file = fopen_func(cName, cMode); if (currentFile) { try { //fwrite_func var status = fun_dump(this.L, writer_cb, ptr(file), 0); console.log(\"lua_dump status=\" + status); } catch (e2) { console.log(\"lua_dump exception: \" + e2); } try { currentFile.flush(); currentFile.close(); } catch (e3) {} } currentFile = null; } }); 这次就可以进行反编译了\n但是a1和a6并不能反编译出来，这里可能有点问题，回看这个样本自带的关于lua的so，在lua_load里进行逆向可以发现\n因为按照之前看源码的流程，首先定位到luaD_protectedparser\n进来后定位到f_parser\n再定位到luaU_undump，但是这个里面还有一个luaU_undump在0x1a,0x1c两个case的是魔改的undump在sub_32D38的位置上\n进入sub_32d38中找到LoadFunction，可以看到loadstring是魔改的\n直接打开unluac源码的LStringType，添加解密代码逻辑\npackage unluac.parse; import java.io.IOException; import java.io.OutputStream; import java.nio.ByteBuffer; import java.nio.charset.StandardCharsets; import unluac.Version; public abstract class LStringType extends BObjectType\u003cLString\u003e { public static LStringType get(Version.StringType type) { switch (type) { case LUA50: return new LStringType50(); case LUA53: return new LStringType53(); case LUA54: return new LStringType54(); default: throw new IllegalStateException(); } } protected ThreadLocal\u003cStringBuilder\u003e b = new ThreadLocal\u003cStringBuilder\u003e() { @Override protected StringBuilder initialValue() { return new StringBuilder(); } }; } class LStringType50 extends LStringType { @Override public LString parse(final ByteBuffer buffer, BHeader header) { BInteger sizeT = header.sizeT.parse(buffer, header); final StringBuilder b = this.b.get(); b.setLength(0); sizeT.iterate(new Runnable() { @Override public void run() { b.append((char) (0xFF \u0026 buffer.get())); } }); if (b.length() == 0) { return LString.NULL; } else { char last = b.charAt(b.length() - 1); b.delete(b.length() - 1, b.length()); String s = b.toString(); if (header.debug) { System.out.println(\"-- parsed \\\"\" + s + \"\\\"\"); } return new LString(s, last); } } @Override public void write(OutputStream out, BHeader header, LString string) throws IOException { int len = string.value.length(); if (string == LString.NULL) { header.sizeT.write(out, header, header.sizeT.create(0)); } else { header.sizeT.write(out, header, header.sizeT.create(len + 1)); for (int i = 0; i \u003c len; i++) { out.write(string.value.charAt(i)); } out.write(0); } } } class LStringType53 extends LStringType { @Override public LString parse(final ByteBuffer buffer, BHeader header) { // 读取长度（含终止 0） BInteger sizeT; int sizeByte = 0xFF \u0026 buffer.get(); if (sizeByte == 0) { return LString.NULL; } else if (sizeByte == 0xFF) { sizeT = header.sizeT.parse(buffer, header); // 真实长度（含终止 0） } else { sizeT = new BInteger(sizeByte); } int fullLen = sizeT.asInt(); // 包括终止 0 int dataLen = fullLen - 1; // 实际字符串长度 if (dataLen \u003c 0) { // 异常情况，返回空 return LString.NULL; } // 读取加壳后的原始数据（魔改版：全部被异或编码） byte[] encoded = new byte[dataLen]; for (int i = 0; i \u003c dataLen; i++) { encoded[i] = buffer.get(); } // 解码：与 IDA 反编译出的 LoadString_xor 算法一致 byte[] decoded = decodeXor(encoded); String s = new String(decoded, StandardCharsets.ISO_8859_1); if (header.debug) { System.out.println(\"-- parsed \\\"\" + s + \"\\\"\"); } return new LString(s); } @Override public void write(OutputStream out, BHeader header, LString string) throws IOException { if (string == LString.NULL) { out.write(0); } else { // 写出时保持魔改前的格式（明文写出，未重新加壳）。 // 如果需要生成“加壳” dump，可在这里对 string.value 先 encodeXor 后再写。 int plainLenWithNull = string.value.length() + 1; if (plainLenWithNull \u003c 0xFF) { out.write((byte) plainLenWithNull); } else { out.write(0xFF); header.sizeT.write(out, header, header.sizeT.create(plainLenWithNull)); } for (int i = 0; i \u003c string.value.length(); i++) { out.write(string.value.charAt(i)); } } } // 魔改 XOR 解码逻辑：输入为被编码的实际数据（不含终止 0） private static byte[] decodeXor(byte[] enc) { int n = enc.length; if (n == 0) { return enc; // 空串 } byte[] out = new byte[n]; int mod = n % 255; int e0 = enc[0] \u0026 0xFF; out[0] = (byte) (e0 ^ mod); int v8 = mod ^ e0; // (n % 255) ^ e0 long t = 2L * n + v8; // 可能超过 32 位，使用 long long step = n + v8; for (int i = 1; i \u003c n; i++) { out[i] = (byte) (enc[i] ^ (int) (t % 255)); t += step; } return out; } // 如果未来需要重新加壳，可提供 encodeXor @SuppressWarnings(\"unused\") private static byte[] encodeXor(byte[] plain) { int n = plain.length; if (n == 0) { return plain; } byte[] enc = new byte[n]; int mod = n % 255; int p0 = plain[0] \u0026 0xFF; // 逆推：e0 = out[0] ^ (n % 255) int e0 = p0 ^ mod; enc[0] = (byte) e0; int v8 = mod ^ e0; long t = 2L * n + v8; long step = n + v8; for (int i = 1; i \u003c n; i++) { int mask = (int) (t % 255); enc[i] = (byte) ((plain[i] \u0026 0xFF) ^ mask); t += step; } return enc; } } class LStringType54 extends LStringType { @Override public LString parse(final ByteBuffer buffer, BHeader header) { BInteger sizeT = header.sizeT.parse(buffer, header); if (sizeT.asInt() == 0) { return LString.NULL; } final StringBuilder b = this.b.get(); b.setLength(0); sizeT.iterate(new Runnable() { boolean first = true; @Override public void run() { if (!first) { b.append((char) (0xFF \u0026 buffer.get())); } else { first = false; } } }); String s = b.toString(); if (header.debug) { System.out.println(\"-- parsed \\\"\" + s + \"\\\"\"); } return new LString(s); } @Override public void write(OutputStream out, BHeader header, LString string) throws IOException { if (string == LString.NULL) { header.sizeT.write(out, header, header.sizeT.create(0)); } else { header.sizeT.write(out, header, header.sizeT.create(string.value.length() + 1)); for (int i = 0; i \u003c string.value.length(); i++) { out.write(string.value.charAt(i)); } } } } 自己编译一下unluac然后运行\njava -jar /Users/l0x1c/decom/unluac.jar ./dump.luac6 --disassemble --output out.asm 编译回bin\njava -jar /Users/l0x1c/decom/unluac.jar ./out.asm -assemble --output out.bin 如果要用这个unluac的这个逻辑需要在lua_load的时候hook，因为如果调用原版的是已经解密完的了\nvar picStore = Process.findModuleByName(\"liblqd_lua.so\"); var count = 0; console.log(Instruction.parse(picStore.base.add(0x13D24)).toString()); Interceptor.attach(picStore.base.add(0x13D24), { // luaL_loadfilex func_addr onEnter: (args) =\u003e { var reader = ptr(args[2]) count += 1; this.fname = \"/data/data/com.lingqing.detector/files/dump/dump.luac\" + count.toString() var file_handle = new File(this.fname + \"hook\", \"wb\"); console.log(reader.readByteArray(16)) var len = ptr(reader.add(8)).readInt() file_handle.write(reader.readPointer().readByteArray(len)); file_handle.flush(); file_handle.close(); this.L = args[0]; }, onLeave: (retval) =\u003e { } }) 这个时候dump出来的1文件可以看到头可以和那个case相对应上了\n这个时候调用编译好的unluac，看一下\n通过分析来看的话，6.lua的文件应该是字符串加密的解密器，直接hook一下lua_pushstring以及strncmp看一下大概的流程\nvar mInterval = setInterval(function () { var mod = Process.findModuleByName(\"liblqd_lua.so\") var strncmp = mod.findExportByName(\"strncmp\"); if (mod == null) { console.log(\"无\") return } clearInterval(mInterval); var addr = mod.base.add(0x12204) console.log(\"hook addr: \" + addr); console.log(Instruction.parse(addr).toString()); Interceptor.attach(addr, { onEnter: function (args) { if(args[1].readCString().indexOf(\"_\")!=0) console.log(args[1].readCString()) } }) //endline Interceptor.attach(strncmp, { onEnter: function (args) { var s1 = args[0].readCString(); var s2 = args[1].readCString(); var n = args[2].toInt32(); console.log(\"strncmp called: \" + s1 + \" , \" + s2 + \" , \" + n); } }); }, 1) hook后可以看见一个关键的东西就是\nhttps://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/services/core/java/com/android/server/pm/ComputerEngine.java;l=2018;drc=61197364367c9e404c7da6900658f1b16c42d0da\n可以理解为通过uid来进行查询的，然后再通过GetPackageInfo来看是否存在来看是否有隐藏的app\n",
+  "wordCount" : "1787",
+  "inLanguage": "en",
+  "image": "https://l0x1c.com/images/papermod-cover.png","datePublished": "2025-11-06T22:25:02+08:00",
+  "dateModified": "2025-11-06T22:25:02+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "L0x1c"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://l0x1c.com/posts/luadec/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "L0x1c's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://l0x1c.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://l0x1c.com/" accesskey="h" title="L0x1c&#39;s Blog (Alt + H)">L0x1c&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://l0x1c.com/archives" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://l0x1c.com/categories/" title="Categories">
+                    <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://l0x1c.com/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://l0x1c.com/search/" title="Search (Alt &#43; /)" accesskey=/>
+                    <span>Search</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://l0x1c.com/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://l0x1c.com/">Home</a>&nbsp;»&nbsp;<a href="https://l0x1c.com/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      unluac xxx_app 分析
+      <span class="entry-hint" title="Draft">
+        <svg xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 -960 960 960" fill="currentColor">
+          <path
+            d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+        </svg>
+      </span>
+    </h1>
+    <div class="post-meta"><span title='2025-11-06 22:25:02 +0800 +0800'>November 6, 2025</span>&nbsp;·&nbsp;9 min&nbsp;·&nbsp;L0x1c
+
+</div>
+  </header> <div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#lua-%e4%bb%8b%e7%bb%8d" aria-label="Lua 介绍">Lua 介绍</a></li>
+                <li>
+                    <a href="#lua-%e5%8a%a0%e8%bd%bd%e6%89%a7%e8%a1%8c%e6%b5%81%e7%a8%8b" aria-label="lua 加载执行流程">lua 加载执行流程</a></li>
+                <li>
+                    <a href="#%e6%80%9d%e8%b7%af%e5%92%8c%e6%b5%81%e7%a8%8b" aria-label="思路和流程">思路和流程</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><p>这个是工作中遇见的一个app，需要分析一下app对于应用列表检测感知这个问题</p>
+<p>对应的样本的网址：https://github.com/TMLP-Team/TMLP-Detectors-and-Bypassers/blob/main/Detectors/%E5%87%8C%E5%8D%BF%E6%A3%80%E6%B5%8B_v1.6_fix.apk</p>
+<p>直接拖进jeb看一下</p>
+<p><img loading="lazy" src="image.png" alt="alt text"  />
+</p>
+<p>调用lua，看一下lingqing.bin</p>
+<p><img loading="lazy" src="image1.png" alt="alt text"  />
+</p>
+<h1 id="lua-介绍">Lua 介绍<a hidden class="anchor" aria-hidden="true" href="#lua-介绍">#</a></h1>
+<p>C 语言和 <code>Lua</code> 的交互是通过 <code>lua_State</code>来实现的，所以首先需要创建一个 <code>lua_State</code></p>
+<p>把 <code>Lua</code> 脚本加载进 <code>Lua</code> 虚拟机， <code>Lua</code> 提供了三个常用的函数</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">LUALIB_API</span> <span class="nf">int</span> <span class="p">(</span><span class="n">luaL_loadfilex</span><span class="p">)</span> <span class="p">(</span><span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">filename</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                                               <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">mode</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#define luaL_loadfile(L,f)	luaL_loadfilex(L,f,NULL)
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="n">LUALIB_API</span> <span class="nf">int</span> <span class="p">(</span><span class="n">luaL_loadbufferx</span><span class="p">)</span> <span class="p">(</span><span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buff</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">sz</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                                   <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">mode</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">LUALIB_API</span> <span class="nf">int</span> <span class="p">(</span><span class="n">luaL_loadstring</span><span class="p">)</span> <span class="p">(</span><span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">);</span>
+</span></span></code></pre></div><p>这三个函数最后走的都是 <code>lua_load</code> 函数，把经过编译后的代码放到了栈顶，执行加载到栈顶的 <code>Lua</code> 代码，上面的函数只是将程序加载到了栈顶，执行了之后才能变成虚拟机中的函数或者变量，因为在栈顶也没有需要传入的参数，所以只需要调用 <code>lua_pcall</code> 即可</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">LUA_API</span> <span class="kt">int</span> <span class="nf">lua_pcallk</span> <span class="p">(</span><span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span><span class="p">,</span> <span class="kt">int</span> <span class="n">nargs</span><span class="p">,</span> <span class="kt">int</span> <span class="n">nresults</span><span class="p">,</span> <span class="kt">int</span> <span class="n">errfunc</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">lua_KContext</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">lua_KFunction</span> <span class="n">k</span><span class="p">)</span>
+</span></span></code></pre></div><p>上面的常用的函数有对应的执行合并参数</p>
+<p><img loading="lazy" src="image2.png" alt="alt text"  />
+</p>
+<h1 id="lua-加载执行流程">lua 加载执行流程<a hidden class="anchor" aria-hidden="true" href="#lua-加载执行流程">#</a></h1>
+<p><code>luaL_loadbufferx</code>来直接看</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">LUALIB_API</span> <span class="kt">int</span> <span class="nf">luaL_loadbufferx</span> <span class="p">(</span><span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buff</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                                 <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">mode</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">LoadS</span> <span class="n">ls</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ls</span><span class="p">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">buff</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ls</span><span class="p">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nf">lua_load</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">getS</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>调用<code>lua_load</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">LUA_API</span> <span class="kt">int</span> <span class="nf">lua_load</span> <span class="p">(</span><span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span><span class="p">,</span> <span class="n">lua_Reader</span> <span class="n">reader</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">data</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                      <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">chunkname</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">mode</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ZIO</span> <span class="n">z</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">status</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">lua_lock</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">chunkname</span><span class="p">)</span> <span class="n">chunkname</span> <span class="o">=</span> <span class="s">&#34;?&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">luaZ_init</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">z</span><span class="p">,</span> <span class="n">reader</span><span class="p">,</span> <span class="n">data</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">status</span> <span class="o">=</span> <span class="nf">luaD_protectedparser</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">z</span><span class="p">,</span> <span class="n">chunkname</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">status</span> <span class="o">==</span> <span class="n">LUA_OK</span><span class="p">)</span> <span class="p">{</span>  <span class="cm">/* no errors? */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">LClosure</span> <span class="o">*</span><span class="n">f</span> <span class="o">=</span> <span class="nf">clLvalue</span><span class="p">(</span><span class="n">L</span><span class="o">-&gt;</span><span class="n">top</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>  <span class="cm">/* get newly created function */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">f</span><span class="o">-&gt;</span><span class="n">nupvalues</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>  <span class="cm">/* does it have an upvalue? */</span>
+</span></span><span class="line"><span class="cl">      <span class="cm">/* get global table from registry */</span>
+</span></span><span class="line"><span class="cl">      <span class="n">Table</span> <span class="o">*</span><span class="n">reg</span> <span class="o">=</span> <span class="nf">hvalue</span><span class="p">(</span><span class="o">&amp;</span><span class="nf">G</span><span class="p">(</span><span class="n">L</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">l_registry</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="k">const</span> <span class="n">TValue</span> <span class="o">*</span><span class="n">gt</span> <span class="o">=</span> <span class="nf">luaH_getint</span><span class="p">(</span><span class="n">reg</span><span class="p">,</span> <span class="n">LUA_RIDX_GLOBALS</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="cm">/* set global table as 1st upvalue of &#39;f&#39; (may be LUA_ENV) */</span>
+</span></span><span class="line"><span class="cl">      <span class="nf">setobj</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">f</span><span class="o">-&gt;</span><span class="n">upvals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">v</span><span class="p">,</span> <span class="n">gt</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="nf">luaC_upvalbarrier</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">f</span><span class="o">-&gt;</span><span class="n">upvals</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">lua_unlock</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">status</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><code>luaD_protectedparser</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">luaD_protectedparser</span> <span class="p">(</span><span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span><span class="p">,</span> <span class="n">ZIO</span> <span class="o">*</span><span class="n">z</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                                        <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">mode</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">struct</span> <span class="n">SParser</span> <span class="n">p</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">status</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">L</span><span class="o">-&gt;</span><span class="n">nny</span><span class="o">++</span><span class="p">;</span>  <span class="cm">/* cannot yield during parsing */</span>
+</span></span><span class="line"><span class="cl">  <span class="n">p</span><span class="p">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">z</span><span class="p">;</span> <span class="n">p</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">;</span> <span class="n">p</span><span class="p">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">p</span><span class="p">.</span><span class="n">dyd</span><span class="p">.</span><span class="n">actvar</span><span class="p">.</span><span class="n">arr</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="n">p</span><span class="p">.</span><span class="n">dyd</span><span class="p">.</span><span class="n">actvar</span><span class="p">.</span><span class="n">size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">p</span><span class="p">.</span><span class="n">dyd</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="n">arr</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="n">p</span><span class="p">.</span><span class="n">dyd</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="n">size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">p</span><span class="p">.</span><span class="n">dyd</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">arr</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="n">p</span><span class="p">.</span><span class="n">dyd</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">luaZ_initbuffer</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">p</span><span class="p">.</span><span class="n">buff</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">status</span> <span class="o">=</span> <span class="nf">luaD_pcall</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">f_parser</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">p</span><span class="p">,</span> <span class="nf">savestack</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">L</span><span class="o">-&gt;</span><span class="n">top</span><span class="p">),</span> <span class="n">L</span><span class="o">-&gt;</span><span class="n">errfunc</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">luaZ_freebuffer</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">p</span><span class="p">.</span><span class="n">buff</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">luaM_freearray</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">dyd</span><span class="p">.</span><span class="n">actvar</span><span class="p">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">dyd</span><span class="p">.</span><span class="n">actvar</span><span class="p">.</span><span class="n">size</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">luaM_freearray</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">dyd</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">dyd</span><span class="p">.</span><span class="n">gt</span><span class="p">.</span><span class="n">size</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">luaM_freearray</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">dyd</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">dyd</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">size</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">L</span><span class="o">-&gt;</span><span class="n">nny</span><span class="o">--</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">status</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><code>f_parser</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">void</span> <span class="nf">f_parser</span> <span class="p">(</span><span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">ud</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">LClosure</span> <span class="o">*</span><span class="n">cl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">struct</span> <span class="n">SParser</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="nf">cast</span><span class="p">(</span><span class="k">struct</span> <span class="n">SParser</span> <span class="o">*</span><span class="p">,</span> <span class="n">ud</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="nf">zgetc</span><span class="p">(</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">z</span><span class="p">);</span>  <span class="cm">/* read first character */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="n">LUA_SIGNATURE</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">checkmode</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">mode</span><span class="p">,</span> <span class="s">&#34;binary&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cl</span> <span class="o">=</span> <span class="nf">luaU_undump</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">z</span><span class="p">,</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">checkmode</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">mode</span><span class="p">,</span> <span class="s">&#34;text&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cl</span> <span class="o">=</span> <span class="nf">luaY_parser</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">z</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">buff</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">dyd</span><span class="p">,</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="n">c</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">lua_assert</span><span class="p">(</span><span class="n">cl</span><span class="o">-&gt;</span><span class="n">nupvalues</span> <span class="o">==</span> <span class="n">cl</span><span class="o">-&gt;</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">sizeupvalues</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">luaF_initupvals</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">cl</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><code>luaU_undump</code> 或者<code>luaY_parser</code>，一个是luac的二进制文件，一个是luac的脚本文件</p>
+<h1 id="思路和流程">思路和流程<a hidden class="anchor" aria-hidden="true" href="#思路和流程">#</a></h1>
+<p>因为有很多魔改对于文件的结构上的那些调整，可以在<code>load</code>完成之后，执行之前的时候，因为这个时候程序在栈顶的时候，调用标准的<code>lua_dump</code>函数，就可以获得<code>luac</code>文件了</p>
+<p><img loading="lazy" src="image3.png" alt="alt text"  />
+</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="nf">int</span> <span class="p">(</span><span class="o">*</span><span class="n">lua_Writer</span><span class="p">)</span> <span class="p">(</span><span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">sz</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">ud</span><span class="p">);</span>
+</span></span></code></pre></div><p>当前的文件是<code>lua 5.3.3</code>版本：</p>
+<p><img loading="lazy" src="image4.png" alt="alt text"  />
+</p>
+<p>直接ida看一下<code>luaL_loadbufferx</code>，这个的<code>luaL_loadbufferx</code>和源码中的是不一样的所以如果frida hook的话，是要在leave的时候</p>
+<p><img loading="lazy" src="image5.png" alt="alt text"  />
+</p>
+<p>看这个反编译中带有lua_dump的函数，所以可以直接调用，脚本：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">lq_lua</span> <span class="o">=</span> <span class="nx">Process</span><span class="p">.</span><span class="nx">findModuleByName</span><span class="p">(</span><span class="s2">&#34;liblqd_lua.so&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">fopen</span>  <span class="o">=</span> <span class="nx">Process</span><span class="p">.</span><span class="nx">findModuleByName</span><span class="p">(</span><span class="s2">&#34;libc.so&#34;</span><span class="p">).</span><span class="nx">findExportByName</span><span class="p">(</span><span class="s2">&#34;fopen&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">fwrite</span> <span class="o">=</span> <span class="nx">Process</span><span class="p">.</span><span class="nx">findModuleByName</span><span class="p">(</span><span class="s2">&#34;libc.so&#34;</span><span class="p">).</span><span class="nx">findExportByName</span><span class="p">(</span><span class="s2">&#34;fwrite&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">fopen_func</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NativeFunction</span><span class="p">(</span><span class="nx">fopen</span><span class="p">,</span> <span class="s1">&#39;pointer&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;pointer&#39;</span><span class="p">,</span> <span class="s1">&#39;pointer&#39;</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">fwrite_func</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NativeFunction</span><span class="p">(</span><span class="nx">fwrite</span><span class="p">,</span> <span class="s1">&#39;size_t&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;pointer&#39;</span><span class="p">,</span> <span class="s1">&#39;size_t&#39;</span><span class="p">,</span> <span class="s1">&#39;size_t&#39;</span><span class="p">,</span> <span class="s1">&#39;pointer&#39;</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">targetAddr</span> <span class="o">=</span> <span class="nx">lq_lua</span><span class="p">.</span><span class="nx">base</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="mh">0x1660C</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">lua_dump_ptr</span> <span class="o">=</span> <span class="nx">lq_lua</span><span class="p">.</span><span class="nx">base</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="mh">0x13E14</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">lua_dump</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NativeFunction</span><span class="p">(</span><span class="nx">lua_dump_ptr</span><span class="p">,</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;pointer&#39;</span><span class="p">,</span> <span class="s1">&#39;pointer&#39;</span><span class="p">,</span> <span class="s1">&#39;pointer&#39;</span><span class="p">,</span> <span class="s1">&#39;int&#39;</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">currentFile</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">writer_cb</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NativeCallback</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">L</span><span class="p">,</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">sz</span><span class="p">,</span> <span class="nx">ud</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kr">const</span> <span class="nx">n</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">sz</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="kr">const</span> <span class="nx">wrote</span> <span class="o">=</span> <span class="nx">fwrite_func</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">ud</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="p">(</span><span class="nb">Number</span><span class="p">(</span><span class="nx">wrote</span><span class="p">)</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">//expected a pointer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;writer_cb exception: &#34;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">},</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;pointer&#39;</span><span class="p">,</span> <span class="s1">&#39;pointer&#39;</span><span class="p">,</span> <span class="s1">&#39;size_t&#39;</span><span class="p">,</span> <span class="s1">&#39;pointer&#39;</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;lq_luaV_gettable @ &#34;</span> <span class="o">+</span> <span class="nx">targetAddr</span> <span class="o">+</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34; insn=&#34;</span> <span class="o">+</span> <span class="nx">Instruction</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">targetAddr</span><span class="p">).</span><span class="nx">toString</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;lua_dump @ &#34;</span> <span class="o">+</span> <span class="nx">lua_dump_ptr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">Interceptor</span><span class="p">.</span><span class="nx">attach</span><span class="p">(</span><span class="nx">targetAddr</span><span class="p">,</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">onEnter</span><span class="o">:</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">count</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="p">.</span><span class="nx">fname</span> <span class="o">=</span> <span class="s2">&#34;/data/data/com.lingqing.detector/files/dump/dump.luac&#34;</span> <span class="o">+</span> <span class="nx">count</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="p">.</span><span class="nx">L</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">onLeave</span><span class="o">:</span> <span class="p">(</span><span class="nx">retval</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;lq_luaV_gettable called &#34;</span> <span class="o">+</span> <span class="nx">count</span> <span class="o">+</span> <span class="s2">&#34; times&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">currentFile</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">File</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">fname</span><span class="p">,</span> <span class="s2">&#34;wb&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;Failed to open file &#34;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">fname</span> <span class="o">+</span> <span class="s2">&#34;: &#34;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">currentFile</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">var</span> <span class="nx">cName</span> <span class="o">=</span> <span class="nx">Memory</span><span class="p">.</span><span class="nx">allocUtf8String</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">fname</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">var</span> <span class="nx">cMode</span> <span class="o">=</span> <span class="nx">Memory</span><span class="p">.</span><span class="nx">allocUtf8String</span><span class="p">(</span><span class="s2">&#34;wb&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">var</span> <span class="nx">file</span> <span class="o">=</span> <span class="nx">fopen_func</span><span class="p">(</span><span class="nx">cName</span><span class="p">,</span> <span class="nx">cMode</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="nx">currentFile</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">//fwrite_func
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="kd">var</span> <span class="nx">status</span> <span class="o">=</span> <span class="nx">lua_dump</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">L</span><span class="p">,</span> <span class="nx">writer_cb</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;lua_dump status=&#34;</span> <span class="o">+</span> <span class="nx">status</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e2</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;lua_dump exception: &#34;</span> <span class="o">+</span> <span class="nx">e2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="k">try</span> <span class="p">{</span> <span class="nx">currentFile</span><span class="p">.</span><span class="nx">flush</span><span class="p">();</span> <span class="nx">currentFile</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span> <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e3</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">currentFile</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">});</span>
+</span></span></code></pre></div><p>可以抓到这6个<code>luac</code>，但是这么抓的还是会有加密的，说明需要调用原版本的<code>lua</code>的<code>lua_dump</code>，自己编译一个调用<code>lua_dump</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">lq_lua</span> <span class="o">=</span> <span class="nx">Process</span><span class="p">.</span><span class="nx">findModuleByName</span><span class="p">(</span><span class="s2">&#34;liblqd_lua.so&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">liblua</span> <span class="o">=</span> <span class="nx">Module</span><span class="p">.</span><span class="nx">load</span><span class="p">(</span><span class="s2">&#34;/data/data/com.lingqing.detector/files/liblua_share.so&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">pdump</span> <span class="o">=</span> <span class="nx">liblua</span><span class="p">.</span><span class="nx">findExportByName</span><span class="p">(</span><span class="s2">&#34;lua_dump&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">fun_dump</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NativeFunction</span><span class="p">(</span><span class="nx">pdump</span><span class="p">,</span> <span class="s2">&#34;int&#34;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&#34;pointer&#34;</span><span class="p">,</span> <span class="s2">&#34;pointer&#34;</span><span class="p">,</span> <span class="s2">&#34;pointer&#34;</span><span class="p">,</span> <span class="s2">&#34;int&#34;</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">fopen</span>  <span class="o">=</span> <span class="nx">Process</span><span class="p">.</span><span class="nx">findModuleByName</span><span class="p">(</span><span class="s2">&#34;libc.so&#34;</span><span class="p">).</span><span class="nx">findExportByName</span><span class="p">(</span><span class="s2">&#34;fopen&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">fwrite</span> <span class="o">=</span> <span class="nx">Process</span><span class="p">.</span><span class="nx">findModuleByName</span><span class="p">(</span><span class="s2">&#34;libc.so&#34;</span><span class="p">).</span><span class="nx">findExportByName</span><span class="p">(</span><span class="s2">&#34;fwrite&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">fopen_func</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NativeFunction</span><span class="p">(</span><span class="nx">fopen</span><span class="p">,</span> <span class="s1">&#39;pointer&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;pointer&#39;</span><span class="p">,</span> <span class="s1">&#39;pointer&#39;</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">fwrite_func</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NativeFunction</span><span class="p">(</span><span class="nx">fwrite</span><span class="p">,</span> <span class="s1">&#39;size_t&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;pointer&#39;</span><span class="p">,</span> <span class="s1">&#39;size_t&#39;</span><span class="p">,</span> <span class="s1">&#39;size_t&#39;</span><span class="p">,</span> <span class="s1">&#39;pointer&#39;</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">targetAddr</span> <span class="o">=</span> <span class="nx">lq_lua</span><span class="p">.</span><span class="nx">base</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="mh">0x1660C</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">lua_dump_ptr</span> <span class="o">=</span> <span class="nx">lq_lua</span><span class="p">.</span><span class="nx">base</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="mh">0x13E14</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">lua_dump</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NativeFunction</span><span class="p">(</span><span class="nx">lua_dump_ptr</span><span class="p">,</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;pointer&#39;</span><span class="p">,</span> <span class="s1">&#39;pointer&#39;</span><span class="p">,</span> <span class="s1">&#39;pointer&#39;</span><span class="p">,</span> <span class="s1">&#39;int&#39;</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">currentFile</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">writer_cb</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NativeCallback</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">L</span><span class="p">,</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">sz</span><span class="p">,</span> <span class="nx">ud</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kr">const</span> <span class="nx">n</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">sz</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="kr">const</span> <span class="nx">wrote</span> <span class="o">=</span> <span class="nx">fwrite_func</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">ud</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="p">(</span><span class="nb">Number</span><span class="p">(</span><span class="nx">wrote</span><span class="p">)</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">//expected a pointer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;writer_cb exception: &#34;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">},</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;pointer&#39;</span><span class="p">,</span> <span class="s1">&#39;pointer&#39;</span><span class="p">,</span> <span class="s1">&#39;size_t&#39;</span><span class="p">,</span> <span class="s1">&#39;pointer&#39;</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;lq_luaV_gettable @ &#34;</span> <span class="o">+</span> <span class="nx">targetAddr</span> <span class="o">+</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34; insn=&#34;</span> <span class="o">+</span> <span class="nx">Instruction</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">targetAddr</span><span class="p">).</span><span class="nx">toString</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;lua_dump @ &#34;</span> <span class="o">+</span> <span class="nx">lua_dump_ptr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">Interceptor</span><span class="p">.</span><span class="nx">attach</span><span class="p">(</span><span class="nx">targetAddr</span><span class="p">,</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">onEnter</span><span class="o">:</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">count</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="p">.</span><span class="nx">fname</span> <span class="o">=</span> <span class="s2">&#34;/data/data/com.lingqing.detector/files/dump/dump.luac&#34;</span> <span class="o">+</span> <span class="nx">count</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="p">.</span><span class="nx">L</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">onLeave</span><span class="o">:</span> <span class="p">(</span><span class="nx">retval</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;lq_luaV_gettable called &#34;</span> <span class="o">+</span> <span class="nx">count</span> <span class="o">+</span> <span class="s2">&#34; times&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">currentFile</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">File</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">fname</span><span class="p">,</span> <span class="s2">&#34;wb&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;Failed to open file &#34;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">fname</span> <span class="o">+</span> <span class="s2">&#34;: &#34;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">currentFile</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">var</span> <span class="nx">cName</span> <span class="o">=</span> <span class="nx">Memory</span><span class="p">.</span><span class="nx">allocUtf8String</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">fname</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">var</span> <span class="nx">cMode</span> <span class="o">=</span> <span class="nx">Memory</span><span class="p">.</span><span class="nx">allocUtf8String</span><span class="p">(</span><span class="s2">&#34;wb&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">var</span> <span class="nx">file</span> <span class="o">=</span> <span class="nx">fopen_func</span><span class="p">(</span><span class="nx">cName</span><span class="p">,</span> <span class="nx">cMode</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="nx">currentFile</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">//fwrite_func
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="kd">var</span> <span class="nx">status</span> <span class="o">=</span> <span class="nx">fun_dump</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">L</span><span class="p">,</span> <span class="nx">writer_cb</span><span class="p">,</span> <span class="nx">ptr</span><span class="p">(</span><span class="nx">file</span><span class="p">),</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;lua_dump status=&#34;</span> <span class="o">+</span> <span class="nx">status</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e2</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;lua_dump exception: &#34;</span> <span class="o">+</span> <span class="nx">e2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="k">try</span> <span class="p">{</span> <span class="nx">currentFile</span><span class="p">.</span><span class="nx">flush</span><span class="p">();</span> <span class="nx">currentFile</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span> <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e3</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">currentFile</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">});</span>
+</span></span></code></pre></div><p>这次就可以进行反编译了</p>
+<p><img loading="lazy" src="image6.png" alt="alt text"  />
+</p>
+<p>但是a1和a6并不能反编译出来，这里可能有点问题，回看这个样本自带的关于<code>lua</code>的<code>so</code>，在<code>lua_load</code>里进行逆向可以发现</p>
+<p>因为按照之前看源码的流程，首先定位到<code>luaD_protectedparser</code></p>
+<p><img loading="lazy" src="image7.png" alt="alt text"  />
+</p>
+<p>进来后定位到<code>f_parser</code></p>
+<p><img loading="lazy" src="image8.png" alt="alt text"  />
+</p>
+<p>再定位到<code>luaU_undump</code>，但是这个里面还有一个<code>luaU_undump</code>在<code>0x1a,0x1c</code>两个<code>case</code>的是魔改的<code>undump</code>在<code>sub_32D38</code>的位置上</p>
+<p><img loading="lazy" src="image9.png" alt="alt text"  />
+</p>
+<p>进入<code>sub_32d38</code>中找到<code>LoadFunction</code>，可以看到<code>loadstring</code>是魔改的</p>
+<p><img loading="lazy" src="image10.png" alt="alt text"  />
+</p>
+<p>直接打开<code>unluac</code>源码的<code>LStringType</code>，添加解密代码逻辑</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">unluac.parse</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.io.IOException</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.io.OutputStream</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.nio.ByteBuffer</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.nio.charset.StandardCharsets</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">unluac.Version</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LStringType</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BObjectType</span><span class="o">&lt;</span><span class="n">LString</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">LStringType</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="n">Version</span><span class="p">.</span><span class="na">StringType</span><span class="w"> </span><span class="n">type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="n">LUA50</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LStringType50</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="n">LUA53</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LStringType53</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="n">LUA54</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LStringType54</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">default</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalStateException</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">protected</span><span class="w"> </span><span class="n">ThreadLocal</span><span class="o">&lt;</span><span class="n">StringBuilder</span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ThreadLocal</span><span class="o">&lt;</span><span class="n">StringBuilder</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">StringBuilder</span><span class="w"> </span><span class="nf">initialValue</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StringBuilder</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">class</span> <span class="nc">LStringType50</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">LStringType</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="n">LString</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">ByteBuffer</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">BHeader</span><span class="w"> </span><span class="n">header</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">BInteger</span><span class="w"> </span><span class="n">sizeT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">header</span><span class="p">.</span><span class="na">sizeT</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">StringBuilder</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">b</span><span class="p">.</span><span class="na">get</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">b</span><span class="p">.</span><span class="na">setLength</span><span class="p">(</span><span class="n">0</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">sizeT</span><span class="p">.</span><span class="na">iterate</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Runnable</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">b</span><span class="p">.</span><span class="na">append</span><span class="p">((</span><span class="kt">char</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="n">0xFF</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="na">get</span><span class="p">()));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="na">length</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">LString</span><span class="p">.</span><span class="na">NULL</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="kt">char</span><span class="w"> </span><span class="n">last</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="na">charAt</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="na">length</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">1</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">b</span><span class="p">.</span><span class="na">delete</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="na">length</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">1</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="na">length</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">String</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="na">toString</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">header</span><span class="p">.</span><span class="na">debug</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;-- parsed &lt;string&gt; \&#34;&#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;\&#34;&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LString</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">last</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="n">OutputStream</span><span class="w"> </span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">BHeader</span><span class="w"> </span><span class="n">header</span><span class="p">,</span><span class="w"> </span><span class="n">LString</span><span class="w"> </span><span class="n">string</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">len</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">string</span><span class="p">.</span><span class="na">value</span><span class="p">.</span><span class="na">length</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">string</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">LString</span><span class="p">.</span><span class="na">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">header</span><span class="p">.</span><span class="na">sizeT</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="p">.</span><span class="na">sizeT</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="n">0</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">header</span><span class="p">.</span><span class="na">sizeT</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="p">.</span><span class="na">sizeT</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="n">len</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">1</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">len</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">out</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="n">string</span><span class="p">.</span><span class="na">value</span><span class="p">.</span><span class="na">charAt</span><span class="p">(</span><span class="n">i</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">out</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="n">0</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">class</span> <span class="nc">LStringType53</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">LStringType</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="n">LString</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">ByteBuffer</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">BHeader</span><span class="w"> </span><span class="n">header</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 读取长度（含终止 0）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">BInteger</span><span class="w"> </span><span class="n">sizeT</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">sizeByte</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0xFF</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="na">get</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sizeByte</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">LString</span><span class="p">.</span><span class="na">NULL</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sizeByte</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">0xFF</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">sizeT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">header</span><span class="p">.</span><span class="na">sizeT</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="p">);</span><span class="w"> </span><span class="c1">// 真实长度（含终止 0）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">sizeT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">BInteger</span><span class="p">(</span><span class="n">sizeByte</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">fullLen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sizeT</span><span class="p">.</span><span class="na">asInt</span><span class="p">();</span><span class="w"> </span><span class="c1">// 包括终止 0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">dataLen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fullLen</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">1</span><span class="p">;</span><span class="w">   </span><span class="c1">// 实际字符串长度</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dataLen</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="c1">// 异常情况，返回空</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">LString</span><span class="p">.</span><span class="na">NULL</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 读取加壳后的原始数据（魔改版：全部被异或编码）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">encoded</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">byte</span><span class="o">[</span><span class="n">dataLen</span><span class="o">]</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">dataLen</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">encoded</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="na">get</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 解码：与 IDA 反编译出的 LoadString_xor 算法一致</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">decoded</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">decodeXor</span><span class="p">(</span><span class="n">encoded</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="p">(</span><span class="n">decoded</span><span class="p">,</span><span class="w"> </span><span class="n">StandardCharsets</span><span class="p">.</span><span class="na">ISO_8859_1</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">header</span><span class="p">.</span><span class="na">debug</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;-- parsed &lt;string-xor&gt; \&#34;&#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;\&#34;&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LString</span><span class="p">(</span><span class="n">s</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="n">OutputStream</span><span class="w"> </span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">BHeader</span><span class="w"> </span><span class="n">header</span><span class="p">,</span><span class="w"> </span><span class="n">LString</span><span class="w"> </span><span class="n">string</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">string</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">LString</span><span class="p">.</span><span class="na">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">out</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="n">0</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="c1">// 写出时保持魔改前的格式（明文写出，未重新加壳）。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="c1">// 如果需要生成“加壳” dump，可在这里对 string.value 先 encodeXor 后再写。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="kt">int</span><span class="w"> </span><span class="n">plainLenWithNull</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">string</span><span class="p">.</span><span class="na">value</span><span class="p">.</span><span class="na">length</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">plainLenWithNull</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">0xFF</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">out</span><span class="p">.</span><span class="na">write</span><span class="p">((</span><span class="kt">byte</span><span class="p">)</span><span class="w"> </span><span class="n">plainLenWithNull</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">out</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="n">0xFF</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">header</span><span class="p">.</span><span class="na">sizeT</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="p">.</span><span class="na">sizeT</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="n">plainLenWithNull</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">string</span><span class="p">.</span><span class="na">value</span><span class="p">.</span><span class="na">length</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">out</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="n">string</span><span class="p">.</span><span class="na">value</span><span class="p">.</span><span class="na">charAt</span><span class="p">(</span><span class="n">i</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c1">// 魔改 XOR 解码逻辑：输入为被编码的实际数据（不含终止 0）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="nf">decodeXor</span><span class="p">(</span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">enc</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">enc</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">enc</span><span class="p">;</span><span class="w"> </span><span class="c1">// 空串</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">byte</span><span class="o">[</span><span class="n">n</span><span class="o">]</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mod</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">255</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">e0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">enc</span><span class="o">[</span><span class="n">0</span><span class="o">]</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">0xFF</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">out</span><span class="o">[</span><span class="n">0</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">byte</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="n">e0</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="n">mod</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">v8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mod</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="n">e0</span><span class="p">;</span><span class="w"> </span><span class="c1">// (n % 255) ^ e0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">2L</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">v8</span><span class="p">;</span><span class="w"> </span><span class="c1">// 可能超过 32 位，使用 long</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="n">step</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">v8</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">out</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">byte</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="n">enc</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="n">t</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">255</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">t</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">step</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">out</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c1">// 如果未来需要重新加壳，可提供 encodeXor</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nd">@SuppressWarnings</span><span class="p">(</span><span class="s">&#34;unused&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="nf">encodeXor</span><span class="p">(</span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">plain</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">plain</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">plain</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">enc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">byte</span><span class="o">[</span><span class="n">n</span><span class="o">]</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mod</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">255</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">p0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">plain</span><span class="o">[</span><span class="n">0</span><span class="o">]</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">0xFF</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 逆推：e0 = out[0] ^ (n % 255)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">e0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p0</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="n">mod</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">enc</span><span class="o">[</span><span class="n">0</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">byte</span><span class="p">)</span><span class="w"> </span><span class="n">e0</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">v8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mod</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="n">e0</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">2L</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">v8</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="n">step</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">v8</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="kt">int</span><span class="w"> </span><span class="n">mask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="n">t</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">255</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">enc</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">byte</span><span class="p">)</span><span class="w"> </span><span class="p">((</span><span class="n">plain</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">0xFF</span><span class="p">)</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="n">mask</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">t</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">step</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">enc</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">class</span> <span class="nc">LStringType54</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">LStringType</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="n">LString</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">ByteBuffer</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">BHeader</span><span class="w"> </span><span class="n">header</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">BInteger</span><span class="w"> </span><span class="n">sizeT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">header</span><span class="p">.</span><span class="na">sizeT</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sizeT</span><span class="p">.</span><span class="na">asInt</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">LString</span><span class="p">.</span><span class="na">NULL</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">StringBuilder</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">b</span><span class="p">.</span><span class="na">get</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">b</span><span class="p">.</span><span class="na">setLength</span><span class="p">(</span><span class="n">0</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">sizeT</span><span class="p">.</span><span class="na">iterate</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Runnable</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="kt">boolean</span><span class="w"> </span><span class="n">first</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">first</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="n">b</span><span class="p">.</span><span class="na">append</span><span class="p">((</span><span class="kt">char</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="n">0xFF</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="na">get</span><span class="p">()));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="n">first</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="na">toString</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">header</span><span class="p">.</span><span class="na">debug</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;-- parsed &lt;string&gt; \&#34;&#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;\&#34;&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LString</span><span class="p">(</span><span class="n">s</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="n">OutputStream</span><span class="w"> </span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">BHeader</span><span class="w"> </span><span class="n">header</span><span class="p">,</span><span class="w"> </span><span class="n">LString</span><span class="w"> </span><span class="n">string</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">string</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">LString</span><span class="p">.</span><span class="na">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">header</span><span class="p">.</span><span class="na">sizeT</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="p">.</span><span class="na">sizeT</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="n">0</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">header</span><span class="p">.</span><span class="na">sizeT</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="p">.</span><span class="na">sizeT</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="n">string</span><span class="p">.</span><span class="na">value</span><span class="p">.</span><span class="na">length</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">1</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">string</span><span class="p">.</span><span class="na">value</span><span class="p">.</span><span class="na">length</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">out</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="n">string</span><span class="p">.</span><span class="na">value</span><span class="p">.</span><span class="na">charAt</span><span class="p">(</span><span class="n">i</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>自己编译一下<code>unluac</code>然后运行</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">java -jar /Users/l0x1c/decom/unluac.jar ./dump.luac6 --disassemble --output out.asm
+</span></span></code></pre></div><p>编译回<code>bin</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">java -jar /Users/l0x1c/decom/unluac.jar ./out.asm -assemble  --output out.bin
+</span></span></code></pre></div><p>如果要用这个<code>unluac</code>的这个逻辑需要在<code>lua_load</code>的时候<code>hook</code>，因为如果调用原版的是已经解密完的了</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">picStore</span> <span class="o">=</span> <span class="nx">Process</span><span class="p">.</span><span class="nx">findModuleByName</span><span class="p">(</span><span class="s2">&#34;liblqd_lua.so&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">Instruction</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">picStore</span><span class="p">.</span><span class="nx">base</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="mh">0x13D24</span><span class="p">)).</span><span class="nx">toString</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Interceptor</span><span class="p">.</span><span class="nx">attach</span><span class="p">(</span><span class="nx">picStore</span><span class="p">.</span><span class="nx">base</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="mh">0x13D24</span><span class="p">),</span> <span class="p">{</span> <span class="c1">// luaL_loadfilex func_addr
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">onEnter</span><span class="o">:</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">var</span> <span class="nx">reader</span> <span class="o">=</span> <span class="nx">ptr</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">count</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="p">.</span><span class="nx">fname</span> <span class="o">=</span> <span class="s2">&#34;/data/data/com.lingqing.detector/files/dump/dump.luac&#34;</span> <span class="o">+</span> <span class="nx">count</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">var</span> <span class="nx">file_handle</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">File</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">fname</span> <span class="o">+</span> <span class="s2">&#34;hook&#34;</span><span class="p">,</span> <span class="s2">&#34;wb&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">reader</span><span class="p">.</span><span class="nx">readByteArray</span><span class="p">(</span><span class="mi">16</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">var</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">ptr</span><span class="p">(</span><span class="nx">reader</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="mi">8</span><span class="p">)).</span><span class="nx">readInt</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">file_handle</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">reader</span><span class="p">.</span><span class="nx">readPointer</span><span class="p">().</span><span class="nx">readByteArray</span><span class="p">(</span><span class="nx">len</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">file_handle</span><span class="p">.</span><span class="nx">flush</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">file_handle</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="p">.</span><span class="nx">L</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">onLeave</span><span class="o">:</span> <span class="p">(</span><span class="nx">retval</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></div><p>这个时候<code>dump</code>出来的<code>1</code>文件可以看到头可以和那个<code>case</code>相对应上了</p>
+<p><img loading="lazy" src="image11.png" alt="alt text"  />
+</p>
+<p>这个时候调用编译好的<code>unluac</code>，看一下</p>
+<p><img loading="lazy" src="image12.png" alt="alt text"  />
+</p>
+<p>通过分析来看的话，<code>6.lua</code>的文件应该是字符串加密的解密器，直接<code>hook</code>一下<code>lua_pushstring</code>以及<code>strncmp</code>看一下大概的流程</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">mInterval</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">mod</span> <span class="o">=</span> <span class="nx">Process</span><span class="p">.</span><span class="nx">findModuleByName</span><span class="p">(</span><span class="s2">&#34;liblqd_lua.so&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">strncmp</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">findExportByName</span><span class="p">(</span><span class="s2">&#34;strncmp&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span> <span class="o">==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;无&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">clearInterval</span><span class="p">(</span><span class="nx">mInterval</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">addr</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">base</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="mh">0x12204</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;hook addr: &#34;</span> <span class="o">+</span> <span class="nx">addr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">Instruction</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">addr</span><span class="p">).</span><span class="nx">toString</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Interceptor</span><span class="p">.</span><span class="nx">attach</span><span class="p">(</span><span class="nx">addr</span><span class="p">,</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">onEnter</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nx">readCString</span><span class="p">().</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&#34;_&#34;</span><span class="p">)</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nx">readCString</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">//endline
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    
+</span></span><span class="line"><span class="cl">    <span class="nx">Interceptor</span><span class="p">.</span><span class="nx">attach</span><span class="p">(</span><span class="nx">strncmp</span><span class="p">,</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">onEnter</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="kd">var</span> <span class="nx">s1</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">readCString</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="kd">var</span> <span class="nx">s2</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nx">readCString</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="kd">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="nx">toInt32</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;strncmp called: &#34;</span> <span class="o">+</span> <span class="nx">s1</span> <span class="o">+</span> <span class="s2">&#34; , &#34;</span> <span class="o">+</span> <span class="nx">s2</span> <span class="o">+</span> <span class="s2">&#34; , &#34;</span> <span class="o">+</span> <span class="nx">n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">});</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">},</span> <span class="mi">1</span><span class="p">)</span>
+</span></span></code></pre></div><p><code>hook</code>后可以看见一个关键的东西就是</p>
+<p><img loading="lazy" src="image13.png" alt="alt text"  />
+</p>
+<p><a href="https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/services/core/java/com/android/server/pm/ComputerEngine.java;l=2018;drc=61197364367c9e404c7da6900658f1b16c42d0da">https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/services/core/java/com/android/server/pm/ComputerEngine.java;l=2018;drc=61197364367c9e404c7da6900658f1b16c42d0da</a></p>
+<p><img loading="lazy" src="image-1.png" alt="alt text"  />
+</p>
+<p>可以理解为通过<code>uid</code>来进行查询的，然后再通过<code>GetPackageInfo</code>来看是否存在来看是否有隐藏的<code>app</code></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+<nav class="paginav">
+  <a class="next" href="https://l0x1c.com/posts/xv6-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">
+    <span class="title">Next »</span>
+    <br>
+    <span>xv6 环境配置 vmare or docker</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
