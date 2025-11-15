@@ -186,6 +186,31 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">dy a_bogus参数 逆向分析
+      <span class="entry-hint" title="Draft">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" fill="currentColor">
+          <path
+            d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+        </svg>
+      </span>
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>关于dy的a_bogus逆向，jsvmp
+进行抖音抓包，对应的位置在
+url = &#34;https://www.douyin.com/aweme/v1/web/aweme/post/&#34; 可以看一下调用栈，不难发现主要的逻辑在bdms_1.0.1.19_fix.js
+直接跳过去可以看到d就是指令操作
+先一点一点的去看
+这个位置调用了atob，代表了对下面的那个字符进行了base64的解密，随后取第 4~7 字节求和得到单字节 key
+再用自定义 map 函数 _ 对余下字节逐个异或，最后把结果送进自带的 DEFLATE 解压器，从而得到可执行的数据块，这里可以很好的看出来这一块是一个压缩文件的格式，对应base64的UEsC
+import base64, zlib, re, hashlib, os, sys from pathlib import Path BASE64_DATA = r&#34;&#34;&#34; &#34;&#34;&#34;.strip() # ============================================== def sanitize_b64(s: str) -&gt; str: return re.sub(r&#39;[^A-Za-z0-9&#43;/=]&#39;, &#39;&#39;, s) def xor_transform(decoded: bytes) -&gt; tuple[bytes, int, int]: key_sum = sum(decoded[4:8]) &amp; 0xFFFFFFFF km = key_sum % 256 step = km % 10 tail = decoded[8:] out = bytearray(len(tail)) for i, b in enumerate(tail): out[i] = (b ^ ((km &#43; step * i) % 256)) &amp; 0xFF return bytes(out), key_sum, km def inflate_raw(data: bytes) -&gt; bytes: return zlib....</p>
+  </div>
+  <footer class="entry-footer"><span title='2025-11-15 17:59:02 +0800 +0800'>November 15, 2025</span>&nbsp;·&nbsp;22 min&nbsp;·&nbsp;L0x1c</footer>
+  <a class="entry-link" aria-label="post link to dy a_bogus参数 逆向分析" href="https://l0x1c.com/posts/dy_web_a_bogus/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">unluac xxx_app 分析
       <span class="entry-hint" title="Draft">
         <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" fill="currentColor">

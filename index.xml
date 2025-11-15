@@ -12,8 +12,22 @@
     <generator>Hugo -- 0.120.4</generator>
     <language>en</language>
     <copyright>PaperMod Contributors</copyright>
-    <lastBuildDate>Thu, 06 Nov 2025 22:25:02 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 15 Nov 2025 17:59:02 +0800</lastBuildDate>
     <atom:link href="https://l0x1c.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>dy a_bogus参数 逆向分析</title>
+      <link>https://l0x1c.com/posts/dy_web_a_bogus/</link>
+      <pubDate>Sat, 15 Nov 2025 17:59:02 +0800</pubDate>
+      <guid>https://l0x1c.com/posts/dy_web_a_bogus/</guid>
+      <description>关于dy的a_bogus逆向，jsvmp
+进行抖音抓包，对应的位置在
+url = &amp;#34;https://www.douyin.com/aweme/v1/web/aweme/post/&amp;#34; 可以看一下调用栈，不难发现主要的逻辑在bdms_1.0.1.19_fix.js
+直接跳过去可以看到d就是指令操作
+先一点一点的去看
+这个位置调用了atob，代表了对下面的那个字符进行了base64的解密，随后取第 4~7 字节求和得到单字节 key
+再用自定义 map 函数 _ 对余下字节逐个异或，最后把结果送进自带的 DEFLATE 解压器，从而得到可执行的数据块，这里可以很好的看出来这一块是一个压缩文件的格式，对应base64的UEsC
+import base64, zlib, re, hashlib, os, sys from pathlib import Path BASE64_DATA = r&amp;#34;&amp;#34;&amp;#34; &amp;#34;&amp;#34;&amp;#34;.strip() # ============================================== def sanitize_b64(s: str) -&amp;gt; str: return re.sub(r&amp;#39;[^A-Za-z0-9+/=]&amp;#39;, &amp;#39;&amp;#39;, s) def xor_transform(decoded: bytes) -&amp;gt; tuple[bytes, int, int]: key_sum = sum(decoded[4:8]) &amp;amp; 0xFFFFFFFF km = key_sum % 256 step = km % 10 tail = decoded[8:] out = bytearray(len(tail)) for i, b in enumerate(tail): out[i] = (b ^ ((km + step * i) % 256)) &amp;amp; 0xFF return bytes(out), key_sum, km def inflate_raw(data: bytes) -&amp;gt; bytes: return zlib.</description>
+    </item>
     <item>
       <title>unluac xxx_app 分析</title>
       <link>https://l0x1c.com/posts/luadec/</link>
