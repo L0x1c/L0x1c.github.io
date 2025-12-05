@@ -12,8 +12,17 @@
     <generator>Hugo -- 0.120.4</generator>
     <language>en</language>
     <copyright>PaperMod Contributors</copyright>
-    <lastBuildDate>Sat, 15 Nov 2025 17:59:02 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 30 Nov 2025 19:37:09 +0800</lastBuildDate>
     <atom:link href="https://l0x1c.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Stanford CS106L Note (上)</title>
+      <link>https://l0x1c.com/posts/cs106l/</link>
+      <pubDate>Sun, 30 Nov 2025 19:37:09 +0800</pubDate>
+      <guid>https://l0x1c.com/posts/cs106l/</guid>
+      <description>主要的笔记内容针对于C++相关的内容，主要针对的课程为Stanford CS106L (2020)的笔记，主要为后面的xv6写的前置笔记知识
+Lecture 1: Streams I Streams 主要的作用就是：外部设备 ↔ （字符缓冲区）stream ↔ 你的变量（double、int、struct）
+stringstream std::istringstream: 输入字符串流（从string 中按类型提取） std::ostringstream: 输出字符串流（往里面放入各种类型，得到string类型） std::stringstream: 既能读又能写 #include &amp;lt;iostream&amp;gt; #include &amp;lt;sstream&amp;gt; int main() { // “16.9 Ounces”, pos at front std::istringstream iss(&amp;#34;16.9 Ounces&amp;#34;); double value; std::string unit; iss &amp;gt;&amp;gt; value &amp;gt;&amp;gt; unit; std::cout &amp;lt;&amp;lt; &amp;#34;Value: &amp;#34; &amp;lt;&amp;lt; value &amp;lt;&amp;lt; &amp;#34;, Unit: &amp;#34; &amp;lt;&amp;lt; unit &amp;lt;&amp;lt; std::endl; return 0; } // Value: 16.9, Unit: Ounces 上面的例子可以看到输入字符串流中的iss -&amp;gt; 16.</description>
+    </item>
     <item>
       <title>dy a_bogus参数 逆向分析</title>
       <link>https://l0x1c.com/posts/dy_web_a_bogus/</link>
