@@ -10,7 +10,7 @@
 <meta name="description" content="Posts - L0x1c&#39;s Blog">
 <meta name="author" content="L0x1c">
 <link rel="canonical" href="https://l0x1c.com/posts/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.fc220c15db4aef0318bbf30adc45d33d4d7c88deff3238b23eb255afdc472ca6.css" integrity="sha256-/CIMFdtK7wMYu/MK3EXTPU18iN7/MjiyPrJVr9xHLKY=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.5ed516264b8f4094f52a76fe7ad158f768d77ec5fb9ae7003d6613abde095cde.css" integrity="sha256-XtUWJkuPQJT1Knb&#43;etFY92jXfsX7mucAPWYTq94JXN4=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://l0x1c.com/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://l0x1c.com/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://l0x1c.com/favicon-32x32.png">
@@ -84,7 +84,26 @@
 </script>
 </head>
 
-<body class="list" id="top">
+<body class="list dark" id="top"><div class="os-desktop">
+        <div class="os-window"><div class="os-titlebar">
+                <div class="os-titlebar-buttons">
+                    <span class="os-btn close"></span>
+                    <span class="os-btn minimize"></span>
+                    <span class="os-btn maximize"></span>
+                </div>
+                <div class="os-titlebar-title">
+                    <span class="os-titlebar-icon">></span>
+                    l0x1c@blog:~/posts
+                </div>
+                <div class="os-titlebar-actions">
+                    <span class="os-titlebar-action" title="Search" onclick="window.location='/search/'">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </span>
+                </div>
+            </div><div class="os-window-content">
 <script>
     if (localStorage.getItem("pref-theme") === "dark") {
         document.body.classList.add('dark');
@@ -169,6 +188,69 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">tb_xxx_签名算法分析
+      <span class="entry-hint" title="Draft">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" fill="currentColor">
+          <path
+            d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+        </svg>
+      </span>
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>调试方法以及trace cat /proc/19408/maps | grep &#34;libsgmainso-6.7.251203.so&#34; 77dc486000-77dc62b000 r-xp 00000000 fe:4a 33069 /data/app/~~Bw8fZLhdSgT8iQaEqzZIOZ==/com.taobao.taobao-6gedRCLNJgGwpWyLbtDUpn==/lib/arm64/libsgmainso-6.7.251203.so 77dc62e000-77dc631000 r--p 001a4000 fe:4a 33069 /data/app/~~Bw8fZLhdSgT8iQaEqzZIOZ==/com.taobao.taobao-6gedRCLNJgGwpWyLbtDUpn==/lib/arm64/libsgmainso-6.7.251203.so 77dc634000-77dc769000 rw-p 001a6000 fe:4a 33069 /data/app/~~Bw8fZLhdSgT8iQaEqzZIOZ==/com.taobao.taobao-6gedRCLNJgGwpWyLbtDUpn==/lib/arm64/libsgmainso-6.7.251203.so dump的方式：https://github.com/lasting-yang/frida_dump (具体的dump的方式github上这里有写使用的方式)
+dump后可以看到里面会出现相关的x-sign x-mini-wua的字段了
+trace范围：
+000d3814 int32_t x0_26 = (*(uint64_t*)0x71424c1010)(7, 1, 2, 0, &amp;var_5a0, arg2); 000d382c sub_e0d74(*(uint64_t*)var_708, *(uint64_t*)var_720); 000d3834 int32_t x0_29; 000d3834 000d3834 if (x0_26 != 1) 000d3834 { 000d3834 data_2e8600 = 1; 000d388c sub_d9d4c(0x32, var_6f0, 0, 1); 000d3898 x0_29 = sub_10fb88(&amp;var_5a0, arg2); 000d3834 } 000d3834 000d38a0 int64_t* var_a18_1; 000d38a0 000d38a0 if (x0_26 !...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-03-06 11:25:02 +0800 +0800'>March 6, 2026</span>&nbsp;·&nbsp;29 min&nbsp;·&nbsp;L0x1c</footer>
+  <a class="entry-link" aria-label="post link to tb_xxx_签名算法分析" href="https://l0x1c.com/posts/tb-x-xxx-%E5%88%86%E6%9E%90/x/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">tb_设备指纹分析
+      <span class="entry-hint" title="Draft">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" fill="currentColor">
+          <path
+            d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+        </svg>
+      </span>
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>淘宝app逆向 1 主要的so：libsgmainso-6.7.251203.so
+还是根据之前windows上逆向的思路问题，其实自己拖到ida中看了一下这个so，里面的其他的段我没看到，第一个反应就是直接dump看看差异，是不是内存解密了
+pidof com.taobao.taobao cat /proc/19408/maps | grep &#34;libsgmainso-6.7.251203.so&#34; 77dc486000-77dc62b000 r-xp 00000000 fe:4a 33069 /data/app/~~Bw8fZLhdSgT8iQaEqzZIOZ==/com.taobao.taobao-6gedRCLNJgGwpWyLbtDUpn==/lib/arm64/libsgmainso-6.7.251203.so 77dc62e000-77dc631000 r--p 001a4000 fe:4a 33069 /data/app/~~Bw8fZLhdSgT8iQaEqzZIOZ==/com.taobao.taobao-6gedRCLNJgGwpWyLbtDUpn==/lib/arm64/libsgmainso-6.7.251203.so 77dc634000-77dc769000 rw-p 001a6000 fe:4a 33069 /data/app/~~Bw8fZLhdSgT8iQaEqzZIOZ==/com.taobao.taobao-6gedRCLNJgGwpWyLbtDUpn==/lib/arm64/libsgmainso-6.7.251203.so dump的方式：https://github.com/lasting-yang/frida_dump (具体的dump的方式github上这里有写使用的方式)
+dump后可以看到里面会出现相关的x-sign x-mini-wua的字段了
+我通过x-sign交叉引用回去（D2400），看到了很多br跳转的混淆存在打了原本的控制流
+写idapython的脚本去去除混淆
+import ida_bytes import ida_funcs import ida_auto import idc def patch_b(ea, target): off = (target - ea) &gt;&gt; 2 if off &lt; -(1 &lt;&lt; 25) or off &gt; (1 &lt;&lt; 25) - 1: raise ValueError(&#34;branch out of range: %x -&gt; %x&#34; % (ea, target)) insn = 0x14000000 | (off &amp; 0x03FFFFFF) ida_bytes....</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-02-11 14:59:02 +0800 +0800'>February 11, 2026</span>&nbsp;·&nbsp;5 min&nbsp;·&nbsp;L0x1c</footer>
+  <a class="entry-link" aria-label="post link to tb_设备指纹分析" href="https://l0x1c.com/posts/%E6%B7%98%E5%AE%9D%E8%AE%BE%E5%A4%87%E6%8C%87%E7%BA%B9%E9%80%86%E5%90%91/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">App流量安全与协议逆向
+      <span class="entry-hint" title="Draft">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" fill="currentColor">
+          <path
+            d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+        </svg>
+      </span>
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Lec 0: 现代流量安全基石 </p>
+  </div>
+  <footer class="entry-footer"><span title='2025-12-16 22:50:09 +0800 +0800'>December 16, 2025</span>&nbsp;·&nbsp;1 min&nbsp;·&nbsp;L0x1c</footer>
+  <a class="entry-link" aria-label="post link to App流量安全与协议逆向" href="https://l0x1c.com/posts/app-%E6%B5%81%E9%87%8F%E5%AE%89%E5%85%A8%E4%B8%8E%E5%8D%8F%E8%AE%AE%E9%80%86%E5%90%91/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">Stanford CS106L Note (上)
       <span class="entry-hint" title="Draft">
         <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" fill="currentColor">
@@ -183,7 +265,7 @@
 Lecture 1: Streams I Streams 主要的作用就是：外部设备 ↔ （字符缓冲区）stream ↔ 你的变量（double、int、struct）
 stringstream std::istringstream: 输入字符串流（从string 中按类型提取） std::ostringstream: 输出字符串流（往里面放入各种类型，得到string类型） std::stringstream: 既能读又能写 #include &lt;iostream&gt; #include &lt;sstream&gt; int main() { // “16.9 Ounces”, pos at front std::istringstream iss(&#34;16.9 Ounces&#34;); double value; std::string unit; iss &gt;&gt; value &gt;&gt; unit; std::cout &lt;&lt; &#34;Value: &#34; &lt;&lt; value &lt;&lt; &#34;, Unit: &#34; &lt;&lt; unit &lt;&lt; std::endl; return 0; } // Value: 16.9, Unit: Ounces 上面的例子可以看到输入字符串流中的iss -&gt; 16....</p>
   </div>
-  <footer class="entry-footer"><span title='2025-11-30 19:37:09 +0800 +0800'>November 30, 2025</span>&nbsp;·&nbsp;3 min&nbsp;·&nbsp;L0x1c</footer>
+  <footer class="entry-footer"><span title='2025-11-30 19:37:09 +0800 +0800'>November 30, 2025</span>&nbsp;·&nbsp;4 min&nbsp;·&nbsp;L0x1c</footer>
   <a class="entry-link" aria-label="post link to Stanford CS106L Note (上)" href="https://l0x1c.com/posts/cs106l/"></a>
 </article>
 
@@ -337,47 +419,14 @@ minifilter_Nt启动 </p>
   <footer class="entry-footer"><span title='2025-06-08 19:55:11 +0800 +0800'>June 8, 2025</span>&nbsp;·&nbsp;1 min&nbsp;·&nbsp;L0x1c</footer>
   <a class="entry-link" aria-label="post link to minifilter" href="https://l0x1c.com/posts/minifilter/"></a>
 </article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">D3CTF-WriteUp
-      <span class="entry-hint" title="Draft">
-        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" fill="currentColor">
-          <path
-            d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
-        </svg>
-      </span>
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>很久没打ctf了, 正好碰见周末有一点空, 就看了一下d3ctf和windows相关的题目
-locked-door 加的是vmp的壳子, 需要调试的话直接用TitanHide - &gt; https://github.com/mrexodia/TitanHide就可以调试起来, download后自行加个签名即可, 发现题目有两个bin文件, 直接可以得到的思路是先dump, 因为一定要读取文件一定会调用readfile, 所以可以根据回溯找到关键位置进行调试 通过readfile回溯已经找到了关键位置, 然后用过函数特征入口点来dump, 正常编程的也就那几个软件, 这个问题在之前我发过看雪的文章可以看一下, 可以看到这里很像入口点了, 看一个正常vs编译出来的程序 比较后可以看很像入口点的位置, 直接dump设置oep, 这样dump后的逻辑就很清晰了 可以看到一个算法, 本身程序对他们的校验的算法是一样的 加密完的数据进行evp的校验 校验过了后才可以走到正确的流程, 参数是key&#43;加密的bin里的data, 那直接替换一下, 就可以得到flag了 d3rpg-revenge 这是一个游戏, 正好我是一个游戏安全的从业者, 直接打开ce开始干, 进入一个房间后, 他让我输入密码, 那么可以对密码的位置进行访问断点, 可以看到可以被很好的断下来 d3rpg.dll&#43;50DEA这里的地址, 这个字符串很可疑, 去搜一下 module Scene_RPG class Secret_Class DELTA = | (($de1ta &#43; 1) * 0xf0000000) def initialize(new_key) @key = str_to_longs(new_key) if @key.length &lt; 4 @key.length.upto(4) { |i| @key[i] = 0 } end end def self....</p>
-  </div>
-  <footer class="entry-footer"><span title='2025-06-01 17:25:09 +0800 +0800'>June 1, 2025</span>&nbsp;·&nbsp;2 min&nbsp;·&nbsp;L0x1c</footer>
-  <a class="entry-link" aria-label="post link to D3CTF-WriteUp" href="https://l0x1c.com/posts/d3ctf_writeup/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">关于CmRegisterCallback的检测/windows进程隐藏的问题
-      <span class="entry-hint" title="Draft">
-        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" fill="currentColor">
-          <path
-            d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
-        </svg>
-      </span>
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>初步分析 分析到一个E语言的外挂, 但是说的是过检测的外挂, 分析一下, 直接ida一把梭大概看到有用的信息, 内部测试3-A.exe explorer.exe 打开外挂后看到的功能大概有这几个, 加载过检, 开始过检, 伪装进程, 隐藏进程这几个, 大概就能猜到肯定用到了驱动 跑起来后, 第一个功能是开始过检测, 发现修改了R3层的应用层访问的状态为拒绝 直接打开process explorer, 可以发现进程的Protection属性变成了PsProtectedSignerWinTcb-Light, 这里的保护和今年的腾讯游戏安全初赛的那个是一样的PPL 直接windbg看一下进程的EPROCESS结构, 可以看到Protection为0x61 -&gt; 0110 0001b, 可以看到修改的为PsProtectedTypeProtectedLight,PsProtectedSignerWinTcb
-//进程保护类型 typedef enum _PS_PROTECTED_TYPE { PsProtectedTypeNone = 0, PsProtectedTypeProtectedLight = 1, PsProtectedTypeProtected = 2 } PS_PROTECTED_TYPE, *PPS_PROTECTED_TYPE; //Audit 审计标志（很少使用） //Signer 签名了进程 typedef enum _PS_PROTECTED_SIGNER { PsProtectedSignerNone = 0, PsProtectedSignerAuthenticode, PsProtectedSignerCodeGen, PsProtectedSignerAntimalware, PsProtectedSignerLsa, PsProtectedSignerWindows, PsProtectedSignerWinTcb, PsProtectedSignerWinSystem, PsProtectedSignerApp, PsProtectedSignerMax } PS_PROTECTED_SIGNER, *PPS_PROTECTED_SIGNER; 直接把这个位置修改为0即可
-CmRegisterCallback 直接开始分析一下这个东西具体都干什么了吧, 可以打开了解到这个是一个E语言的东西, 并且他一定是有一个通信码在和什么东西通信的, 因为有一个点击事件, 直接ida开始分析, 打开后直接可以看到了一个地址，R3反正也是通信做的, 大部分功能应该是在驱动里，直接去驱动分析看一下 发现直接download可以的, 发现这个东西在疯狂套娃, ExAllocatePoolWithTag后创建一个系统线程, 线程的入口点就是申请的内存的位置, 由这个sys中藏的一个PE的oep的位置开始执行 直接双机调试开始搞一下, 还是老地方ioploaddriver, 直接下断释放的函数可以看到这个位置是一个PE 在StartRoutine下断看一下主要在做什么 经过分析后, 可以分析到它通过设置CmRegisterCallback注册表回调, 把代码放在这里开始执行用于隐藏自己的驱动代码 分析BE的时候发现实际上是有对这种情况进行检测的, BE中分别对进程线程回调, 以及注册表回调判断回调函数的其实位置是不是被hook, 是不是jmp reg的跳转来判断是不是有问题 直接打开BE逆向发现他取了CmUnRegisterCallback的特征, 因为这里存有相应的表, 里面存放了相对的地址和cookie...</p>
-  </div>
-  <footer class="entry-footer"><span title='2025-05-27 18:49:02 +0800 +0800'>May 27, 2025</span>&nbsp;·&nbsp;3 min&nbsp;·&nbsp;L0x1c</footer>
-  <a class="entry-link" aria-label="post link to 关于CmRegisterCallback的检测/windows进程隐藏的问题" href="https://l0x1c.com/posts/dg-pass_anti%E5%88%86%E6%9E%90/"></a>
-</article>
-    </main>
-    
+<footer class="page-footer">
+  <nav class="pagination">
+    <a class="next" href="https://l0x1c.com/posts/page/2/">Next&nbsp;2/2&nbsp;»
+    </a>
+  </nav>
+</footer>
+                </main>
+                
 <footer class="footer">
         <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span> · 
 
@@ -447,6 +496,39 @@ CmRegisterCallback 直接开始分析一下这个东西具体都干什么了吧,
     })
 
 </script>
-</body>
+</div><div class="os-statusbar">
+                <div class="os-statusbar-left">
+                    <span class="os-status-item os-status-user">l0x1c@blog</span>
+                    <span class="os-status-separator">|</span>
+                    <span class="os-status-item os-status-path">~/posts
+                    </span>
+                </div>
+                <div class="os-statusbar-right">
+                    <span class="os-status-item">hugo v0.120.4</span>
+                    <span class="os-status-separator">|</span>
+                    <span class="os-status-item os-status-clock" id="os-clock"></span>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <script>
+    
+    function updateClock() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2,'0');
+        const m = String(now.getMinutes()).padStart(2,'0');
+        const s = String(now.getSeconds()).padStart(2,'0');
+        const el = document.getElementById('os-clock');
+        if (el) el.textContent = h + ':' + m + ':' + s;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    
+    document.body.classList.add('dark');
+    localStorage.setItem("pref-theme", "dark");
+    </script>
+
+</body>
 </html>

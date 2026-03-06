@@ -12,8 +12,38 @@
     <generator>Hugo -- 0.120.4</generator>
     <language>en</language>
     <copyright>PaperMod Contributors</copyright>
-    <lastBuildDate>Sun, 30 Nov 2025 19:37:09 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 06 Mar 2026 11:25:02 +0800</lastBuildDate>
     <atom:link href="https://l0x1c.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>tb_xxx_签名算法分析</title>
+      <link>https://l0x1c.com/posts/tb-x-xxx-%E5%88%86%E6%9E%90/x/</link>
+      <pubDate>Fri, 06 Mar 2026 11:25:02 +0800</pubDate>
+      <guid>https://l0x1c.com/posts/tb-x-xxx-%E5%88%86%E6%9E%90/x/</guid>
+      <description>调试方法以及trace cat /proc/19408/maps | grep &amp;#34;libsgmainso-6.7.251203.so&amp;#34; 77dc486000-77dc62b000 r-xp 00000000 fe:4a 33069 /data/app/~~Bw8fZLhdSgT8iQaEqzZIOZ==/com.taobao.taobao-6gedRCLNJgGwpWyLbtDUpn==/lib/arm64/libsgmainso-6.7.251203.so 77dc62e000-77dc631000 r--p 001a4000 fe:4a 33069 /data/app/~~Bw8fZLhdSgT8iQaEqzZIOZ==/com.taobao.taobao-6gedRCLNJgGwpWyLbtDUpn==/lib/arm64/libsgmainso-6.7.251203.so 77dc634000-77dc769000 rw-p 001a6000 fe:4a 33069 /data/app/~~Bw8fZLhdSgT8iQaEqzZIOZ==/com.taobao.taobao-6gedRCLNJgGwpWyLbtDUpn==/lib/arm64/libsgmainso-6.7.251203.so dump的方式：https://github.com/lasting-yang/frida_dump (具体的dump的方式github上这里有写使用的方式)
+dump后可以看到里面会出现相关的x-sign x-mini-wua的字段了
+trace范围：
+000d3814 int32_t x0_26 = (*(uint64_t*)0x71424c1010)(7, 1, 2, 0, &amp;amp;var_5a0, arg2); 000d382c sub_e0d74(*(uint64_t*)var_708, *(uint64_t*)var_720); 000d3834 int32_t x0_29; 000d3834 000d3834 if (x0_26 != 1) 000d3834 { 000d3834 data_2e8600 = 1; 000d388c sub_d9d4c(0x32, var_6f0, 0, 1); 000d3898 x0_29 = sub_10fb88(&amp;amp;var_5a0, arg2); 000d3834 } 000d3834 000d38a0 int64_t* var_a18_1; 000d38a0 000d38a0 if (x0_26 !</description>
+    </item>
+    <item>
+      <title>tb_设备指纹分析</title>
+      <link>https://l0x1c.com/posts/%E6%B7%98%E5%AE%9D%E8%AE%BE%E5%A4%87%E6%8C%87%E7%BA%B9%E9%80%86%E5%90%91/</link>
+      <pubDate>Wed, 11 Feb 2026 14:59:02 +0800</pubDate>
+      <guid>https://l0x1c.com/posts/%E6%B7%98%E5%AE%9D%E8%AE%BE%E5%A4%87%E6%8C%87%E7%BA%B9%E9%80%86%E5%90%91/</guid>
+      <description>淘宝app逆向 1 主要的so：libsgmainso-6.7.251203.so
+还是根据之前windows上逆向的思路问题，其实自己拖到ida中看了一下这个so，里面的其他的段我没看到，第一个反应就是直接dump看看差异，是不是内存解密了
+pidof com.taobao.taobao cat /proc/19408/maps | grep &amp;#34;libsgmainso-6.7.251203.so&amp;#34; 77dc486000-77dc62b000 r-xp 00000000 fe:4a 33069 /data/app/~~Bw8fZLhdSgT8iQaEqzZIOZ==/com.taobao.taobao-6gedRCLNJgGwpWyLbtDUpn==/lib/arm64/libsgmainso-6.7.251203.so 77dc62e000-77dc631000 r--p 001a4000 fe:4a 33069 /data/app/~~Bw8fZLhdSgT8iQaEqzZIOZ==/com.taobao.taobao-6gedRCLNJgGwpWyLbtDUpn==/lib/arm64/libsgmainso-6.7.251203.so 77dc634000-77dc769000 rw-p 001a6000 fe:4a 33069 /data/app/~~Bw8fZLhdSgT8iQaEqzZIOZ==/com.taobao.taobao-6gedRCLNJgGwpWyLbtDUpn==/lib/arm64/libsgmainso-6.7.251203.so dump的方式：https://github.com/lasting-yang/frida_dump (具体的dump的方式github上这里有写使用的方式)
+dump后可以看到里面会出现相关的x-sign x-mini-wua的字段了
+我通过x-sign交叉引用回去（D2400），看到了很多br跳转的混淆存在打了原本的控制流
+写idapython的脚本去去除混淆
+import ida_bytes import ida_funcs import ida_auto import idc def patch_b(ea, target): off = (target - ea) &amp;gt;&amp;gt; 2 if off &amp;lt; -(1 &amp;lt;&amp;lt; 25) or off &amp;gt; (1 &amp;lt;&amp;lt; 25) - 1: raise ValueError(&amp;#34;branch out of range: %x -&amp;gt; %x&amp;#34; % (ea, target)) insn = 0x14000000 | (off &amp;amp; 0x03FFFFFF) ida_bytes.</description>
+    </item>
+    <item>
+      <title>App流量安全与协议逆向</title>
+      <link>https://l0x1c.com/posts/app-%E6%B5%81%E9%87%8F%E5%AE%89%E5%85%A8%E4%B8%8E%E5%8D%8F%E8%AE%AE%E9%80%86%E5%90%91/</link>
+      <pubDate>Tue, 16 Dec 2025 22:50:09 +0800</pubDate>
+      <guid>https://l0x1c.com/posts/app-%E6%B5%81%E9%87%8F%E5%AE%89%E5%85%A8%E4%B8%8E%E5%8D%8F%E8%AE%AE%E9%80%86%E5%90%91/</guid>
+      <description>Lec 0: 现代流量安全基石 </description>
+    </item>
     <item>
       <title>Stanford CS106L Note (上)</title>
       <link>https://l0x1c.com/posts/cs106l/</link>

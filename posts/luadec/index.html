@@ -17,7 +17,7 @@ LUALIB_API int (luaL_loadfilex) (lua_State *L, const char *filename, const char 
 LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_KContext ctx, lua_KFunction k) 上面的常用的函数有对应的执行合并参数">
 <meta name="author" content="L0x1c">
 <link rel="canonical" href="https://l0x1c.com/posts/luadec/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.fc220c15db4aef0318bbf30adc45d33d4d7c88deff3238b23eb255afdc472ca6.css" integrity="sha256-/CIMFdtK7wMYu/MK3EXTPU18iN7/MjiyPrJVr9xHLKY=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.5ed516264b8f4094f52a76fe7ad158f768d77ec5fb9ae7003d6613abde095cde.css" integrity="sha256-XtUWJkuPQJT1Knb&#43;etFY92jXfsX7mucAPWYTq94JXN4=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://l0x1c.com/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://l0x1c.com/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://l0x1c.com/favicon-32x32.png">
@@ -145,7 +145,26 @@ LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_
 </script>
 </head>
 
-<body class="" id="top">
+<body class=" dark" id="top"><div class="os-desktop">
+        <div class="os-window"><div class="os-titlebar">
+                <div class="os-titlebar-buttons">
+                    <span class="os-btn close"></span>
+                    <span class="os-btn minimize"></span>
+                    <span class="os-btn maximize"></span>
+                </div>
+                <div class="os-titlebar-title">
+                    <span class="os-titlebar-icon">></span>
+                    l0x1c@blog:~/posts/luadec
+                </div>
+                <div class="os-titlebar-actions">
+                    <span class="os-titlebar-action" title="Search" onclick="window.location='/search/'">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </span>
+                </div>
+            </div><div class="os-window-content">
 <script>
     if (localStorage.getItem("pref-theme") === "dark") {
         document.body.classList.add('dark');
@@ -806,8 +825,8 @@ LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_
 
   </footer>
 </article>
-    </main>
-    
+                </main>
+                
 <footer class="footer">
         <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span> · 
 
@@ -924,6 +943,39 @@ LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_
         }
     });
 </script>
-</body>
+</div><div class="os-statusbar">
+                <div class="os-statusbar-left">
+                    <span class="os-status-item os-status-user">l0x1c@blog</span>
+                    <span class="os-status-separator">|</span>
+                    <span class="os-status-item os-status-path">~/posts/luadec
+                    </span>
+                </div>
+                <div class="os-statusbar-right">
+                    <span class="os-status-item">hugo v0.120.4</span>
+                    <span class="os-status-separator">|</span>
+                    <span class="os-status-item os-status-clock" id="os-clock"></span>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <script>
+    
+    function updateClock() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2,'0');
+        const m = String(now.getMinutes()).padStart(2,'0');
+        const s = String(now.getSeconds()).padStart(2,'0');
+        const el = document.getElementById('os-clock');
+        if (el) el.textContent = h + ':' + m + ':' + s;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    
+    document.body.classList.add('dark');
+    localStorage.setItem("pref-theme", "dark");
+    </script>
+
+</body>
 </html>
