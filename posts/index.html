@@ -265,7 +265,7 @@ import ida_bytes import ida_funcs import ida_auto import idc def patch_b(ea, tar
 Lecture 1: Streams I Streams 主要的作用就是：外部设备 ↔ （字符缓冲区）stream ↔ 你的变量（double、int、struct）
 stringstream std::istringstream: 输入字符串流（从string 中按类型提取） std::ostringstream: 输出字符串流（往里面放入各种类型，得到string类型） std::stringstream: 既能读又能写 #include &lt;iostream&gt; #include &lt;sstream&gt; int main() { // “16.9 Ounces”, pos at front std::istringstream iss(&#34;16.9 Ounces&#34;); double value; std::string unit; iss &gt;&gt; value &gt;&gt; unit; std::cout &lt;&lt; &#34;Value: &#34; &lt;&lt; value &lt;&lt; &#34;, Unit: &#34; &lt;&lt; unit &lt;&lt; std::endl; return 0; } // Value: 16.9, Unit: Ounces 上面的例子可以看到输入字符串流中的iss -&gt; 16....</p>
   </div>
-  <footer class="entry-footer"><span title='2025-11-30 19:37:09 +0800 +0800'>November 30, 2025</span>&nbsp;·&nbsp;4 min&nbsp;·&nbsp;L0x1c</footer>
+  <footer class="entry-footer"><span title='2025-11-30 19:37:09 +0800 +0800'>November 30, 2025</span>&nbsp;·&nbsp;10 min&nbsp;·&nbsp;L0x1c</footer>
   <a class="entry-link" aria-label="post link to Stanford CS106L Note (上)" href="https://l0x1c.com/posts/cs106l/"></a>
 </article>
 

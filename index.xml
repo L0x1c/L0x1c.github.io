@@ -162,5 +162,12 @@ CmRegisterCallback 直接开始分析一下这个东西具体都干什么了吧,
       <guid>https://l0x1c.com/about/</guid>
       <description>About Profile ctfer@W&amp;amp;M (Intern) Feiyu Security (2020.8 ~2020.9) (Intern) Virus Analysis Engineer@sangfor (2020.9 ~ 2021.5) Security Enginner@QiAnXin (2021.7 ~ 2024.1) Anti-cheat Engineer@Tencent GameSecurity Interest Cybersecurity Binary Play Game Contact L0x1c3r (at) gmail (dot) com</description>
     </item>
+    <item>
+      <title></title>
+      <link>https://l0x1c.com/posts/frida-%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://l0x1c.com/posts/frida-%E5%AD%A6%E4%B9%A0/</guid>
+      <description></description>
+    </item>
   </channel>
 </rss>
