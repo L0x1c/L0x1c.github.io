@@ -12,8 +12,17 @@
     <generator>Hugo -- 0.120.4</generator>
     <language>en</language>
     <copyright>PaperMod Contributors</copyright>
-    <lastBuildDate>Tue, 16 Dec 2025 22:50:09 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 02 Jul 2026 06:15:00 +0800</lastBuildDate>
     <atom:link href="https://l0x1c.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>A Friendly Introduction to Number Theory 学习笔记</title>
+      <link>https://l0x1c.com/posts/a-friendly-introduction-to-number-theory/</link>
+      <pubDate>Thu, 02 Jul 2026 06:15:00 +0800</pubDate>
+      <guid>https://l0x1c.com/posts/a-friendly-introduction-to-number-theory/</guid>
+      <description>Chapter 1 What is number theory Number theory is the study of the set of positive whole numbers, which is often called the set of natural numbers.
+We know natural numbers have different types: odd, even, square, cube, prime ( 质数 ), composite ( 合数 ), x mod y, triangular, perfect, fibonacci.
+The main goal of number theory is to discover interesting and unexpected relationships between different sorts of numbers and to prove that these relatinships are true.</description>
+    </item>
     <item>
       <title>App流量安全与协议逆向</title>
       <link>https://l0x1c.com/posts/app-%E6%B5%81%E9%87%8F%E5%AE%89%E5%85%A8%E4%B8%8E%E5%8D%8F%E8%AE%AE%E9%80%86%E5%90%91/</link>
