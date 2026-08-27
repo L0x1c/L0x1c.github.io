@@ -7,13 +7,36 @@
 <meta name="robots" content="index, follow">
 <title>内存管理 | L0x1c&#39;s Blog</title>
 <meta name="keywords" content="">
-<meta name="description" content="VAD_私有内存 私有内存 像malloc, virtualalloc申请的内存都是私有内存, MapViewofFile, MapViewOfSize, mdl, 这种是映射的内存
-这些内存是由一个叫做vadroot的节点来管理的, 可以看一下这个位置 这里如果后续想获取到这个位置的话, 因为每个版本的偏移可能不一样, 可以通过函数PsGetProcessExitStatus来获取对应的偏移 &#43; 4就是vadRoot win10上的结构
-&#43;0x658 VadRoot : _RTL_AVL_TREE &#43;0x660 VadHint : 0xffff900f`4bf43e10 Void &#43;0x668 VadCount : 0xde VadRoot: _RTL_AVL_TREE 里面就是代表了二叉搜索树的节点, 而里面的每个节点的结构都是__MMVAD的结构, VadHint多次查询的节点会放在这里, VadCount代表vad节点的个数
-kd&gt; dt _RTL_AVL_TREE ffff900f4c129400&#43;0x658 nt!_RTL_AVL_TREE &#43;0x000 Root : 0xffff900f`4bf44810 _RTL_BALANCED_NODE kd&gt; dt 0xffff900f`4bf44810 _RTL_BALANCED_NODE nt!_RTL_BALANCED_NODE &#43;0x000 Children : [2] 0xffff900f`4b1dcb10 _RTL_BALANCED_NODE &#43;0x000 Left : 0xffff900f`4b1dcb10 _RTL_BALANCED_NODE &#43;0x008 Right : 0xffff900f`4bfe65c0 _RTL_BALANCED_NODE &#43;0x010 Red : 0y0 &#43;0x010 Balance : 0y00 &#43;0x010 ParentValue : 0 !">
+<meta name="description" content="VAD_私有内存
+私有内存
+像malloc, virtualalloc申请的内存都是私有内存, MapViewofFile, MapViewOfSize, mdl, 这种是映射的内存
+这些内存是由一个叫做vadroot的节点来管理的, 可以看一下这个位置
+
+
+这里如果后续想获取到这个位置的话, 因为每个版本的偏移可能不一样, 可以通过函数PsGetProcessExitStatus来获取对应的偏移 &#43; 4就是vadRoot
+win10上的结构
+   &#43;0x658 VadRoot          : _RTL_AVL_TREE
+   &#43;0x660 VadHint          : 0xffff900f`4bf43e10 Void
+   &#43;0x668 VadCount         : 0xde
+VadRoot: _RTL_AVL_TREE 里面就是代表了二叉搜索树的节点, 而里面的每个节点的结构都是__MMVAD的结构, VadHint多次查询的节点会放在这里, VadCount代表vad节点的个数
+kd&gt; dt _RTL_AVL_TREE ffff900f4c129400&#43;0x658
+nt!_RTL_AVL_TREE
+   &#43;0x000 Root             : 0xffff900f`4bf44810 _RTL_BALANCED_NODE
+kd&gt; dt 0xffff900f`4bf44810 _RTL_BALANCED_NODE
+nt!_RTL_BALANCED_NODE
+   &#43;0x000 Children         : [2] 0xffff900f`4b1dcb10 _RTL_BALANCED_NODE
+   &#43;0x000 Left             : 0xffff900f`4b1dcb10 _RTL_BALANCED_NODE
+   &#43;0x008 Right            : 0xffff900f`4bfe65c0 _RTL_BALANCED_NODE
+   &#43;0x010 Red              : 0y0
+   &#43;0x010 Balance          : 0y00
+   &#43;0x010 ParentValue      : 0
+!vad即可查询
+
+
+其中start和End代表了开始和结束, 都需要乘上pagesize -&gt; 0x1000其中end不一样(end &#43; 1)*pagesize - 1, 里面的每一个节点都是_MMVAD的结构, 可以找一个私有内存看一下结构">
 <meta name="author" content="L0x1c">
 <link rel="canonical" href="https://l0x1c.com/posts/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.5ed516264b8f4094f52a76fe7ad158f768d77ec5fb9ae7003d6613abde095cde.css" integrity="sha256-XtUWJkuPQJT1Knb&#43;etFY92jXfsX7mucAPWYTq94JXN4=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.a1477192c35ea6c813174b820fb74b9fcdbe8b746e426aa3d5980b5cc4adc33a.css" integrity="sha256-oUdxksNepsgTF0uCD7dLn82&#43;i3RuQmqj1ZgLXMStwzo=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://l0x1c.com/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://l0x1c.com/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://l0x1c.com/favicon-32x32.png">
@@ -21,6 +44,7 @@ kd&gt; dt _RTL_AVL_TREE ffff900f4c129400&#43;0x658 nt!_RTL_AVL_TREE &#43;0x000 R
 <link rel="mask-icon" href="https://l0x1c.com/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://l0x1c.com/posts/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
 <noscript>
     <style>
         #theme-toggle,
@@ -57,11 +81,51 @@ kd&gt; dt _RTL_AVL_TREE ffff900f4c129400&#43;0x658 nt!_RTL_AVL_TREE &#43;0x000 R
         }
 
     </style>
-</noscript><meta property="og:title" content="内存管理" />
-<meta property="og:description" content="VAD_私有内存 私有内存 像malloc, virtualalloc申请的内存都是私有内存, MapViewofFile, MapViewOfSize, mdl, 这种是映射的内存
-这些内存是由一个叫做vadroot的节点来管理的, 可以看一下这个位置 这里如果后续想获取到这个位置的话, 因为每个版本的偏移可能不一样, 可以通过函数PsGetProcessExitStatus来获取对应的偏移 &#43; 4就是vadRoot win10上的结构
-&#43;0x658 VadRoot : _RTL_AVL_TREE &#43;0x660 VadHint : 0xffff900f`4bf43e10 Void &#43;0x668 VadCount : 0xde VadRoot: _RTL_AVL_TREE 里面就是代表了二叉搜索树的节点, 而里面的每个节点的结构都是__MMVAD的结构, VadHint多次查询的节点会放在这里, VadCount代表vad节点的个数
-kd&gt; dt _RTL_AVL_TREE ffff900f4c129400&#43;0x658 nt!_RTL_AVL_TREE &#43;0x000 Root : 0xffff900f`4bf44810 _RTL_BALANCED_NODE kd&gt; dt 0xffff900f`4bf44810 _RTL_BALANCED_NODE nt!_RTL_BALANCED_NODE &#43;0x000 Children : [2] 0xffff900f`4b1dcb10 _RTL_BALANCED_NODE &#43;0x000 Left : 0xffff900f`4b1dcb10 _RTL_BALANCED_NODE &#43;0x008 Right : 0xffff900f`4bfe65c0 _RTL_BALANCED_NODE &#43;0x010 Red : 0y0 &#43;0x010 Balance : 0y00 &#43;0x010 ParentValue : 0 !" />
+</noscript>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "$", right: "$", display: false},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false
+    });
+  });
+</script>
+<meta property="og:title" content="内存管理" />
+<meta property="og:description" content="VAD_私有内存
+私有内存
+像malloc, virtualalloc申请的内存都是私有内存, MapViewofFile, MapViewOfSize, mdl, 这种是映射的内存
+这些内存是由一个叫做vadroot的节点来管理的, 可以看一下这个位置
+
+
+这里如果后续想获取到这个位置的话, 因为每个版本的偏移可能不一样, 可以通过函数PsGetProcessExitStatus来获取对应的偏移 &#43; 4就是vadRoot
+win10上的结构
+   &#43;0x658 VadRoot          : _RTL_AVL_TREE
+   &#43;0x660 VadHint          : 0xffff900f`4bf43e10 Void
+   &#43;0x668 VadCount         : 0xde
+VadRoot: _RTL_AVL_TREE 里面就是代表了二叉搜索树的节点, 而里面的每个节点的结构都是__MMVAD的结构, VadHint多次查询的节点会放在这里, VadCount代表vad节点的个数
+kd&gt; dt _RTL_AVL_TREE ffff900f4c129400&#43;0x658
+nt!_RTL_AVL_TREE
+   &#43;0x000 Root             : 0xffff900f`4bf44810 _RTL_BALANCED_NODE
+kd&gt; dt 0xffff900f`4bf44810 _RTL_BALANCED_NODE
+nt!_RTL_BALANCED_NODE
+   &#43;0x000 Children         : [2] 0xffff900f`4b1dcb10 _RTL_BALANCED_NODE
+   &#43;0x000 Left             : 0xffff900f`4b1dcb10 _RTL_BALANCED_NODE
+   &#43;0x008 Right            : 0xffff900f`4bfe65c0 _RTL_BALANCED_NODE
+   &#43;0x010 Red              : 0y0
+   &#43;0x010 Balance          : 0y00
+   &#43;0x010 ParentValue      : 0
+!vad即可查询
+
+
+其中start和End代表了开始和结束, 都需要乘上pagesize -&gt; 0x1000其中end不一样(end &#43; 1)*pagesize - 1, 里面的每一个节点都是_MMVAD的结构, 可以找一个私有内存看一下结构" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://l0x1c.com/posts/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" />
 <meta property="og:image" content="https://l0x1c.com/images/papermod-cover.png" />
@@ -72,10 +136,33 @@ kd&gt; dt _RTL_AVL_TREE ffff900f4c129400&#43;0x658 nt!_RTL_AVL_TREE &#43;0x000 R
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:image" content="https://l0x1c.com/images/papermod-cover.png" />
 <meta name="twitter:title" content="内存管理"/>
-<meta name="twitter:description" content="VAD_私有内存 私有内存 像malloc, virtualalloc申请的内存都是私有内存, MapViewofFile, MapViewOfSize, mdl, 这种是映射的内存
-这些内存是由一个叫做vadroot的节点来管理的, 可以看一下这个位置 这里如果后续想获取到这个位置的话, 因为每个版本的偏移可能不一样, 可以通过函数PsGetProcessExitStatus来获取对应的偏移 &#43; 4就是vadRoot win10上的结构
-&#43;0x658 VadRoot : _RTL_AVL_TREE &#43;0x660 VadHint : 0xffff900f`4bf43e10 Void &#43;0x668 VadCount : 0xde VadRoot: _RTL_AVL_TREE 里面就是代表了二叉搜索树的节点, 而里面的每个节点的结构都是__MMVAD的结构, VadHint多次查询的节点会放在这里, VadCount代表vad节点的个数
-kd&gt; dt _RTL_AVL_TREE ffff900f4c129400&#43;0x658 nt!_RTL_AVL_TREE &#43;0x000 Root : 0xffff900f`4bf44810 _RTL_BALANCED_NODE kd&gt; dt 0xffff900f`4bf44810 _RTL_BALANCED_NODE nt!_RTL_BALANCED_NODE &#43;0x000 Children : [2] 0xffff900f`4b1dcb10 _RTL_BALANCED_NODE &#43;0x000 Left : 0xffff900f`4b1dcb10 _RTL_BALANCED_NODE &#43;0x008 Right : 0xffff900f`4bfe65c0 _RTL_BALANCED_NODE &#43;0x010 Red : 0y0 &#43;0x010 Balance : 0y00 &#43;0x010 ParentValue : 0 !"/>
+<meta name="twitter:description" content="VAD_私有内存
+私有内存
+像malloc, virtualalloc申请的内存都是私有内存, MapViewofFile, MapViewOfSize, mdl, 这种是映射的内存
+这些内存是由一个叫做vadroot的节点来管理的, 可以看一下这个位置
+
+
+这里如果后续想获取到这个位置的话, 因为每个版本的偏移可能不一样, 可以通过函数PsGetProcessExitStatus来获取对应的偏移 &#43; 4就是vadRoot
+win10上的结构
+   &#43;0x658 VadRoot          : _RTL_AVL_TREE
+   &#43;0x660 VadHint          : 0xffff900f`4bf43e10 Void
+   &#43;0x668 VadCount         : 0xde
+VadRoot: _RTL_AVL_TREE 里面就是代表了二叉搜索树的节点, 而里面的每个节点的结构都是__MMVAD的结构, VadHint多次查询的节点会放在这里, VadCount代表vad节点的个数
+kd&gt; dt _RTL_AVL_TREE ffff900f4c129400&#43;0x658
+nt!_RTL_AVL_TREE
+   &#43;0x000 Root             : 0xffff900f`4bf44810 _RTL_BALANCED_NODE
+kd&gt; dt 0xffff900f`4bf44810 _RTL_BALANCED_NODE
+nt!_RTL_BALANCED_NODE
+   &#43;0x000 Children         : [2] 0xffff900f`4b1dcb10 _RTL_BALANCED_NODE
+   &#43;0x000 Left             : 0xffff900f`4b1dcb10 _RTL_BALANCED_NODE
+   &#43;0x008 Right            : 0xffff900f`4bfe65c0 _RTL_BALANCED_NODE
+   &#43;0x010 Red              : 0y0
+   &#43;0x010 Balance          : 0y00
+   &#43;0x010 ParentValue      : 0
+!vad即可查询
+
+
+其中start和End代表了开始和结束, 都需要乘上pagesize -&gt; 0x1000其中end不一样(end &#43; 1)*pagesize - 1, 里面的每一个节点都是_MMVAD的结构, 可以找一个私有内存看一下结构"/>
 
 
 <script type="application/ld+json">
@@ -104,7 +191,7 @@ kd&gt; dt _RTL_AVL_TREE ffff900f4c129400&#43;0x658 nt!_RTL_AVL_TREE &#43;0x000 R
   "@type": "BlogPosting",
   "headline": "内存管理",
   "name": "内存管理",
-  "description": "VAD_私有内存 私有内存 像malloc, virtualalloc申请的内存都是私有内存, MapViewofFile, MapViewOfSize, mdl, 这种是映射的内存\n这些内存是由一个叫做vadroot的节点来管理的, 可以看一下这个位置 这里如果后续想获取到这个位置的话, 因为每个版本的偏移可能不一样, 可以通过函数PsGetProcessExitStatus来获取对应的偏移 + 4就是vadRoot win10上的结构\n+0x658 VadRoot : _RTL_AVL_TREE +0x660 VadHint : 0xffff900f`4bf43e10 Void +0x668 VadCount : 0xde VadRoot: _RTL_AVL_TREE 里面就是代表了二叉搜索树的节点, 而里面的每个节点的结构都是__MMVAD的结构, VadHint多次查询的节点会放在这里, VadCount代表vad节点的个数\nkd\u0026gt; dt _RTL_AVL_TREE ffff900f4c129400+0x658 nt!_RTL_AVL_TREE +0x000 Root : 0xffff900f`4bf44810 _RTL_BALANCED_NODE kd\u0026gt; dt 0xffff900f`4bf44810 _RTL_BALANCED_NODE nt!_RTL_BALANCED_NODE +0x000 Children : [2] 0xffff900f`4b1dcb10 _RTL_BALANCED_NODE +0x000 Left : 0xffff900f`4b1dcb10 _RTL_BALANCED_NODE +0x008 Right : 0xffff900f`4bfe65c0 _RTL_BALANCED_NODE +0x010 Red : 0y0 +0x010 Balance : 0y00 +0x010 ParentValue : 0 !",
+  "description": "VAD_私有内存 私有内存 像malloc, virtualalloc申请的内存都是私有内存, MapViewofFile, MapViewOfSize, mdl, 这种是映射的内存\n这些内存是由一个叫做vadroot的节点来管理的, 可以看一下这个位置 这里如果后续想获取到这个位置的话, 因为每个版本的偏移可能不一样, 可以通过函数PsGetProcessExitStatus来获取对应的偏移 + 4就是vadRoot win10上的结构\n+0x658 VadRoot : _RTL_AVL_TREE +0x660 VadHint : 0xffff900f`4bf43e10 Void +0x668 VadCount : 0xde VadRoot: _RTL_AVL_TREE 里面就是代表了二叉搜索树的节点, 而里面的每个节点的结构都是__MMVAD的结构, VadHint多次查询的节点会放在这里, VadCount代表vad节点的个数\nkd\u0026gt; dt _RTL_AVL_TREE ffff900f4c129400+0x658 nt!_RTL_AVL_TREE +0x000 Root : 0xffff900f`4bf44810 _RTL_BALANCED_NODE kd\u0026gt; dt 0xffff900f`4bf44810 _RTL_BALANCED_NODE nt!_RTL_BALANCED_NODE +0x000 Children : [2] 0xffff900f`4b1dcb10 _RTL_BALANCED_NODE +0x000 Left : 0xffff900f`4b1dcb10 _RTL_BALANCED_NODE +0x008 Right : 0xffff900f`4bfe65c0 _RTL_BALANCED_NODE +0x010 Red : 0y0 +0x010 Balance : 0y00 +0x010 ParentValue : 0 !vad即可查询 其中start和End代表了开始和结束, 都需要乘上pagesize -\u0026gt; 0x1000其中end不一样(end + 1)*pagesize - 1, 里面的每一个节点都是_MMVAD的结构, 可以找一个私有内存看一下结构\n",
   "keywords": [
     
   ],
@@ -133,26 +220,7 @@ kd&gt; dt _RTL_AVL_TREE ffff900f4c129400&#43;0x658 nt!_RTL_AVL_TREE &#43;0x000 R
 </script>
 </head>
 
-<body class=" dark" id="top"><div class="os-desktop">
-        <div class="os-window"><div class="os-titlebar">
-                <div class="os-titlebar-buttons">
-                    <span class="os-btn close"></span>
-                    <span class="os-btn minimize"></span>
-                    <span class="os-btn maximize"></span>
-                </div>
-                <div class="os-titlebar-title">
-                    <span class="os-titlebar-icon">></span>
-                    l0x1c@blog:~/posts/内存管理
-                </div>
-                <div class="os-titlebar-actions">
-                    <span class="os-titlebar-action" title="Search" onclick="window.location='/search/'">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <path d="m21 21-4.35-4.35"></path>
-                        </svg>
-                    </span>
-                </div>
-            </div><div class="os-window-content">
+<body class="" id="top">
 <script>
     if (localStorage.getItem("pref-theme") === "dark") {
         document.body.classList.add('dark');
@@ -336,55 +404,55 @@ nt!_MMVAD_SHORT
 </p>
 <p>看一下这个<code>vadtype</code></p>
 <table>
-<thead>
-<tr>
-<th>值（十进制）</th>
-<th>名称</th>
-<th>含义说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>0</td>
-<td><code>VadNone</code></td>
-<td>未指定类型（保留）</td>
-</tr>
-<tr>
-<td>1</td>
-<td><code>VadDevicePhysicalMemory</code></td>
-<td>映射的物理设备内存</td>
-</tr>
-<tr>
-<td>2</td>
-<td><code>VadImageMap</code></td>
-<td>映像（如 EXE、DLL 文件）映射</td>
-</tr>
-<tr>
-<td>3</td>
-<td><code>VadAwe</code></td>
-<td>使用 AWE（Address Windowing Extensions）分配的内存</td>
-</tr>
-<tr>
-<td>4</td>
-<td><code>VadWriteWatch</code></td>
-<td>启用了写监视（Write-Watch）的内存，用于检测哪些页面被写入</td>
-</tr>
-<tr>
-<td>5</td>
-<td><code>VadLargePages</code></td>
-<td>使用大页（Large Pages）分配的内存</td>
-</tr>
-<tr>
-<td>6</td>
-<td><code>VadRotatePhysical</code></td>
-<td>映射旋转的物理内存（罕见）</td>
-</tr>
-<tr>
-<td>7</td>
-<td><code>VadLargePageSection</code></td>
-<td>段式大页分配（仅在某些版本支持）</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>值（十进制）</th>
+          <th>名称</th>
+          <th>含义说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>0</td>
+          <td><code>VadNone</code></td>
+          <td>未指定类型（保留）</td>
+      </tr>
+      <tr>
+          <td>1</td>
+          <td><code>VadDevicePhysicalMemory</code></td>
+          <td>映射的物理设备内存</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td><code>VadImageMap</code></td>
+          <td>映像（如 EXE、DLL 文件）映射</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td><code>VadAwe</code></td>
+          <td>使用 AWE（Address Windowing Extensions）分配的内存</td>
+      </tr>
+      <tr>
+          <td>4</td>
+          <td><code>VadWriteWatch</code></td>
+          <td>启用了写监视（Write-Watch）的内存，用于检测哪些页面被写入</td>
+      </tr>
+      <tr>
+          <td>5</td>
+          <td><code>VadLargePages</code></td>
+          <td>使用大页（Large Pages）分配的内存</td>
+      </tr>
+      <tr>
+          <td>6</td>
+          <td><code>VadRotatePhysical</code></td>
+          <td>映射旋转的物理内存（罕见）</td>
+      </tr>
+      <tr>
+          <td>7</td>
+          <td><code>VadLargePageSection</code></td>
+          <td>段式大页分配（仅在某些版本支持）</td>
+      </tr>
+  </tbody>
 </table>
 <p><img loading="lazy" src="image-4.png" alt="alt text"  />
 </p>
@@ -776,8 +844,8 @@ nt!_MMVAD_SHORT
 
   </footer>
 </article>
-                </main>
-                
+    </main>
+    
 <footer class="footer">
         <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span> · 
 
@@ -894,39 +962,6 @@ nt!_MMVAD_SHORT
         }
     });
 </script>
-</div><div class="os-statusbar">
-                <div class="os-statusbar-left">
-                    <span class="os-status-item os-status-user">l0x1c@blog</span>
-                    <span class="os-status-separator">|</span>
-                    <span class="os-status-item os-status-path">~/posts/内存管理
-                    </span>
-                </div>
-                <div class="os-statusbar-right">
-                    <span class="os-status-item">hugo v0.120.4</span>
-                    <span class="os-status-separator">|</span>
-                    <span class="os-status-item os-status-clock" id="os-clock"></span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-    
-    function updateClock() {
-        const now = new Date();
-        const h = String(now.getHours()).padStart(2,'0');
-        const m = String(now.getMinutes()).padStart(2,'0');
-        const s = String(now.getSeconds()).padStart(2,'0');
-        const el = document.getElementById('os-clock');
-        if (el) el.textContent = h + ':' + m + ':' + s;
-    }
-    updateClock();
-    setInterval(updateClock, 1000);
-
-    
-    document.body.classList.add('dark');
-    localStorage.setItem("pref-theme", "dark");
-    </script>
-
 </body>
+
 </html>

@@ -10,7 +10,7 @@
 <meta name="description" content="Search - L0x1c&#39;s Blog">
 <meta name="author" content="L0x1c">
 <link rel="canonical" href="https://l0x1c.com/search/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.5ed516264b8f4094f52a76fe7ad158f768d77ec5fb9ae7003d6613abde095cde.css" integrity="sha256-XtUWJkuPQJT1Knb&#43;etFY92jXfsX7mucAPWYTq94JXN4=" rel="preload stylesheet" as="style"><link crossorigin="anonymous" rel="preload" as="fetch" href="../index.json">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.a1477192c35ea6c813174b820fb74b9fcdbe8b746e426aa3d5980b5cc4adc33a.css" integrity="sha256-oUdxksNepsgTF0uCD7dLn82&#43;i3RuQmqj1ZgLXMStwzo=" rel="preload stylesheet" as="style"><link crossorigin="anonymous" rel="preload" as="fetch" href="../index.json">
 <script defer crossorigin="anonymous" src="/assets/js/search.40bc872e663a93629c28470a60af5070cb451de1a65f242264488d087eabd131.js" integrity="sha256-QLyHLmY6k2KcKEcKYK9QcMtFHeGmXyQiZEiNCH6r0TE="></script>
 <link rel="icon" href="https://l0x1c.com/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://l0x1c.com/favicon-16x16.png">
@@ -19,6 +19,7 @@
 <link rel="mask-icon" href="https://l0x1c.com/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://l0x1c.com/search/">
 <noscript>
     <style>
         #theme-toggle,
@@ -55,7 +56,24 @@
         }
 
     </style>
-</noscript><meta property="og:title" content="Search" />
+</noscript>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "$", right: "$", display: false},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false
+    });
+  });
+</script>
+<meta property="og:title" content="Search" />
 <meta property="og:description" content="" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://l0x1c.com/search/" />
@@ -119,26 +137,7 @@
 </script>
 </head>
 
-<body class="list dark" id="top"><div class="os-desktop">
-        <div class="os-window"><div class="os-titlebar">
-                <div class="os-titlebar-buttons">
-                    <span class="os-btn close"></span>
-                    <span class="os-btn minimize"></span>
-                    <span class="os-btn maximize"></span>
-                </div>
-                <div class="os-titlebar-title">
-                    <span class="os-titlebar-icon">></span>
-                    l0x1c@blog:~/posts/search
-                </div>
-                <div class="os-titlebar-actions">
-                    <span class="os-titlebar-action" title="Search" onclick="window.location='/search/'">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <path d="m21 21-4.35-4.35"></path>
-                        </svg>
-                    </span>
-                </div>
-            </div><div class="os-window-content">
+<body class="list" id="top">
 <script>
     if (localStorage.getItem("pref-theme") === "dark") {
         document.body.classList.add('dark');
@@ -223,8 +222,8 @@
         aria-label="search" type="search" autocomplete="off" maxlength="64">
     <ul id="searchResults" aria-label="search results"></ul>
 </div>
-                </main>
-                
+    </main>
+    
 <footer class="footer">
         <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span> · 
 
@@ -294,39 +293,6 @@
     })
 
 </script>
-</div><div class="os-statusbar">
-                <div class="os-statusbar-left">
-                    <span class="os-status-item os-status-user">l0x1c@blog</span>
-                    <span class="os-status-separator">|</span>
-                    <span class="os-status-item os-status-path">~/posts/search
-                    </span>
-                </div>
-                <div class="os-statusbar-right">
-                    <span class="os-status-item">hugo v0.120.4</span>
-                    <span class="os-status-separator">|</span>
-                    <span class="os-status-item os-status-clock" id="os-clock"></span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-    
-    function updateClock() {
-        const now = new Date();
-        const h = String(now.getHours()).padStart(2,'0');
-        const m = String(now.getMinutes()).padStart(2,'0');
-        const s = String(now.getSeconds()).padStart(2,'0');
-        const el = document.getElementById('os-clock');
-        if (el) el.textContent = h + ':' + m + ':' + s;
-    }
-    updateClock();
-    setInterval(updateClock, 1000);
-
-    
-    document.body.classList.add('dark');
-    localStorage.setItem("pref-theme", "dark");
-    </script>
-
 </body>
+
 </html>

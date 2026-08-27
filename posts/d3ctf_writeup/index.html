@@ -8,10 +8,144 @@
 <title>D3CTF-WriteUp | L0x1c&#39;s Blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="很久没打ctf了, 正好碰见周末有一点空, 就看了一下d3ctf和windows相关的题目
-locked-door 加的是vmp的壳子, 需要调试的话直接用TitanHide - &gt; https://github.com/mrexodia/TitanHide就可以调试起来, download后自行加个签名即可, 发现题目有两个bin文件, 直接可以得到的思路是先dump, 因为一定要读取文件一定会调用readfile, 所以可以根据回溯找到关键位置进行调试 通过readfile回溯已经找到了关键位置, 然后用过函数特征入口点来dump, 正常编程的也就那几个软件, 这个问题在之前我发过看雪的文章可以看一下, 可以看到这里很像入口点了, 看一个正常vs编译出来的程序 比较后可以看很像入口点的位置, 直接dump设置oep, 这样dump后的逻辑就很清晰了 可以看到一个算法, 本身程序对他们的校验的算法是一样的 加密完的数据进行evp的校验 校验过了后才可以走到正确的流程, 参数是key&#43;加密的bin里的data, 那直接替换一下, 就可以得到flag了 d3rpg-revenge 这是一个游戏, 正好我是一个游戏安全的从业者, 直接打开ce开始干, 进入一个房间后, 他让我输入密码, 那么可以对密码的位置进行访问断点, 可以看到可以被很好的断下来 d3rpg.dll&#43;50DEA这里的地址, 这个字符串很可疑, 去搜一下 module Scene_RPG class Secret_Class DELTA = | (($de1ta &#43; 1) * 0xf0000000) def initialize(new_key) @key = str_to_longs(new_key) if @key.length &lt; 4 @key.length.upto(4) { |i| @key[i] = 0 } end end def self.">
+locked-door
+加的是vmp的壳子, 需要调试的话直接用TitanHide - &gt; https://github.com/mrexodia/TitanHide就可以调试起来, download后自行加个签名即可, 发现题目有两个bin文件, 直接可以得到的思路是先dump, 因为一定要读取文件一定会调用readfile, 所以可以根据回溯找到关键位置进行调试
+
+
+通过readfile回溯已经找到了关键位置, 然后用过函数特征入口点来dump, 正常编程的也就那几个软件, 这个问题在之前我发过看雪的文章可以看一下, 可以看到这里很像入口点了, 看一个正常vs编译出来的程序
+
+
+
+
+比较后可以看很像入口点的位置, 直接dump设置oep, 这样dump后的逻辑就很清晰了
+
+
+可以看到一个算法, 本身程序对他们的校验的算法是一样的
+
+
+
+
+加密完的数据进行evp的校验
+
+
+校验过了后才可以走到正确的流程, 参数是key&#43;加密的bin里的data, 那直接替换一下, 就可以得到flag了
+
+
+d3rpg-revenge
+这是一个游戏, 正好我是一个游戏安全的从业者, 直接打开ce开始干, 进入一个房间后, 他让我输入密码, 那么可以对密码的位置进行访问断点, 可以看到可以被很好的断下来
+
+
+d3rpg.dll&#43;50DEA这里的地址, 这个字符串很可疑, 去搜一下
+
+
+module Scene_RPG
+  class Secret_Class
+    DELTA =      | (($de1ta &#43; 1) * 0xf0000000)
+    def initialize(new_key)
+      @key = str_to_longs(new_key)
+      if @key.length &lt; 4
+        @key.length.upto(4) { |i| @key[i] = 0 }
+      end
+    end
+    def self.str_to_longs(s, include_count = false)
+      s = s.dup
+      length = s.length
+      ((4 - s.length % 4) &amp; 3).times { s &lt;&lt; &#34;\0&#34; }
+      unpacked = s.unpack(&#39;V*&#39;).collect { |n| int32 n }
+      unpacked &lt;&lt; length if include_count
+      unpacked
+    end
+    def str_to_longs(s, include_count = false)
+      self.class.str_to_longs s, include_count
+    end
+    def self.longs_to_str(l, count_included = false)
+      s = l.pack(&#39;V*&#39;)
+      s = s[0...(l[-1])] if count_included
+      s
+    end
+    def longs_to_str(l, count_included = false)
+      self.class.longs_to_str l, count_included
+    end
+    def self.int32(n)
+      n -= 4_294_967_296 while (n &gt;= 2_147_483_648)
+      n &#43;= 4_294_967_296 while (n &lt;= -2_147_483_648)
+      n.to_i
+    end
+    def int32(n)
+      self.class.int32 n
+    end
+
+    def mx(z, y, sum, p, e)
+      int32(
+        ((z &gt;&gt; 5 &amp; 0x07FFFFFF) ^ (y &lt;&lt; 2)) &#43;
+        ((y &gt;&gt; 3 &amp; 0x1FFFFFFF) ^ (z &lt;&lt; 4))
+      ) ^ int32((sum ^ y) &#43; (@key[(p &amp; 3) ^ e] ^ z))
+    end
+    def self.encrypt(key, plaintext)
+      self.new(key).encrypt(plaintext)
+    end
+    def encrypt(plaintext)
+      return &#39;&#39; if plaintext.length == 0
+      v = str_to_longs(plaintext, true)
+      v[1] = 0 if v.length == 1
+      n = v.length - 1
+      z = v[n]
+      y = v[0]
+      q = (6 &#43; 52 / (n &#43; 1)).floor
+      sum = $de1ta * DELTA
+      p = 0
+      while(0 &lt;= (q -= 1)) do
+        sum = int32(sum &#43; DELTA)
+        e = sum &gt;&gt; 2 &amp; 3
+        n.times do |i|
+          y = v[i &#43; 1];
+          z = v[i] = int32(v[i] &#43; mx(z, y, sum, i, e))
+          p = i
+        end
+        p &#43;= 1
+        y = v[0];
+        z = v[p] = int32(v[p] &#43; mx(z, y, sum, p, e))
+      end
+      longs_to_str(v).unpack(&#39;a*&#39;).pack(&#39;m&#39;).delete(&#34;\n&#34;)
+    end
+    def self.decrypt(key, ciphertext)
+      self.new(key).decrypt(ciphertext)
+    end
+  end
+end
+
+def validate_flag(input_flag)
+  c_flag = input_flag &#43; &#34;\0&#34;
+  result = $check_flag.call(c_flag)
+  result == 1
+end
+
+
+def check
+  flag = $game_party.actors[0].name
+  key = Scene_RPG::Secret_Class.new(&#39;rpgmakerxp_D3CTF&#39;)
+  cyphertext = key.encrypt(flag)
+  if validate_flag(cyphertext)
+    $game_variables[1] = 100
+  else
+    $game_variables[1] = 0
+  end
+end
+
+def check1
+  flag = $game_party.actors[0].name
+  if flag == &#34;ImPsw&#34;
+    $game_variables[2] = 100
+  else
+    $game_variables[2] = 0
+  end
+end
+
+
+直接写python解密即可">
 <meta name="author" content="L0x1c">
 <link rel="canonical" href="https://l0x1c.com/posts/d3ctf_writeup/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.5ed516264b8f4094f52a76fe7ad158f768d77ec5fb9ae7003d6613abde095cde.css" integrity="sha256-XtUWJkuPQJT1Knb&#43;etFY92jXfsX7mucAPWYTq94JXN4=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.a1477192c35ea6c813174b820fb74b9fcdbe8b746e426aa3d5980b5cc4adc33a.css" integrity="sha256-oUdxksNepsgTF0uCD7dLn82&#43;i3RuQmqj1ZgLXMStwzo=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://l0x1c.com/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://l0x1c.com/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://l0x1c.com/favicon-32x32.png">
@@ -19,6 +153,7 @@ locked-door 加的是vmp的壳子, 需要调试的话直接用TitanHide - &gt; h
 <link rel="mask-icon" href="https://l0x1c.com/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://l0x1c.com/posts/d3ctf_writeup/">
 <noscript>
     <style>
         #theme-toggle,
@@ -55,9 +190,160 @@ locked-door 加的是vmp的壳子, 需要调试的话直接用TitanHide - &gt; h
         }
 
     </style>
-</noscript><meta property="og:title" content="D3CTF-WriteUp" />
+</noscript>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "$", right: "$", display: false},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false
+    });
+  });
+</script>
+<meta property="og:title" content="D3CTF-WriteUp" />
 <meta property="og:description" content="很久没打ctf了, 正好碰见周末有一点空, 就看了一下d3ctf和windows相关的题目
-locked-door 加的是vmp的壳子, 需要调试的话直接用TitanHide - &gt; https://github.com/mrexodia/TitanHide就可以调试起来, download后自行加个签名即可, 发现题目有两个bin文件, 直接可以得到的思路是先dump, 因为一定要读取文件一定会调用readfile, 所以可以根据回溯找到关键位置进行调试 通过readfile回溯已经找到了关键位置, 然后用过函数特征入口点来dump, 正常编程的也就那几个软件, 这个问题在之前我发过看雪的文章可以看一下, 可以看到这里很像入口点了, 看一个正常vs编译出来的程序 比较后可以看很像入口点的位置, 直接dump设置oep, 这样dump后的逻辑就很清晰了 可以看到一个算法, 本身程序对他们的校验的算法是一样的 加密完的数据进行evp的校验 校验过了后才可以走到正确的流程, 参数是key&#43;加密的bin里的data, 那直接替换一下, 就可以得到flag了 d3rpg-revenge 这是一个游戏, 正好我是一个游戏安全的从业者, 直接打开ce开始干, 进入一个房间后, 他让我输入密码, 那么可以对密码的位置进行访问断点, 可以看到可以被很好的断下来 d3rpg.dll&#43;50DEA这里的地址, 这个字符串很可疑, 去搜一下 module Scene_RPG class Secret_Class DELTA = | (($de1ta &#43; 1) * 0xf0000000) def initialize(new_key) @key = str_to_longs(new_key) if @key.length &lt; 4 @key.length.upto(4) { |i| @key[i] = 0 } end end def self." />
+locked-door
+加的是vmp的壳子, 需要调试的话直接用TitanHide - &gt; https://github.com/mrexodia/TitanHide就可以调试起来, download后自行加个签名即可, 发现题目有两个bin文件, 直接可以得到的思路是先dump, 因为一定要读取文件一定会调用readfile, 所以可以根据回溯找到关键位置进行调试
+
+
+通过readfile回溯已经找到了关键位置, 然后用过函数特征入口点来dump, 正常编程的也就那几个软件, 这个问题在之前我发过看雪的文章可以看一下, 可以看到这里很像入口点了, 看一个正常vs编译出来的程序
+
+
+
+
+比较后可以看很像入口点的位置, 直接dump设置oep, 这样dump后的逻辑就很清晰了
+
+
+可以看到一个算法, 本身程序对他们的校验的算法是一样的
+
+
+
+
+加密完的数据进行evp的校验
+
+
+校验过了后才可以走到正确的流程, 参数是key&#43;加密的bin里的data, 那直接替换一下, 就可以得到flag了
+
+
+d3rpg-revenge
+这是一个游戏, 正好我是一个游戏安全的从业者, 直接打开ce开始干, 进入一个房间后, 他让我输入密码, 那么可以对密码的位置进行访问断点, 可以看到可以被很好的断下来
+
+
+d3rpg.dll&#43;50DEA这里的地址, 这个字符串很可疑, 去搜一下
+
+
+module Scene_RPG
+  class Secret_Class
+    DELTA =      | (($de1ta &#43; 1) * 0xf0000000)
+    def initialize(new_key)
+      @key = str_to_longs(new_key)
+      if @key.length &lt; 4
+        @key.length.upto(4) { |i| @key[i] = 0 }
+      end
+    end
+    def self.str_to_longs(s, include_count = false)
+      s = s.dup
+      length = s.length
+      ((4 - s.length % 4) &amp; 3).times { s &lt;&lt; &#34;\0&#34; }
+      unpacked = s.unpack(&#39;V*&#39;).collect { |n| int32 n }
+      unpacked &lt;&lt; length if include_count
+      unpacked
+    end
+    def str_to_longs(s, include_count = false)
+      self.class.str_to_longs s, include_count
+    end
+    def self.longs_to_str(l, count_included = false)
+      s = l.pack(&#39;V*&#39;)
+      s = s[0...(l[-1])] if count_included
+      s
+    end
+    def longs_to_str(l, count_included = false)
+      self.class.longs_to_str l, count_included
+    end
+    def self.int32(n)
+      n -= 4_294_967_296 while (n &gt;= 2_147_483_648)
+      n &#43;= 4_294_967_296 while (n &lt;= -2_147_483_648)
+      n.to_i
+    end
+    def int32(n)
+      self.class.int32 n
+    end
+
+    def mx(z, y, sum, p, e)
+      int32(
+        ((z &gt;&gt; 5 &amp; 0x07FFFFFF) ^ (y &lt;&lt; 2)) &#43;
+        ((y &gt;&gt; 3 &amp; 0x1FFFFFFF) ^ (z &lt;&lt; 4))
+      ) ^ int32((sum ^ y) &#43; (@key[(p &amp; 3) ^ e] ^ z))
+    end
+    def self.encrypt(key, plaintext)
+      self.new(key).encrypt(plaintext)
+    end
+    def encrypt(plaintext)
+      return &#39;&#39; if plaintext.length == 0
+      v = str_to_longs(plaintext, true)
+      v[1] = 0 if v.length == 1
+      n = v.length - 1
+      z = v[n]
+      y = v[0]
+      q = (6 &#43; 52 / (n &#43; 1)).floor
+      sum = $de1ta * DELTA
+      p = 0
+      while(0 &lt;= (q -= 1)) do
+        sum = int32(sum &#43; DELTA)
+        e = sum &gt;&gt; 2 &amp; 3
+        n.times do |i|
+          y = v[i &#43; 1];
+          z = v[i] = int32(v[i] &#43; mx(z, y, sum, i, e))
+          p = i
+        end
+        p &#43;= 1
+        y = v[0];
+        z = v[p] = int32(v[p] &#43; mx(z, y, sum, p, e))
+      end
+      longs_to_str(v).unpack(&#39;a*&#39;).pack(&#39;m&#39;).delete(&#34;\n&#34;)
+    end
+    def self.decrypt(key, ciphertext)
+      self.new(key).decrypt(ciphertext)
+    end
+  end
+end
+
+def validate_flag(input_flag)
+  c_flag = input_flag &#43; &#34;\0&#34;
+  result = $check_flag.call(c_flag)
+  result == 1
+end
+
+
+def check
+  flag = $game_party.actors[0].name
+  key = Scene_RPG::Secret_Class.new(&#39;rpgmakerxp_D3CTF&#39;)
+  cyphertext = key.encrypt(flag)
+  if validate_flag(cyphertext)
+    $game_variables[1] = 100
+  else
+    $game_variables[1] = 0
+  end
+end
+
+def check1
+  flag = $game_party.actors[0].name
+  if flag == &#34;ImPsw&#34;
+    $game_variables[2] = 100
+  else
+    $game_variables[2] = 0
+  end
+end
+
+
+直接写python解密即可" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://l0x1c.com/posts/d3ctf_writeup/" />
 <meta property="og:image" content="https://l0x1c.com/images/papermod-cover.png" />
@@ -69,7 +355,141 @@ locked-door 加的是vmp的壳子, 需要调试的话直接用TitanHide - &gt; h
 <meta name="twitter:image" content="https://l0x1c.com/images/papermod-cover.png" />
 <meta name="twitter:title" content="D3CTF-WriteUp"/>
 <meta name="twitter:description" content="很久没打ctf了, 正好碰见周末有一点空, 就看了一下d3ctf和windows相关的题目
-locked-door 加的是vmp的壳子, 需要调试的话直接用TitanHide - &gt; https://github.com/mrexodia/TitanHide就可以调试起来, download后自行加个签名即可, 发现题目有两个bin文件, 直接可以得到的思路是先dump, 因为一定要读取文件一定会调用readfile, 所以可以根据回溯找到关键位置进行调试 通过readfile回溯已经找到了关键位置, 然后用过函数特征入口点来dump, 正常编程的也就那几个软件, 这个问题在之前我发过看雪的文章可以看一下, 可以看到这里很像入口点了, 看一个正常vs编译出来的程序 比较后可以看很像入口点的位置, 直接dump设置oep, 这样dump后的逻辑就很清晰了 可以看到一个算法, 本身程序对他们的校验的算法是一样的 加密完的数据进行evp的校验 校验过了后才可以走到正确的流程, 参数是key&#43;加密的bin里的data, 那直接替换一下, 就可以得到flag了 d3rpg-revenge 这是一个游戏, 正好我是一个游戏安全的从业者, 直接打开ce开始干, 进入一个房间后, 他让我输入密码, 那么可以对密码的位置进行访问断点, 可以看到可以被很好的断下来 d3rpg.dll&#43;50DEA这里的地址, 这个字符串很可疑, 去搜一下 module Scene_RPG class Secret_Class DELTA = | (($de1ta &#43; 1) * 0xf0000000) def initialize(new_key) @key = str_to_longs(new_key) if @key.length &lt; 4 @key.length.upto(4) { |i| @key[i] = 0 } end end def self."/>
+locked-door
+加的是vmp的壳子, 需要调试的话直接用TitanHide - &gt; https://github.com/mrexodia/TitanHide就可以调试起来, download后自行加个签名即可, 发现题目有两个bin文件, 直接可以得到的思路是先dump, 因为一定要读取文件一定会调用readfile, 所以可以根据回溯找到关键位置进行调试
+
+
+通过readfile回溯已经找到了关键位置, 然后用过函数特征入口点来dump, 正常编程的也就那几个软件, 这个问题在之前我发过看雪的文章可以看一下, 可以看到这里很像入口点了, 看一个正常vs编译出来的程序
+
+
+
+
+比较后可以看很像入口点的位置, 直接dump设置oep, 这样dump后的逻辑就很清晰了
+
+
+可以看到一个算法, 本身程序对他们的校验的算法是一样的
+
+
+
+
+加密完的数据进行evp的校验
+
+
+校验过了后才可以走到正确的流程, 参数是key&#43;加密的bin里的data, 那直接替换一下, 就可以得到flag了
+
+
+d3rpg-revenge
+这是一个游戏, 正好我是一个游戏安全的从业者, 直接打开ce开始干, 进入一个房间后, 他让我输入密码, 那么可以对密码的位置进行访问断点, 可以看到可以被很好的断下来
+
+
+d3rpg.dll&#43;50DEA这里的地址, 这个字符串很可疑, 去搜一下
+
+
+module Scene_RPG
+  class Secret_Class
+    DELTA =      | (($de1ta &#43; 1) * 0xf0000000)
+    def initialize(new_key)
+      @key = str_to_longs(new_key)
+      if @key.length &lt; 4
+        @key.length.upto(4) { |i| @key[i] = 0 }
+      end
+    end
+    def self.str_to_longs(s, include_count = false)
+      s = s.dup
+      length = s.length
+      ((4 - s.length % 4) &amp; 3).times { s &lt;&lt; &#34;\0&#34; }
+      unpacked = s.unpack(&#39;V*&#39;).collect { |n| int32 n }
+      unpacked &lt;&lt; length if include_count
+      unpacked
+    end
+    def str_to_longs(s, include_count = false)
+      self.class.str_to_longs s, include_count
+    end
+    def self.longs_to_str(l, count_included = false)
+      s = l.pack(&#39;V*&#39;)
+      s = s[0...(l[-1])] if count_included
+      s
+    end
+    def longs_to_str(l, count_included = false)
+      self.class.longs_to_str l, count_included
+    end
+    def self.int32(n)
+      n -= 4_294_967_296 while (n &gt;= 2_147_483_648)
+      n &#43;= 4_294_967_296 while (n &lt;= -2_147_483_648)
+      n.to_i
+    end
+    def int32(n)
+      self.class.int32 n
+    end
+
+    def mx(z, y, sum, p, e)
+      int32(
+        ((z &gt;&gt; 5 &amp; 0x07FFFFFF) ^ (y &lt;&lt; 2)) &#43;
+        ((y &gt;&gt; 3 &amp; 0x1FFFFFFF) ^ (z &lt;&lt; 4))
+      ) ^ int32((sum ^ y) &#43; (@key[(p &amp; 3) ^ e] ^ z))
+    end
+    def self.encrypt(key, plaintext)
+      self.new(key).encrypt(plaintext)
+    end
+    def encrypt(plaintext)
+      return &#39;&#39; if plaintext.length == 0
+      v = str_to_longs(plaintext, true)
+      v[1] = 0 if v.length == 1
+      n = v.length - 1
+      z = v[n]
+      y = v[0]
+      q = (6 &#43; 52 / (n &#43; 1)).floor
+      sum = $de1ta * DELTA
+      p = 0
+      while(0 &lt;= (q -= 1)) do
+        sum = int32(sum &#43; DELTA)
+        e = sum &gt;&gt; 2 &amp; 3
+        n.times do |i|
+          y = v[i &#43; 1];
+          z = v[i] = int32(v[i] &#43; mx(z, y, sum, i, e))
+          p = i
+        end
+        p &#43;= 1
+        y = v[0];
+        z = v[p] = int32(v[p] &#43; mx(z, y, sum, p, e))
+      end
+      longs_to_str(v).unpack(&#39;a*&#39;).pack(&#39;m&#39;).delete(&#34;\n&#34;)
+    end
+    def self.decrypt(key, ciphertext)
+      self.new(key).decrypt(ciphertext)
+    end
+  end
+end
+
+def validate_flag(input_flag)
+  c_flag = input_flag &#43; &#34;\0&#34;
+  result = $check_flag.call(c_flag)
+  result == 1
+end
+
+
+def check
+  flag = $game_party.actors[0].name
+  key = Scene_RPG::Secret_Class.new(&#39;rpgmakerxp_D3CTF&#39;)
+  cyphertext = key.encrypt(flag)
+  if validate_flag(cyphertext)
+    $game_variables[1] = 100
+  else
+    $game_variables[1] = 0
+  end
+end
+
+def check1
+  flag = $game_party.actors[0].name
+  if flag == &#34;ImPsw&#34;
+    $game_variables[2] = 100
+  else
+    $game_variables[2] = 0
+  end
+end
+
+
+直接写python解密即可"/>
 
 
 <script type="application/ld+json">
@@ -98,7 +518,7 @@ locked-door 加的是vmp的壳子, 需要调试的话直接用TitanHide - &gt; h
   "@type": "BlogPosting",
   "headline": "D3CTF-WriteUp",
   "name": "D3CTF-WriteUp",
-  "description": "很久没打ctf了, 正好碰见周末有一点空, 就看了一下d3ctf和windows相关的题目\nlocked-door 加的是vmp的壳子, 需要调试的话直接用TitanHide - \u0026gt; https://github.com/mrexodia/TitanHide就可以调试起来, download后自行加个签名即可, 发现题目有两个bin文件, 直接可以得到的思路是先dump, 因为一定要读取文件一定会调用readfile, 所以可以根据回溯找到关键位置进行调试 通过readfile回溯已经找到了关键位置, 然后用过函数特征入口点来dump, 正常编程的也就那几个软件, 这个问题在之前我发过看雪的文章可以看一下, 可以看到这里很像入口点了, 看一个正常vs编译出来的程序 比较后可以看很像入口点的位置, 直接dump设置oep, 这样dump后的逻辑就很清晰了 可以看到一个算法, 本身程序对他们的校验的算法是一样的 加密完的数据进行evp的校验 校验过了后才可以走到正确的流程, 参数是key+加密的bin里的data, 那直接替换一下, 就可以得到flag了 d3rpg-revenge 这是一个游戏, 正好我是一个游戏安全的从业者, 直接打开ce开始干, 进入一个房间后, 他让我输入密码, 那么可以对密码的位置进行访问断点, 可以看到可以被很好的断下来 d3rpg.dll+50DEA这里的地址, 这个字符串很可疑, 去搜一下 module Scene_RPG class Secret_Class DELTA = | (($de1ta + 1) * 0xf0000000) def initialize(new_key) @key = str_to_longs(new_key) if @key.length \u0026lt; 4 @key.length.upto(4) { |i| @key[i] = 0 } end end def self.",
+  "description": "很久没打ctf了, 正好碰见周末有一点空, 就看了一下d3ctf和windows相关的题目\nlocked-door 加的是vmp的壳子, 需要调试的话直接用TitanHide - \u0026gt; https://github.com/mrexodia/TitanHide就可以调试起来, download后自行加个签名即可, 发现题目有两个bin文件, 直接可以得到的思路是先dump, 因为一定要读取文件一定会调用readfile, 所以可以根据回溯找到关键位置进行调试 通过readfile回溯已经找到了关键位置, 然后用过函数特征入口点来dump, 正常编程的也就那几个软件, 这个问题在之前我发过看雪的文章可以看一下, 可以看到这里很像入口点了, 看一个正常vs编译出来的程序 比较后可以看很像入口点的位置, 直接dump设置oep, 这样dump后的逻辑就很清晰了 可以看到一个算法, 本身程序对他们的校验的算法是一样的 加密完的数据进行evp的校验 校验过了后才可以走到正确的流程, 参数是key+加密的bin里的data, 那直接替换一下, 就可以得到flag了 d3rpg-revenge 这是一个游戏, 正好我是一个游戏安全的从业者, 直接打开ce开始干, 进入一个房间后, 他让我输入密码, 那么可以对密码的位置进行访问断点, 可以看到可以被很好的断下来 d3rpg.dll+50DEA这里的地址, 这个字符串很可疑, 去搜一下 module Scene_RPG class Secret_Class DELTA = | (($de1ta + 1) * 0xf0000000) def initialize(new_key) @key = str_to_longs(new_key) if @key.length \u0026lt; 4 @key.length.upto(4) { |i| @key[i] = 0 } end end def self.str_to_longs(s, include_count = false) s = s.dup length = s.length ((4 - s.length % 4) \u0026amp; 3).times { s \u0026lt;\u0026lt; \u0026#34;\\0\u0026#34; } unpacked = s.unpack(\u0026#39;V*\u0026#39;).collect { |n| int32 n } unpacked \u0026lt;\u0026lt; length if include_count unpacked end def str_to_longs(s, include_count = false) self.class.str_to_longs s, include_count end def self.longs_to_str(l, count_included = false) s = l.pack(\u0026#39;V*\u0026#39;) s = s[0...(l[-1])] if count_included s end def longs_to_str(l, count_included = false) self.class.longs_to_str l, count_included end def self.int32(n) n -= 4_294_967_296 while (n \u0026gt;= 2_147_483_648) n += 4_294_967_296 while (n \u0026lt;= -2_147_483_648) n.to_i end def int32(n) self.class.int32 n end def mx(z, y, sum, p, e) int32( ((z \u0026gt;\u0026gt; 5 \u0026amp; 0x07FFFFFF) ^ (y \u0026lt;\u0026lt; 2)) + ((y \u0026gt;\u0026gt; 3 \u0026amp; 0x1FFFFFFF) ^ (z \u0026lt;\u0026lt; 4)) ) ^ int32((sum ^ y) + (@key[(p \u0026amp; 3) ^ e] ^ z)) end def self.encrypt(key, plaintext) self.new(key).encrypt(plaintext) end def encrypt(plaintext) return \u0026#39;\u0026#39; if plaintext.length == 0 v = str_to_longs(plaintext, true) v[1] = 0 if v.length == 1 n = v.length - 1 z = v[n] y = v[0] q = (6 + 52 / (n + 1)).floor sum = $de1ta * DELTA p = 0 while(0 \u0026lt;= (q -= 1)) do sum = int32(sum + DELTA) e = sum \u0026gt;\u0026gt; 2 \u0026amp; 3 n.times do |i| y = v[i + 1]; z = v[i] = int32(v[i] + mx(z, y, sum, i, e)) p = i end p += 1 y = v[0]; z = v[p] = int32(v[p] + mx(z, y, sum, p, e)) end longs_to_str(v).unpack(\u0026#39;a*\u0026#39;).pack(\u0026#39;m\u0026#39;).delete(\u0026#34;\\n\u0026#34;) end def self.decrypt(key, ciphertext) self.new(key).decrypt(ciphertext) end end end def validate_flag(input_flag) c_flag = input_flag + \u0026#34;\\0\u0026#34; result = $check_flag.call(c_flag) result == 1 end def check flag = $game_party.actors[0].name key = Scene_RPG::Secret_Class.new(\u0026#39;rpgmakerxp_D3CTF\u0026#39;) cyphertext = key.encrypt(flag) if validate_flag(cyphertext) $game_variables[1] = 100 else $game_variables[1] = 0 end end def check1 flag = $game_party.actors[0].name if flag == \u0026#34;ImPsw\u0026#34; $game_variables[2] = 100 else $game_variables[2] = 0 end end 直接写python解密即可\n",
   "keywords": [
     
   ],
@@ -127,26 +547,7 @@ locked-door 加的是vmp的壳子, 需要调试的话直接用TitanHide - &gt; h
 </script>
 </head>
 
-<body class=" dark" id="top"><div class="os-desktop">
-        <div class="os-window"><div class="os-titlebar">
-                <div class="os-titlebar-buttons">
-                    <span class="os-btn close"></span>
-                    <span class="os-btn minimize"></span>
-                    <span class="os-btn maximize"></span>
-                </div>
-                <div class="os-titlebar-title">
-                    <span class="os-titlebar-icon">></span>
-                    l0x1c@blog:~/posts/D3CTF_WriteUp
-                </div>
-                <div class="os-titlebar-actions">
-                    <span class="os-titlebar-action" title="Search" onclick="window.location='/search/'">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <path d="m21 21-4.35-4.35"></path>
-                        </svg>
-                    </span>
-                </div>
-            </div><div class="os-window-content">
+<body class="" id="top">
 <script>
     if (localStorage.getItem("pref-theme") === "dark") {
         document.body.classList.add('dark');
@@ -416,8 +817,8 @@ end
 
   </footer>
 </article>
-                </main>
-                
+    </main>
+    
 <footer class="footer">
         <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span> · 
 
@@ -534,39 +935,6 @@ end
         }
     });
 </script>
-</div><div class="os-statusbar">
-                <div class="os-statusbar-left">
-                    <span class="os-status-item os-status-user">l0x1c@blog</span>
-                    <span class="os-status-separator">|</span>
-                    <span class="os-status-item os-status-path">~/posts/D3CTF_WriteUp
-                    </span>
-                </div>
-                <div class="os-statusbar-right">
-                    <span class="os-status-item">hugo v0.120.4</span>
-                    <span class="os-status-separator">|</span>
-                    <span class="os-status-item os-status-clock" id="os-clock"></span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-    
-    function updateClock() {
-        const now = new Date();
-        const h = String(now.getHours()).padStart(2,'0');
-        const m = String(now.getMinutes()).padStart(2,'0');
-        const s = String(now.getSeconds()).padStart(2,'0');
-        const el = document.getElementById('os-clock');
-        if (el) el.textContent = h + ':' + m + ':' + s;
-    }
-    updateClock();
-    setInterval(updateClock, 1000);
-
-    
-    document.body.classList.add('dark');
-    localStorage.setItem("pref-theme", "dark");
-    </script>
-
 </body>
+
 </html>

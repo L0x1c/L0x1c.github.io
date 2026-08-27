@@ -10,14 +10,63 @@
 <meta name="description" content="这个是工作中遇见的一个app，需要分析一下app对于应用列表检测感知这个问题
 对应的样本的网址：https://github.com/TMLP-Team/TMLP-Detectors-and-Bypassers/blob/main/Detectors/%E5%87%8C%E5%8D%BF%E6%A3%80%E6%B5%8B_v1.6_fix.apk
 直接拖进jeb看一下
+
+
 调用lua，看一下lingqing.bin
-Lua 介绍 C 语言和 Lua 的交互是通过 lua_State来实现的，所以首先需要创建一个 lua_State
+
+
+Lua 介绍
+C 语言和 Lua 的交互是通过 lua_State来实现的，所以首先需要创建一个 lua_State
 把 Lua 脚本加载进 Lua 虚拟机， Lua 提供了三个常用的函数
-LUALIB_API int (luaL_loadfilex) (lua_State *L, const char *filename, const char *mode); #define luaL_loadfile(L,f)	luaL_loadfilex(L,f,NULL) LUALIB_API int (luaL_loadbufferx) (lua_State *L, const char *buff, size_t sz, const char *name, const char *mode); LUALIB_API int (luaL_loadstring) (lua_State *L, const char *s); 这三个函数最后走的都是 lua_load 函数，把经过编译后的代码放到了栈顶，执行加载到栈顶的 Lua 代码，上面的函数只是将程序加载到了栈顶，执行了之后才能变成虚拟机中的函数或者变量，因为在栈顶也没有需要传入的参数，所以只需要调用 lua_pcall 即可
-LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_KContext ctx, lua_KFunction k) 上面的常用的函数有对应的执行合并参数">
+LUALIB_API int (luaL_loadfilex) (lua_State *L, const char *filename,
+                                               const char *mode);
+#define luaL_loadfile(L,f)	luaL_loadfilex(L,f,NULL)
+
+LUALIB_API int (luaL_loadbufferx) (lua_State *L, const char *buff, size_t sz,
+                                   const char *name, const char *mode);
+LUALIB_API int (luaL_loadstring) (lua_State *L, const char *s);
+这三个函数最后走的都是 lua_load 函数，把经过编译后的代码放到了栈顶，执行加载到栈顶的 Lua 代码，上面的函数只是将程序加载到了栈顶，执行了之后才能变成虚拟机中的函数或者变量，因为在栈顶也没有需要传入的参数，所以只需要调用 lua_pcall 即可
+LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc,
+                        lua_KContext ctx, lua_KFunction k)
+上面的常用的函数有对应的执行合并参数
+
+
+lua 加载执行流程
+luaL_loadbufferx来直接看
+LUALIB_API int luaL_loadbufferx (lua_State *L, const char *buff, size_t size,
+                                 const char *name, const char *mode) {
+  LoadS ls;
+  ls.s = buff;
+  ls.size = size;
+  return lua_load(L, getS, &amp;ls, name, mode);
+}
+调用lua_load
+LUA_API int lua_load (lua_State *L, lua_Reader reader, void *data,
+                      const char *chunkname, const char *mode) {
+  ZIO z;
+  int status;
+  lua_lock(L);
+  if (!chunkname) chunkname = &#34;?&#34;;
+  luaZ_init(L, &amp;z, reader, data);
+  status = luaD_protectedparser(L, &amp;z, chunkname, mode);
+  if (status == LUA_OK) {  /* no errors? */
+    LClosure *f = clLvalue(L-&gt;top - 1);  /* get newly created function */
+    if (f-&gt;nupvalues &gt;= 1) {  /* does it have an upvalue? */
+      /* get global table from registry */
+      Table *reg = hvalue(&amp;G(L)-&gt;l_registry);
+      const TValue *gt = luaH_getint(reg, LUA_RIDX_GLOBALS);
+      /* set global table as 1st upvalue of &#39;f&#39; (may be LUA_ENV) */
+      setobj(L, f-&gt;upvals[0]-&gt;v, gt);
+      luaC_upvalbarrier(L, f-&gt;upvals[0]);
+    }
+  }
+  lua_unlock(L);
+  return status;
+}
+luaD_protectedparser">
 <meta name="author" content="L0x1c">
 <link rel="canonical" href="https://l0x1c.com/posts/luadec/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.5ed516264b8f4094f52a76fe7ad158f768d77ec5fb9ae7003d6613abde095cde.css" integrity="sha256-XtUWJkuPQJT1Knb&#43;etFY92jXfsX7mucAPWYTq94JXN4=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.a1477192c35ea6c813174b820fb74b9fcdbe8b746e426aa3d5980b5cc4adc33a.css" integrity="sha256-oUdxksNepsgTF0uCD7dLn82&#43;i3RuQmqj1ZgLXMStwzo=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://l0x1c.com/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://l0x1c.com/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://l0x1c.com/favicon-32x32.png">
@@ -25,6 +74,7 @@ LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_
 <link rel="mask-icon" href="https://l0x1c.com/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://l0x1c.com/posts/luadec/">
 <noscript>
     <style>
         #theme-toggle,
@@ -61,15 +111,81 @@ LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_
         }
 
     </style>
-</noscript><meta property="og:title" content="unluac xxx_app 分析" />
+</noscript>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "$", right: "$", display: false},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false
+    });
+  });
+</script>
+<meta property="og:title" content="unluac xxx_app 分析" />
 <meta property="og:description" content="这个是工作中遇见的一个app，需要分析一下app对于应用列表检测感知这个问题
 对应的样本的网址：https://github.com/TMLP-Team/TMLP-Detectors-and-Bypassers/blob/main/Detectors/%E5%87%8C%E5%8D%BF%E6%A3%80%E6%B5%8B_v1.6_fix.apk
 直接拖进jeb看一下
+
+
 调用lua，看一下lingqing.bin
-Lua 介绍 C 语言和 Lua 的交互是通过 lua_State来实现的，所以首先需要创建一个 lua_State
+
+
+Lua 介绍
+C 语言和 Lua 的交互是通过 lua_State来实现的，所以首先需要创建一个 lua_State
 把 Lua 脚本加载进 Lua 虚拟机， Lua 提供了三个常用的函数
-LUALIB_API int (luaL_loadfilex) (lua_State *L, const char *filename, const char *mode); #define luaL_loadfile(L,f)	luaL_loadfilex(L,f,NULL) LUALIB_API int (luaL_loadbufferx) (lua_State *L, const char *buff, size_t sz, const char *name, const char *mode); LUALIB_API int (luaL_loadstring) (lua_State *L, const char *s); 这三个函数最后走的都是 lua_load 函数，把经过编译后的代码放到了栈顶，执行加载到栈顶的 Lua 代码，上面的函数只是将程序加载到了栈顶，执行了之后才能变成虚拟机中的函数或者变量，因为在栈顶也没有需要传入的参数，所以只需要调用 lua_pcall 即可
-LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_KContext ctx, lua_KFunction k) 上面的常用的函数有对应的执行合并参数" />
+LUALIB_API int (luaL_loadfilex) (lua_State *L, const char *filename,
+                                               const char *mode);
+#define luaL_loadfile(L,f)	luaL_loadfilex(L,f,NULL)
+
+LUALIB_API int (luaL_loadbufferx) (lua_State *L, const char *buff, size_t sz,
+                                   const char *name, const char *mode);
+LUALIB_API int (luaL_loadstring) (lua_State *L, const char *s);
+这三个函数最后走的都是 lua_load 函数，把经过编译后的代码放到了栈顶，执行加载到栈顶的 Lua 代码，上面的函数只是将程序加载到了栈顶，执行了之后才能变成虚拟机中的函数或者变量，因为在栈顶也没有需要传入的参数，所以只需要调用 lua_pcall 即可
+LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc,
+                        lua_KContext ctx, lua_KFunction k)
+上面的常用的函数有对应的执行合并参数
+
+
+lua 加载执行流程
+luaL_loadbufferx来直接看
+LUALIB_API int luaL_loadbufferx (lua_State *L, const char *buff, size_t size,
+                                 const char *name, const char *mode) {
+  LoadS ls;
+  ls.s = buff;
+  ls.size = size;
+  return lua_load(L, getS, &amp;ls, name, mode);
+}
+调用lua_load
+LUA_API int lua_load (lua_State *L, lua_Reader reader, void *data,
+                      const char *chunkname, const char *mode) {
+  ZIO z;
+  int status;
+  lua_lock(L);
+  if (!chunkname) chunkname = &#34;?&#34;;
+  luaZ_init(L, &amp;z, reader, data);
+  status = luaD_protectedparser(L, &amp;z, chunkname, mode);
+  if (status == LUA_OK) {  /* no errors? */
+    LClosure *f = clLvalue(L-&gt;top - 1);  /* get newly created function */
+    if (f-&gt;nupvalues &gt;= 1) {  /* does it have an upvalue? */
+      /* get global table from registry */
+      Table *reg = hvalue(&amp;G(L)-&gt;l_registry);
+      const TValue *gt = luaH_getint(reg, LUA_RIDX_GLOBALS);
+      /* set global table as 1st upvalue of &#39;f&#39; (may be LUA_ENV) */
+      setobj(L, f-&gt;upvals[0]-&gt;v, gt);
+      luaC_upvalbarrier(L, f-&gt;upvals[0]);
+    }
+  }
+  lua_unlock(L);
+  return status;
+}
+luaD_protectedparser" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://l0x1c.com/posts/luadec/" />
 <meta property="og:image" content="https://l0x1c.com/images/papermod-cover.png" />
@@ -83,11 +199,60 @@ LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_
 <meta name="twitter:description" content="这个是工作中遇见的一个app，需要分析一下app对于应用列表检测感知这个问题
 对应的样本的网址：https://github.com/TMLP-Team/TMLP-Detectors-and-Bypassers/blob/main/Detectors/%E5%87%8C%E5%8D%BF%E6%A3%80%E6%B5%8B_v1.6_fix.apk
 直接拖进jeb看一下
+
+
 调用lua，看一下lingqing.bin
-Lua 介绍 C 语言和 Lua 的交互是通过 lua_State来实现的，所以首先需要创建一个 lua_State
+
+
+Lua 介绍
+C 语言和 Lua 的交互是通过 lua_State来实现的，所以首先需要创建一个 lua_State
 把 Lua 脚本加载进 Lua 虚拟机， Lua 提供了三个常用的函数
-LUALIB_API int (luaL_loadfilex) (lua_State *L, const char *filename, const char *mode); #define luaL_loadfile(L,f)	luaL_loadfilex(L,f,NULL) LUALIB_API int (luaL_loadbufferx) (lua_State *L, const char *buff, size_t sz, const char *name, const char *mode); LUALIB_API int (luaL_loadstring) (lua_State *L, const char *s); 这三个函数最后走的都是 lua_load 函数，把经过编译后的代码放到了栈顶，执行加载到栈顶的 Lua 代码，上面的函数只是将程序加载到了栈顶，执行了之后才能变成虚拟机中的函数或者变量，因为在栈顶也没有需要传入的参数，所以只需要调用 lua_pcall 即可
-LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_KContext ctx, lua_KFunction k) 上面的常用的函数有对应的执行合并参数"/>
+LUALIB_API int (luaL_loadfilex) (lua_State *L, const char *filename,
+                                               const char *mode);
+#define luaL_loadfile(L,f)	luaL_loadfilex(L,f,NULL)
+
+LUALIB_API int (luaL_loadbufferx) (lua_State *L, const char *buff, size_t sz,
+                                   const char *name, const char *mode);
+LUALIB_API int (luaL_loadstring) (lua_State *L, const char *s);
+这三个函数最后走的都是 lua_load 函数，把经过编译后的代码放到了栈顶，执行加载到栈顶的 Lua 代码，上面的函数只是将程序加载到了栈顶，执行了之后才能变成虚拟机中的函数或者变量，因为在栈顶也没有需要传入的参数，所以只需要调用 lua_pcall 即可
+LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc,
+                        lua_KContext ctx, lua_KFunction k)
+上面的常用的函数有对应的执行合并参数
+
+
+lua 加载执行流程
+luaL_loadbufferx来直接看
+LUALIB_API int luaL_loadbufferx (lua_State *L, const char *buff, size_t size,
+                                 const char *name, const char *mode) {
+  LoadS ls;
+  ls.s = buff;
+  ls.size = size;
+  return lua_load(L, getS, &amp;ls, name, mode);
+}
+调用lua_load
+LUA_API int lua_load (lua_State *L, lua_Reader reader, void *data,
+                      const char *chunkname, const char *mode) {
+  ZIO z;
+  int status;
+  lua_lock(L);
+  if (!chunkname) chunkname = &#34;?&#34;;
+  luaZ_init(L, &amp;z, reader, data);
+  status = luaD_protectedparser(L, &amp;z, chunkname, mode);
+  if (status == LUA_OK) {  /* no errors? */
+    LClosure *f = clLvalue(L-&gt;top - 1);  /* get newly created function */
+    if (f-&gt;nupvalues &gt;= 1) {  /* does it have an upvalue? */
+      /* get global table from registry */
+      Table *reg = hvalue(&amp;G(L)-&gt;l_registry);
+      const TValue *gt = luaH_getint(reg, LUA_RIDX_GLOBALS);
+      /* set global table as 1st upvalue of &#39;f&#39; (may be LUA_ENV) */
+      setobj(L, f-&gt;upvals[0]-&gt;v, gt);
+      luaC_upvalbarrier(L, f-&gt;upvals[0]);
+    }
+  }
+  lua_unlock(L);
+  return status;
+}
+luaD_protectedparser"/>
 
 
 <script type="application/ld+json">
@@ -116,7 +281,7 @@ LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_
   "@type": "BlogPosting",
   "headline": "unluac xxx_app 分析",
   "name": "unluac xxx_app 分析",
-  "description": "这个是工作中遇见的一个app，需要分析一下app对于应用列表检测感知这个问题\n对应的样本的网址：https://github.com/TMLP-Team/TMLP-Detectors-and-Bypassers/blob/main/Detectors/%E5%87%8C%E5%8D%BF%E6%A3%80%E6%B5%8B_v1.6_fix.apk\n直接拖进jeb看一下\n调用lua，看一下lingqing.bin\nLua 介绍 C 语言和 Lua 的交互是通过 lua_State来实现的，所以首先需要创建一个 lua_State\n把 Lua 脚本加载进 Lua 虚拟机， Lua 提供了三个常用的函数\nLUALIB_API int (luaL_loadfilex) (lua_State *L, const char *filename, const char *mode); #define luaL_loadfile(L,f)\tluaL_loadfilex(L,f,NULL) LUALIB_API int (luaL_loadbufferx) (lua_State *L, const char *buff, size_t sz, const char *name, const char *mode); LUALIB_API int (luaL_loadstring) (lua_State *L, const char *s); 这三个函数最后走的都是 lua_load 函数，把经过编译后的代码放到了栈顶，执行加载到栈顶的 Lua 代码，上面的函数只是将程序加载到了栈顶，执行了之后才能变成虚拟机中的函数或者变量，因为在栈顶也没有需要传入的参数，所以只需要调用 lua_pcall 即可\nLUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_KContext ctx, lua_KFunction k) 上面的常用的函数有对应的执行合并参数",
+  "description": "这个是工作中遇见的一个app，需要分析一下app对于应用列表检测感知这个问题\n对应的样本的网址：https://github.com/TMLP-Team/TMLP-Detectors-and-Bypassers/blob/main/Detectors/%E5%87%8C%E5%8D%BF%E6%A3%80%E6%B5%8B_v1.6_fix.apk\n直接拖进jeb看一下\n调用lua，看一下lingqing.bin\nLua 介绍 C 语言和 Lua 的交互是通过 lua_State来实现的，所以首先需要创建一个 lua_State\n把 Lua 脚本加载进 Lua 虚拟机， Lua 提供了三个常用的函数\nLUALIB_API int (luaL_loadfilex) (lua_State *L, const char *filename, const char *mode); #define luaL_loadfile(L,f)\tluaL_loadfilex(L,f,NULL) LUALIB_API int (luaL_loadbufferx) (lua_State *L, const char *buff, size_t sz, const char *name, const char *mode); LUALIB_API int (luaL_loadstring) (lua_State *L, const char *s); 这三个函数最后走的都是 lua_load 函数，把经过编译后的代码放到了栈顶，执行加载到栈顶的 Lua 代码，上面的函数只是将程序加载到了栈顶，执行了之后才能变成虚拟机中的函数或者变量，因为在栈顶也没有需要传入的参数，所以只需要调用 lua_pcall 即可\nLUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_KContext ctx, lua_KFunction k) 上面的常用的函数有对应的执行合并参数\nlua 加载执行流程 luaL_loadbufferx来直接看\nLUALIB_API int luaL_loadbufferx (lua_State *L, const char *buff, size_t size, const char *name, const char *mode) { LoadS ls; ls.s = buff; ls.size = size; return lua_load(L, getS, \u0026amp;ls, name, mode); } 调用lua_load\nLUA_API int lua_load (lua_State *L, lua_Reader reader, void *data, const char *chunkname, const char *mode) { ZIO z; int status; lua_lock(L); if (!chunkname) chunkname = \u0026#34;?\u0026#34;; luaZ_init(L, \u0026amp;z, reader, data); status = luaD_protectedparser(L, \u0026amp;z, chunkname, mode); if (status == LUA_OK) { /* no errors? */ LClosure *f = clLvalue(L-\u0026gt;top - 1); /* get newly created function */ if (f-\u0026gt;nupvalues \u0026gt;= 1) { /* does it have an upvalue? */ /* get global table from registry */ Table *reg = hvalue(\u0026amp;G(L)-\u0026gt;l_registry); const TValue *gt = luaH_getint(reg, LUA_RIDX_GLOBALS); /* set global table as 1st upvalue of \u0026#39;f\u0026#39; (may be LUA_ENV) */ setobj(L, f-\u0026gt;upvals[0]-\u0026gt;v, gt); luaC_upvalbarrier(L, f-\u0026gt;upvals[0]); } } lua_unlock(L); return status; } luaD_protectedparser\n",
   "keywords": [
     
   ],
@@ -145,26 +310,7 @@ LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_
 </script>
 </head>
 
-<body class=" dark" id="top"><div class="os-desktop">
-        <div class="os-window"><div class="os-titlebar">
-                <div class="os-titlebar-buttons">
-                    <span class="os-btn close"></span>
-                    <span class="os-btn minimize"></span>
-                    <span class="os-btn maximize"></span>
-                </div>
-                <div class="os-titlebar-title">
-                    <span class="os-titlebar-icon">></span>
-                    l0x1c@blog:~/posts/luadec
-                </div>
-                <div class="os-titlebar-actions">
-                    <span class="os-titlebar-action" title="Search" onclick="window.location='/search/'">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <path d="m21 21-4.35-4.35"></path>
-                        </svg>
-                    </span>
-                </div>
-            </div><div class="os-window-content">
+<body class="" id="top">
 <script>
     if (localStorage.getItem("pref-theme") === "dark") {
         document.body.classList.add('dark');
@@ -799,7 +945,7 @@ LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_
 </span></span></code></pre></div><p><code>hook</code>后可以看见一个关键的东西就是</p>
 <p><img loading="lazy" src="image13.png" alt="alt text"  />
 </p>
-<p><a href="https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/services/core/java/com/android/server/pm/ComputerEngine.java;l=2018;drc=61197364367c9e404c7da6900658f1b16c42d0da">https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/services/core/java/com/android/server/pm/ComputerEngine.java;l=2018;drc=61197364367c9e404c7da6900658f1b16c42d0da</a></p>
+<p><a href="https://cs.android.com/android/platform/superproject/main/&#43;/main:frameworks/base/services/core/java/com/android/server/pm/ComputerEngine.java;l=2018;drc=61197364367c9e404c7da6900658f1b16c42d0da">https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/services/core/java/com/android/server/pm/ComputerEngine.java;l=2018;drc=61197364367c9e404c7da6900658f1b16c42d0da</a></p>
 <p><img loading="lazy" src="image-1.png" alt="alt text"  />
 </p>
 <p>可以理解为通过<code>uid</code>来进行查询的，然后再通过<code>GetPackageInfo</code>来看是否存在来看是否有隐藏的<code>app</code></p>
@@ -825,8 +971,8 @@ LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_
 
   </footer>
 </article>
-                </main>
-                
+    </main>
+    
 <footer class="footer">
         <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span> · 
 
@@ -943,39 +1089,6 @@ LUA_API int lua_pcallk (lua_State *L, int nargs, int nresults, int errfunc, lua_
         }
     });
 </script>
-</div><div class="os-statusbar">
-                <div class="os-statusbar-left">
-                    <span class="os-status-item os-status-user">l0x1c@blog</span>
-                    <span class="os-status-separator">|</span>
-                    <span class="os-status-item os-status-path">~/posts/luadec
-                    </span>
-                </div>
-                <div class="os-statusbar-right">
-                    <span class="os-status-item">hugo v0.120.4</span>
-                    <span class="os-status-separator">|</span>
-                    <span class="os-status-item os-status-clock" id="os-clock"></span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-    
-    function updateClock() {
-        const now = new Date();
-        const h = String(now.getHours()).padStart(2,'0');
-        const m = String(now.getMinutes()).padStart(2,'0');
-        const s = String(now.getSeconds()).padStart(2,'0');
-        const el = document.getElementById('os-clock');
-        if (el) el.textContent = h + ':' + m + ':' + s;
-    }
-    updateClock();
-    setInterval(updateClock, 1000);
-
-    
-    document.body.classList.add('dark');
-    localStorage.setItem("pref-theme", "dark");
-    </script>
-
 </body>
+
 </html>

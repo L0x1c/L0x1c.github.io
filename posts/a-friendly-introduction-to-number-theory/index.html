@@ -7,12 +7,13 @@
 <meta name="robots" content="index, follow">
 <title>A Friendly Introduction to Number Theory 学习笔记 | L0x1c&#39;s Blog</title>
 <meta name="keywords" content="">
-<meta name="description" content="Chapter 1 What is number theory Number theory is the study of the set of positive whole numbers, which is often called the set of natural numbers.
+<meta name="description" content="Chapter 1 What is number theory
+Number theory is the study of the set of positive whole numbers, which is often called the set of natural numbers.
 We know natural numbers have different types: odd, even, square, cube, prime ( 质数 ), composite ( 合数 ), x mod y, triangular, perfect, fibonacci.
 The main goal of number theory is to discover interesting and unexpected relationships between different sorts of numbers and to prove that these relatinships are true.">
 <meta name="author" content="L0x1c">
 <link rel="canonical" href="https://l0x1c.com/posts/a-friendly-introduction-to-number-theory/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.5ed516264b8f4094f52a76fe7ad158f768d77ec5fb9ae7003d6613abde095cde.css" integrity="sha256-XtUWJkuPQJT1Knb&#43;etFY92jXfsX7mucAPWYTq94JXN4=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.a1477192c35ea6c813174b820fb74b9fcdbe8b746e426aa3d5980b5cc4adc33a.css" integrity="sha256-oUdxksNepsgTF0uCD7dLn82&#43;i3RuQmqj1ZgLXMStwzo=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://l0x1c.com/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://l0x1c.com/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://l0x1c.com/favicon-32x32.png">
@@ -20,6 +21,7 @@ The main goal of number theory is to discover interesting and unexpected relatio
 <link rel="mask-icon" href="https://l0x1c.com/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://l0x1c.com/posts/a-friendly-introduction-to-number-theory/">
 <noscript>
     <style>
         #theme-toggle,
@@ -56,8 +58,26 @@ The main goal of number theory is to discover interesting and unexpected relatio
         }
 
     </style>
-</noscript><meta property="og:title" content="A Friendly Introduction to Number Theory 学习笔记" />
-<meta property="og:description" content="Chapter 1 What is number theory Number theory is the study of the set of positive whole numbers, which is often called the set of natural numbers.
+</noscript>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "$", right: "$", display: false},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false
+    });
+  });
+</script>
+<meta property="og:title" content="A Friendly Introduction to Number Theory 学习笔记" />
+<meta property="og:description" content="Chapter 1 What is number theory
+Number theory is the study of the set of positive whole numbers, which is often called the set of natural numbers.
 We know natural numbers have different types: odd, even, square, cube, prime ( 质数 ), composite ( 合数 ), x mod y, triangular, perfect, fibonacci.
 The main goal of number theory is to discover interesting and unexpected relationships between different sorts of numbers and to prove that these relatinships are true." />
 <meta property="og:type" content="article" />
@@ -70,7 +90,8 @@ The main goal of number theory is to discover interesting and unexpected relatio
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:image" content="https://l0x1c.com/images/papermod-cover.png" />
 <meta name="twitter:title" content="A Friendly Introduction to Number Theory 学习笔记"/>
-<meta name="twitter:description" content="Chapter 1 What is number theory Number theory is the study of the set of positive whole numbers, which is often called the set of natural numbers.
+<meta name="twitter:description" content="Chapter 1 What is number theory
+Number theory is the study of the set of positive whole numbers, which is often called the set of natural numbers.
 We know natural numbers have different types: odd, even, square, cube, prime ( 质数 ), composite ( 合数 ), x mod y, triangular, perfect, fibonacci.
 The main goal of number theory is to discover interesting and unexpected relationships between different sorts of numbers and to prove that these relatinships are true."/>
 
@@ -101,12 +122,12 @@ The main goal of number theory is to discover interesting and unexpected relatio
   "@type": "BlogPosting",
   "headline": "A Friendly Introduction to Number Theory 学习笔记",
   "name": "A Friendly Introduction to Number Theory 学习笔记",
-  "description": "Chapter 1 What is number theory Number theory is the study of the set of positive whole numbers, which is often called the set of natural numbers.\nWe know natural numbers have different types: odd, even, square, cube, prime ( 质数 ), composite ( 合数 ), x mod y, triangular, perfect, fibonacci.\nThe main goal of number theory is to discover interesting and unexpected relationships between different sorts of numbers and to prove that these relatinships are true.",
+  "description": "Chapter 1 What is number theory Number theory is the study of the set of positive whole numbers, which is often called the set of natural numbers.\nWe know natural numbers have different types: odd, even, square, cube, prime ( 质数 ), composite ( 合数 ), x mod y, triangular, perfect, fibonacci.\nThe main goal of number theory is to discover interesting and unexpected relationships between different sorts of numbers and to prove that these relatinships are true.\n",
   "keywords": [
     
   ],
-  "articleBody": "Chapter 1 What is number theory Number theory is the study of the set of positive whole numbers, which is often called the set of natural numbers.\nWe know natural numbers have different types: odd, even, square, cube, prime ( 质数 ), composite ( 合数 ), x mod y, triangular, perfect, fibonacci.\nThe main goal of number theory is to discover interesting and unexpected relationships between different sorts of numbers and to prove that these relatinships are true.\nIf we want to study math, number theory is partly experimental and partly theoretical. ( 数论一半是实验性的，一半是理论性的 ):\nAccumulate data, usually numerical, but sometimes more abstract in nature. Examine the data and try to find patterns and relationships. Formulate conjectures (i.e., guesses) that explain the patterns and relationships. These are frequently given by formulas. Test your conjectures by collecting additional data and checking whether the new information fits your conjectures. Devise an argument (i.e., a proof) that your conjectures are correct. 这一节主要是介绍了数论是研究自然数之间的关系，如果我们想研究各种关系的情况，需要通过大量的收集数据，观察数据之间的关系和规律，后续提出猜想，来用大量的数据来验证猜想是否正确，后续需要证明你的猜想是正确的.\n1.1 The first two numbers that are both squares and triangles are 1 and 36. Find the next one and, if possible, the one after that. Can you figure out an efficient way to find triangular-square numbers? Do you think that there are infinitely many?\nI found some numbers using code.\nfor i in range(1, 10000): triangles_number = i * (i + 1) // 2 square_root = int(triangles_number ** 0.5) if square_root * square_root == triangles_number: print(f\"Triangular-square number found: {triangles_number} (Triangle index: {i}, Square root: {square_root})\") result: - 1 (Triangle index: 1, Square root: 1) - 36 (Triangle index: 8, Square root: 6) - 1225 (Triangle index: 49, Square root: 35) - 41616 (Triangle index: 288, Square root: 204) - 1413721 (Triangle index: 1681, Square root: 1189) - 48024900 (Triangle index: 9800, Square root: 6930) i find patterns and relationships about these data:\nSquare root : $6 \\times 6 - 1 = 35, 6 \\times 35 - 6 = 204, 6 \\times 204 - 35 = 1189$ … $m_{k+1} = 6m_k - m_{k-1}$\nTriangle index: $6 \\times 8 - 1 + 2 = 49, 6 \\times 49 - 8 + 2 = 288, 6 \\times 288 - 49 + 2 = 1681$ … $m_{k+1} = 6m_k - m_{k-1} + 2$\nI want to prove this formula：\n$\\frac {(1 + n) \\times n} {2} = m ^ 2$\n$4n ^ 2 + 4n = 8m^2$\n$(2n + 1)^2 - 8m^2 = 1$\nif $ x = 2n + 1 $ and $ y = 2m$\nwe can get $ x^2 - 2y^2 = 1$ because Pell’s equation is $x^2 - Dy^2 = 1$\nIf n and m are 0, it doesn’t make any sense. $x=3, y=2$ is the smallest nontrivial solution\n$(3 + 2\\sqrt 2)(3 - 2\\sqrt 2) = 1$\n$(x + y\\sqrt 2)(x - y\\sqrt 2) = 1$\n$(3 + 2\\sqrt 2)(3 - 2\\sqrt 2)(x + y\\sqrt 2)(x - y\\sqrt 2) = 1$\n$(3x + 4y + \\sqrt 2(2x + 3y))(3x + 4y - \\sqrt 2(2x + 3y)) = 1$\nif $3x + 4y = x’$ and $2x + 3y = y'$\nwe can get $(x’ + \\sqrt 2 y’)(x’ - \\sqrt 2 y’) = 1$ $x’^2 - 2y’^2 =1$\nTherefore there are infinitely many solutions. For example, starting from the solution $(x, y) = (3, 2)$, the formulas $x’ = 3x + 4y$ and $y’ = 2x + 3y$ give a new solution $(17, 12)$. Since $x = 2n + 1$ and $y = 2m$, this new solution gives $n = 8$ and $m = 6$, which is the square–triangular number $36$. Each time we apply the formulas, we get a strictly larger solution, so this process never stops. Therefore there are infinitely many square–triangular numbers.\n1.2 Try adding up the first few odd numbers and see if the numbers you get satisfy some sort of pattern. Once you find the pattern, express it as a formula. Give a geometric verification that your formula is correct.\nI adding up the first few odd numbers: $$1 = 1,\\quad 1+3 = 4,\\quad 1+3+5 = 9,\\quad 1+3+5+7 = 16$$\nthe sums are exactly the square numbers, Let $x$ be the last odd number in the sum. Then the number of terms is $\\frac{x+1}{2}$, so $$1 + 3 + 5 + \\cdots + x = \\left(\\frac{x+1}{2}\\right)^2$$\nIf the sum does not start from 1 but from some odd number $a$, we can subtract the missing part. Let $m = a - 2$ be the odd number just before $a$. Then\n$$a + (a+2) + \\cdots + x = \\left(\\frac{x+1}{2}\\right)^2 - \\left(\\frac{m+1}{2}\\right)^2,$$\nGeometric verification. Arrange $n^2$ dots in an $n \\times n$ square, and cut the square into L-shaped layers. Consider the layer whose side length is $s = \\frac{x-1}{2} + 1$, where $x$ is an odd number. This layer contains\n$$s + s - 1 = (x + 2 - 1) - 1 = x$$\n1.3 The consecutive odd numbers 3, 5, and 7 are all primes. Are there infinitely many such “prime triplets”? That is, are there infinitely many prime numbers p such that p + 2 and p + 4 are also primes?\nThe odd multiples of 3 are $9, 15, 21, 27, \\ldots$, appearing every 6. We show that every triple $(p,\\ p+2,\\ p+4)$ with $p \u003e 3$ contains one of them.\nStarting from $p = 5$ and moving forward by 6 each time, the triples\n$$(5, 7, \\mathbf{9}),\\quad (11, 13, \\mathbf{15}),\\quad (17, 19, \\mathbf{21}),\\ \\ldots$$\neach contain a multiple of 3 in the third position ($p + 4$).\nSuppose the first position skips past the multiple of 3 and starts at the very next odd number. Then the new third position is $(p + 4) + 2 + 4 = (p + 4) + 6$. Since $(p+4) \\bmod 3 \\equiv 0$, adding 6 does not change the remainder, so $((p+4) + 6) \\pmod 3 \\equiv 0 $ as well. The new triple therefore contains a multiple of 3 again. It follows that there are not infinitely many primes $p$ such that $p + 2$ and $p + 4$ are also primes.\n1.4. It is generally believed that infinitely many primes have the form N2 + 1, although no one knows for sure. (a) Do you think that there are infinitely many primes of the form $N^2 - 1$? (b) Do you think that there are infinitely many primes of the form $N^2 - 2$? (c) How about of the form $N^2 - 3$? How about $N^2 - 4$? (d) Which values of a do you think give infinitely many primes of the form $N^2 - a$\nIf a is not a perfect square can have infinitely many primes.\nFor example, $N^2 - 1 = (N+1)(N-1)$, so this number always has at least two known factors, namely $N+1$ and $N-1$.\nIf $a$ is a square number, say $a = k^2$, then by the difference of two squares formula, $N^2 - a = (N+k)(N-k)$.\nExercise 1.5. The following two lines indicate another way to derive the formula for the sum of the first $n$ integers by rearranging the terms in the sum. Fill in the details. $$1 + 2 + 3 + \\cdots + n = (1 + n) + (2 + (n-1)) + (3 + (n-2)) + \\cdots$$ $$= (1 + n) + (1 + n) + (1 + n) + \\cdots$$How many copies of $n + 1$ are in there in the second line? You may need to consider the cases of odd $n$ and even $n$ separately. If that’s not clear, first try writing it out explicitly for $n = 6$ and $n = 7$.\nInstead of treating the two cases separately, I derived a single formula that covers both:\n$$1 + 2 + \\cdots + n = (1+n)\\cdot\\frac{n - (n \\bmod 2)}{2} + (n \\bmod 2)\\cdot\\frac{n + (n \\bmod 2)}{2}$$\n1.6. For each of the following statements, fill in the blank with an easy-to-check criterion: (a) $M$ is a triangular number if and only if ____ is an odd square. (b) $N$ is an odd square if and only if ____ is a triangular number. (c) Prove that your criteria in (a) and (b) are correct.\n$$8M + 1 = 8\\cdot\\frac{n(n+1)}{2} + 1 = 4n^2 + 4n + 1 = (2n+1)^2$$\nChapter 2 Pythagorean Triples ",
-  "wordCount" : "1377",
+  "articleBody": "Chapter 1 What is number theory Number theory is the study of the set of positive whole numbers, which is often called the set of natural numbers.\nWe know natural numbers have different types: odd, even, square, cube, prime ( 质数 ), composite ( 合数 ), x mod y, triangular, perfect, fibonacci.\nThe main goal of number theory is to discover interesting and unexpected relationships between different sorts of numbers and to prove that these relatinships are true.\nIf we want to study math, number theory is partly experimental and partly theoretical. ( 数论一半是实验性的，一半是理论性的 ):\nAccumulate data, usually numerical, but sometimes more abstract in nature. Examine the data and try to find patterns and relationships. Formulate conjectures (i.e., guesses) that explain the patterns and relationships. These are frequently given by formulas. Test your conjectures by collecting additional data and checking whether the new information fits your conjectures. Devise an argument (i.e., a proof) that your conjectures are correct. 这一节主要是介绍了数论是研究自然数之间的关系，如果我们想研究各种关系的情况，需要通过大量的收集数据，观察数据之间的关系和规律，后续提出猜想，来用大量的数据来验证猜想是否正确，后续需要证明你的猜想是正确的.\n1.1 The first two numbers that are both squares and triangles are 1 and 36. Find the next one and, if possible, the one after that. Can you figure out an efficient way to find triangular-square numbers? Do you think that there are infinitely many?\nI found some numbers using code.\nfor i in range(1, 10000): triangles_number = i * (i + 1) // 2 square_root = int(triangles_number ** 0.5) if square_root * square_root == triangles_number: print(f\"Triangular-square number found: {triangles_number} (Triangle index: {i}, Square root: {square_root})\") result: - 1 (Triangle index: 1, Square root: 1) - 36 (Triangle index: 8, Square root: 6) - 1225 (Triangle index: 49, Square root: 35) - 41616 (Triangle index: 288, Square root: 204) - 1413721 (Triangle index: 1681, Square root: 1189) - 48024900 (Triangle index: 9800, Square root: 6930) i find patterns and relationships about these data:\nSquare root : $6 \\times 6 - 1 = 35, 6 \\times 35 - 6 = 204, 6 \\times 204 - 35 = 1189$ … $m_{k+1} = 6m_k - m_{k-1}$\nTriangle index: $6 \\times 8 - 1 + 2 = 49, 6 \\times 49 - 8 + 2 = 288, 6 \\times 288 - 49 + 2 = 1681$ … $m_{k+1} = 6m_k - m_{k-1} + 2$\nI want to prove this formula：\n$\\frac {(1 + n) \\times n} {2} = m ^ 2$\n$4n ^ 2 + 4n = 8m^2$\n$(2n + 1)^2 - 8m^2 = 1$\nif $ x = 2n + 1 $ and $ y = 2m$\nwe can get $ x^2 - 2y^2 = 1$ because Pell’s equation is $x^2 - Dy^2 = 1$\nIf n and m are 0, it doesn’t make any sense. $x=3, y=2$ is the smallest nontrivial solution\n$(3 + 2\\sqrt 2)(3 - 2\\sqrt 2) = 1$\n$(x + y\\sqrt 2)(x - y\\sqrt 2) = 1$\n$(3 + 2\\sqrt 2)(3 - 2\\sqrt 2)(x + y\\sqrt 2)(x - y\\sqrt 2) = 1$\n$(3x + 4y + \\sqrt 2(2x + 3y))(3x + 4y - \\sqrt 2(2x + 3y)) = 1$\nif $3x + 4y = x'$ and $2x + 3y = y'$\nwe can get $(x' + \\sqrt 2 y')(x' - \\sqrt 2 y') = 1$ $x'^2 - 2y'^2 =1$\nTherefore there are infinitely many solutions. For example, starting from the solution $(x, y) = (3, 2)$, the formulas $x' = 3x + 4y$ and $y' = 2x + 3y$ give a new solution $(17, 12)$. Since $x = 2n + 1$ and $y = 2m$, this new solution gives $n = 8$ and $m = 6$, which is the square–triangular number $36$. Each time we apply the formulas, we get a strictly larger solution, so this process never stops. Therefore there are infinitely many square–triangular numbers.\n1.2 Try adding up the first few odd numbers and see if the numbers you get satisfy some sort of pattern. Once you find the pattern, express it as a formula. Give a geometric verification that your formula is correct.\nI adding up the first few odd numbers: $$1 = 1,\\quad 1+3 = 4,\\quad 1+3+5 = 9,\\quad 1+3+5+7 = 16$$the sums are exactly the square numbers, Let $x$ be the last odd number in the sum. Then the number of terms is $\\frac{x+1}{2}$, so $$1 + 3 + 5 + \\cdots + x = \\left(\\frac{x+1}{2}\\right)^2$$If the sum does not start from 1 but from some odd number $a$, we can subtract the missing part. Let $m = a - 2$ be the odd number just before $a$. Then\n$$a + (a+2) + \\cdots + x = \\left(\\frac{x+1}{2}\\right)^2 - \\left(\\frac{m+1}{2}\\right)^2,$$Geometric verification. Arrange $n^2$ dots in an $n \\times n$ square, and cut the square into L-shaped layers. Consider the layer whose side length is $s = \\frac{x-1}{2} + 1$, where $x$ is an odd number. This layer contains\n$$s + s - 1 = (x + 2 - 1) - 1 = x$$1.3 The consecutive odd numbers 3, 5, and 7 are all primes. Are there infinitely many such “prime triplets”? That is, are there infinitely many prime numbers p such that p + 2 and p + 4 are also primes?\nThe odd multiples of 3 are $9, 15, 21, 27, \\ldots$, appearing every 6. We show that every triple $(p,\\ p+2,\\ p+4)$ with $p \u003e 3$ contains one of them.\nStarting from $p = 5$ and moving forward by 6 each time, the triples\n$$(5, 7, \\mathbf{9}),\\quad (11, 13, \\mathbf{15}),\\quad (17, 19, \\mathbf{21}),\\ \\ldots$$each contain a multiple of 3 in the third position ($p + 4$).\nSuppose the first position skips past the multiple of 3 and starts at the very next odd number. Then the new third position is $(p + 4) + 2 + 4 = (p + 4) + 6$. Since $(p+4) \\bmod 3 \\equiv 0$, adding 6 does not change the remainder, so $((p+4) + 6) \\pmod 3 \\equiv 0 $ as well. The new triple therefore contains a multiple of 3 again. It follows that there are not infinitely many primes $p$ such that $p + 2$ and $p + 4$ are also primes.\n1.4. It is generally believed that infinitely many primes have the form N2 + 1, although no one knows for sure. (a) Do you think that there are infinitely many primes of the form $N^2 - 1$? (b) Do you think that there are infinitely many primes of the form $N^2 - 2$? (c) How about of the form $N^2 - 3$? How about $N^2 - 4$? (d) Which values of a do you think give infinitely many primes of the form $N^2 - a$\nIf a is not a perfect square can have infinitely many primes.\nFor example, $N^2 - 1 = (N+1)(N-1)$, so this number always has at least two known factors, namely $N+1$ and $N-1$.\nIf $a$ is a square number, say $a = k^2$, then by the difference of two squares formula, $N^2 - a = (N+k)(N-k)$.\nExercise 1.5. The following two lines indicate another way to derive the formula for the sum of the first $n$ integers by rearranging the terms in the sum. Fill in the details. $$1 + 2 + 3 + \\cdots + n = (1 + n) + (2 + (n-1)) + (3 + (n-2)) + \\cdots$$ $$= (1 + n) + (1 + n) + (1 + n) + \\cdots$$How many copies of $n + 1$ are in there in the second line? You may need to consider the cases of odd $n$ and even $n$ separately. If that’s not clear, first try writing it out explicitly for $n = 6$ and $n = 7$.\nInstead of treating the two cases separately, I derived a single formula that covers both:\n$$1 + 2 + \\cdots + n = (1+n)\\cdot\\frac{n - (n \\bmod 2)}{2} + (n \\bmod 2)\\cdot\\frac{n + (n \\bmod 2)}{2}$$1.6. For each of the following statements, fill in the blank with an easy-to-check criterion: (a) $M$ is a triangular number if and only if ____ is an odd square. (b) $N$ is an odd square if and only if ____ is a triangular number. (c) Prove that your criteria in (a) and (b) are correct.\n$$8M + 1 = 8\\cdot\\frac{n(n+1)}{2} + 1 = 4n^2 + 4n + 1 = (2n+1)^2$$Chapter 2 Pythagorean Triples ",
+  "wordCount" : "1370",
   "inLanguage": "en",
   "image": "https://l0x1c.com/images/papermod-cover.png","datePublished": "2026-07-02T06:15:00+08:00",
   "dateModified": "2026-07-02T06:15:00+08:00",
@@ -130,26 +151,7 @@ The main goal of number theory is to discover interesting and unexpected relatio
 </script>
 </head>
 
-<body class=" dark" id="top"><div class="os-desktop">
-        <div class="os-window"><div class="os-titlebar">
-                <div class="os-titlebar-buttons">
-                    <span class="os-btn close"></span>
-                    <span class="os-btn minimize"></span>
-                    <span class="os-btn maximize"></span>
-                </div>
-                <div class="os-titlebar-title">
-                    <span class="os-titlebar-icon">></span>
-                    l0x1c@blog:~/posts/A Friendly Introduction to Number Theory
-                </div>
-                <div class="os-titlebar-actions">
-                    <span class="os-titlebar-action" title="Search" onclick="window.location='/search/'">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <path d="m21 21-4.35-4.35"></path>
-                        </svg>
-                    </span>
-                </div>
-            </div><div class="os-window-content">
+<body class="" id="top">
 <script>
     if (localStorage.getItem("pref-theme") === "dark") {
         document.body.classList.add('dark');
@@ -293,25 +295,22 @@ The main goal of number theory is to discover interesting and unexpected relatio
 <p>$(x + y\sqrt 2)(x - y\sqrt 2) = 1$</p>
 <p>$(3 + 2\sqrt 2)(3 - 2\sqrt 2)(x + y\sqrt 2)(x - y\sqrt 2) = 1$</p>
 <p>$(3x + 4y + \sqrt 2(2x + 3y))(3x + 4y - \sqrt 2(2x + 3y)) = 1$</p>
-<p>if $3x + 4y = x&rsquo;$ and $2x + 3y = y'$</p>
-<p>we can get $(x&rsquo; + \sqrt 2 y&rsquo;)(x&rsquo; - \sqrt 2 y&rsquo;) = 1$ $x&rsquo;^2 - 2y&rsquo;^2 =1$</p>
-<p>Therefore there are infinitely many solutions. For example, starting from the solution $(x, y) = (3, 2)$, the formulas $x&rsquo; = 3x + 4y$ and $y&rsquo; = 2x + 3y$ give a new solution $(17, 12)$. Since $x = 2n + 1$ and $y = 2m$, this new solution gives $n = 8$ and $m = 6$, which is the square–triangular number $36$. Each time we apply the formulas, we get a strictly larger solution, so this process never stops. Therefore there are infinitely many square–triangular numbers.</p>
+<p>if $3x + 4y = x'$ and $2x + 3y = y'$</p>
+<p>we can get $(x' + \sqrt 2 y')(x' - \sqrt 2 y') = 1$ $x'^2 - 2y'^2 =1$</p>
+<p>Therefore there are infinitely many solutions. For example, starting from the solution $(x, y) = (3, 2)$, the formulas $x' = 3x + 4y$ and $y' = 2x + 3y$ give a new solution $(17, 12)$. Since $x = 2n + 1$ and $y = 2m$, this new solution gives $n = 8$ and $m = 6$, which is the square–triangular number $36$. Each time we apply the formulas, we get a strictly larger solution, so this process never stops. Therefore there are infinitely many square–triangular numbers.</p>
 <p><strong>1.2 Try adding up the first few odd numbers and see if the numbers you get satisfy some
 sort of pattern. Once you find the pattern, express it as a formula. Give a geometric
 verification that your formula is correct.</strong></p>
-<p>I adding up the first few odd numbers: $$1 = 1,\quad 1+3 = 4,\quad 1+3+5 = 9,\quad 1+3+5+7 = 16$$</p>
-<p>the sums are exactly the square numbers, Let $x$ be the last odd number in the sum. Then the number of terms is $\frac{x+1}{2}$, so $$1 + 3 + 5 + \cdots + x = \left(\frac{x+1}{2}\right)^2$$</p>
-<p>If the sum does not start from 1 but from some odd number $a$, we can subtract the missing part. Let $m = a - 2$ be the odd number just before $a$. Then</p>
-<p>$$a + (a+2) + \cdots + x = \left(\frac{x+1}{2}\right)^2 - \left(\frac{m+1}{2}\right)^2,$$</p>
-<p>Geometric verification. Arrange $n^2$ dots in an $n \times n$ square, and cut the square into L-shaped layers. Consider the layer whose side length is $s = \frac{x-1}{2} + 1$, where $x$ is an odd number. This layer contains</p>
-<p>$$s + s - 1 = (x + 2 - 1) - 1 = x$$</p>
-<p><strong>1.3 The consecutive odd numbers 3, 5, and 7 are all primes. Are there infinitely many
+<p>I adding up the first few odd numbers: </p>
+$$1 = 1,\quad 1+3 = 4,\quad 1+3+5 = 9,\quad 1+3+5+7 = 16$$<p>the sums are exactly the square numbers, Let $x$ be the last odd number in the sum. Then the number of terms is $\frac{x+1}{2}$, so </p>
+$$1 + 3 + 5 + \cdots + x = \left(\frac{x+1}{2}\right)^2$$<p>If the sum does not start from 1 but from some odd number $a$, we can subtract the missing part. Let $m = a - 2$ be the odd number just before $a$. Then</p>
+$$a + (a+2) + \cdots + x = \left(\frac{x+1}{2}\right)^2 - \left(\frac{m+1}{2}\right)^2,$$<p>Geometric verification. Arrange $n^2$ dots in an $n \times n$ square, and cut the square into L-shaped layers. Consider the layer whose side length is $s = \frac{x-1}{2} + 1$, where $x$ is an odd number. This layer contains</p>
+$$s + s - 1 = (x + 2 - 1) - 1 = x$$<p><strong>1.3 The consecutive odd numbers 3, 5, and 7 are all primes. Are there infinitely many
 such &ldquo;prime triplets&rdquo;? That is, are there infinitely many prime numbers p such that p + 2
 and p + 4 are also primes?</strong></p>
-<p>The odd multiples of 3 are $9, 15, 21, 27, \ldots$, appearing every 6. We show that every triple $(p,\ p+2,\ p+4)$ with $p &gt; 3$ contains one of them.</p>
+<p>The odd multiples of 3 are $9, 15, 21, 27, \ldots$, appearing every 6. We show that every triple $(p,\ p+2,\ p+4)$ with $p > 3$ contains one of them.</p>
 <p>Starting from $p = 5$ and moving forward by 6 each time, the triples</p>
-<p>$$(5, 7, \mathbf{9}),\quad (11, 13, \mathbf{15}),\quad (17, 19, \mathbf{21}),\ \ldots$$</p>
-<p>each contain a multiple of 3 in the third position ($p + 4$).</p>
+$$(5, 7, \mathbf{9}),\quad (11, 13, \mathbf{15}),\quad (17, 19, \mathbf{21}),\ \ldots$$<p>each contain a multiple of 3 in the third position ($p + 4$).</p>
 <p>Suppose the first position skips past the multiple of 3 and starts at the very next odd number. Then the new third position is $(p + 4) + 2 + 4 = (p + 4) + 6$. Since $(p+4) \bmod 3 \equiv 0$, adding 6 does not change the remainder, so $((p+4) + 6)  \pmod 3 \equiv 0 $ as well. The new triple therefore contains a multiple of 3 again. It follows that there are not infinitely many primes $p$ such that $p + 2$ and $p + 4$ are also primes.</p>
 <p><strong>1.4. It is generally believed that infinitely many primes have the form N2 + 1, although
 no one knows for sure.
@@ -330,13 +329,11 @@ $$= (1 + n) + (1 + n) + (1 + n) + \cdots$$How many copies of $n + 1$ are in ther
 the cases of odd $n$ and even $n$ separately. If that&rsquo;s not clear, first try writing
 it out explicitly for $n = 6$ and $n = 7$.</strong></p>
 <p>Instead of treating the two cases separately, I derived a single formula that covers both:</p>
-<p>$$1 + 2 + \cdots + n = (1+n)\cdot\frac{n - (n \bmod 2)}{2} + (n \bmod 2)\cdot\frac{n + (n \bmod 2)}{2}$$</p>
-<p><strong>1.6. For each of the following statements, fill in the blank with an easy-to-check criterion:
+$$1 + 2 + \cdots + n = (1+n)\cdot\frac{n - (n \bmod 2)}{2} + (n \bmod 2)\cdot\frac{n + (n \bmod 2)}{2}$$<p><strong>1.6. For each of the following statements, fill in the blank with an easy-to-check criterion:
 (a) $M$ is a triangular number if and only if ____ is an odd square.
 (b) $N$ is an odd square if and only if ____ is a triangular number.
 (c) Prove that your criteria in (a) and (b) are correct.</strong></p>
-<p>$$8M + 1 = 8\cdot\frac{n(n+1)}{2} + 1 = 4n^2 + 4n + 1 = (2n+1)^2$$</p>
-<h1 id="chapter-2-pythagorean-triples">Chapter 2 Pythagorean Triples<a hidden class="anchor" aria-hidden="true" href="#chapter-2-pythagorean-triples">#</a></h1>
+$$8M + 1 = 8\cdot\frac{n(n+1)}{2} + 1 = 4n^2 + 4n + 1 = (2n+1)^2$$<h1 id="chapter-2-pythagorean-triples">Chapter 2 Pythagorean Triples<a hidden class="anchor" aria-hidden="true" href="#chapter-2-pythagorean-triples">#</a></h1>
 
 
   </div>
@@ -354,8 +351,8 @@ it out explicitly for $n = 6$ and $n = 7$.</strong></p>
 
   </footer>
 </article>
-                </main>
-                
+    </main>
+    
 <footer class="footer">
         <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span> · 
 
@@ -472,39 +469,6 @@ it out explicitly for $n = 6$ and $n = 7$.</strong></p>
         }
     });
 </script>
-</div><div class="os-statusbar">
-                <div class="os-statusbar-left">
-                    <span class="os-status-item os-status-user">l0x1c@blog</span>
-                    <span class="os-status-separator">|</span>
-                    <span class="os-status-item os-status-path">~/posts/A Friendly Introduction to Number Theory
-                    </span>
-                </div>
-                <div class="os-statusbar-right">
-                    <span class="os-status-item">hugo v0.120.4</span>
-                    <span class="os-status-separator">|</span>
-                    <span class="os-status-item os-status-clock" id="os-clock"></span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-    
-    function updateClock() {
-        const now = new Date();
-        const h = String(now.getHours()).padStart(2,'0');
-        const m = String(now.getMinutes()).padStart(2,'0');
-        const s = String(now.getSeconds()).padStart(2,'0');
-        const el = document.getElementById('os-clock');
-        if (el) el.textContent = h + ':' + m + ':' + s;
-    }
-    updateClock();
-    setInterval(updateClock, 1000);
-
-    
-    document.body.classList.add('dark');
-    localStorage.setItem("pref-theme", "dark");
-    </script>
-
 </body>
+
 </html>
